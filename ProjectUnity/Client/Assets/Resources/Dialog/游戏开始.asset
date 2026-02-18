@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2076314477274378924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba079efee81c01f428b2629519b1031a, type: 3}
+  m_Name: "\u52B3\u52A8\u65F6\u95F4"
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -296, y: -472}
+  ports:
+    keys:
+    - input
+    - nextNode
+    - nextNode 0
+    values:
+    - _fieldName: input
+      _node: {fileID: -2076314477274378924}
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: nextNode
+      _node: {fileID: -2076314477274378924}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: nextNode 0
+      _node: {fileID: -2076314477274378924}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: input
+        node: {fileID: 4167961175027728999}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 1
+  input: 
+  speakerid: 1200001
+  ani: Talking
+  rewards: []
+  cost: []
+  dialogText:
+  - "\u81EA\u4ECE\u7236\u4EB2\u53BB\u4E16\u540E\uFF0C\u6211\u5C31\u548C\u8FD9\u5339\u9A6C\u76F8\u4F9D\u4E3A\u547D\uFF0C\u4F4F\u5728\u8FD9\u4E2A\u519C\u573A\u91CC\u3002"
+  - "\u4E0D\u77E5\u9053\u4E3A\u4EC0\u4E48\u7236\u4EB2\u90A3\u4E48\u91CD\u89C6\u8FD9\u5339\u9A6C\u3002"
+  - "\u8FD9\u662F\u6700\u540E\u4E00\u4E9B\u9A6C\u8349\u4E86\uFF0C\u6211\u53BB\u518D\u7ED9\u4F60\u79CD\u4E00\u4E9B\u3002"
+  choices:
+  - choiceText: "\u79BB\u5F00"
+    conditions: []
+  nextNode: {fileID: 0}
+  scene: 
+  prefab: 
+  endingDescription: 
+  eventid: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0adb7cbcff07d16499b27566a20258a9, type: 3}
+  m_Name: "\u6E38\u620F\u5F00\u59CB"
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: -2076314477274378924}
+  - {fileID: 4167961175027728999}
+--- !u!114 &4167961175027728999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba079efee81c01f428b2629519b1031a, type: 3}
+  m_Name: 1
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 8, y: -424}
+  ports:
+    keys:
+    - input
+    - nextNode
+    values:
+    - _fieldName: input
+      _node: {fileID: 4167961175027728999}
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: nextNode 0
+        node: {fileID: -2076314477274378924}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: nextNode
+      _node: {fileID: 4167961175027728999}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  input: 
+  speakerid: 1200001
+  ani: Talking
+  rewards:
+  - k: 0
+    v: 0
+  cost: []
+  dialogText: []
+  choices: []
+  nextNode: {fileID: 0}
+  scene: 
+  prefab: 
+  endingDescription: 
+  eventid: 0

@@ -1,0 +1,11 @@
+﻿ID,名称,解锁日期,开放时间,场景名,预制,静态图,相机路径,默认位置,默认动画,是否可操作
+cid,name,unlockday,opentime,scene,prefab,icon,campath,ptrans,pani,ctrl
+1800001,你的农场,1,1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24,Shop,StorePanel|StorePanel,UI/地图_会见室,Base/Camera_A-Block_01,Point,Talking_03,0
+1800002,养鸡场,1,1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24,Shop,StorePanel|StorePanel,UI/地图_会见室,Base/Camera_A-Block_01,Point,Talking_03,1
+1800003,杂货铺,1,1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24,Shop,StorePanel|StorePanel,UI/地图_会见室,Base/Camera_A-Block_01,Point,Talking_03,1
+1800004,牧场,1,1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24,Shop,StorePanel|StorePanel,UI/地图_会见室,Base/Camera_A-Block_01,Point,Talking_03,1
+1800005,医院,1,1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24,Shop,StorePanel|StorePanel,UI/地图_会见室,Base/Camera_A-Block_01,Point,Talking_03,1
+1800006,图书馆,1,1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24,Shop,StorePanel|StorePanel,UI/地图_会见室,Base/Camera_A-Block_01,Point,Talking_03,1
+1800007,矿洞,1,1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24,Shop,StorePanel|StorePanel,UI/地图_会见室,Base/Camera_A-Block_01,Point,Talking_03,0
+1800008,教堂,1,1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24,Shop,StorePanel|StorePanel,UI/地图_会见室,Base/Camera_A-Block_01,Point,Talking_03,1
+1800009,海边,1,8|9|10|11|12|13|14|15|16|17|18|19|20,Shop,StorePanel|StorePanel,UI/地图_会见室,Base/Camera_A-Block_01,Point,Talking_03,1

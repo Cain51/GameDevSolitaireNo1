@@ -1,0 +1,26 @@
+﻿//角色部件
+public enum enPart
+{
+    flag,
+    ani,
+    tran,
+    move,
+    sta,
+    pick,
+    flip,
+    group,
+    face,
+    talk,
+    tag,
+    work,
+    effect,
+    asset,
+    weapon,
+    mission,
+    debuff,
+    knewn,
+    want,
+    food,
+    statetag,
+    max,
+}
