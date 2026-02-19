@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "\u52B3\u52A8\u65F6\u95F4"
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -296, y: -472}
+  position: {x: -392, y: -472}
   ports:
     keys:
     - input

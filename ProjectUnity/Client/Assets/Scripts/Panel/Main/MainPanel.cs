@@ -41,7 +41,10 @@ public class MainPanel : PanelBase
 	{
 		lbl_day.text = $"第{day}天";
 		SetTimeSlice(0, 23, Color.white);
-	}
+		if ((day + 1) % 3 == 0) cangomatch = true;
+		else cangomatch = false;
+
+    }
 	public void SetTime(int curTime)
 	{
 		tran_clock.localEulerAngles = new Vector3(0, 0, (24 - curTime) * -15);
@@ -111,10 +114,31 @@ public class MainPanel : PanelBase
 
         TipManager.Tip("Exp+"+20+"!");
     }
-	public void Match() {
+	bool cangomatch = false;
+	public bool ismatchlocked = false;
+    public void Match() {
+
+		if (!ismatchlocked) return;
+        GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+        if (!cangomatch)
+		{
+
+
+
+            TipManager.Tip($"赛马场下次开放时间:第{((((gm.day+1) / 3 + 1) * 3)-1)}天,中午之前");
+            return;
+		}
+
+        if (gm.time < 12)
+        {
+			Debug.Log(gm.time);
+            TipManager.Tip("赛马只能在中午以前参加！");
+            return;
+        }
 
         SceneLoadManager slm = CBus.Instance.GetManager(ManagerName.SceneLoadManager) as SceneLoadManager;
         slm.Load("match");
+		cangomatch = false;
     }
 
     public void Sleep() {

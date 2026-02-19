@@ -49,7 +49,7 @@ namespace RG.Zeluda
                     }
 				};
                 AssetManager am = CBus.Instance.GetManager(ManagerName.AssetManager) as AssetManager;
-                am.Add(1100003, 10);
+                am.Add(1100003, 3);
                 levelManager.updateexp();
                 main.SetTime(time);
 				main.InitClock();
@@ -137,6 +137,11 @@ namespace RG.Zeluda
 					//	UIManager um2 = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
 					//	VideoPanel video = um2.OpenPanel("VideoPanel") as VideoPanel;
 					//}
+					if (day == 2)
+					{
+						main.ismatchlocked = true;
+						TipManager.Tip("赛马场开放了!");
+                    }
 				};
 			});
 		}

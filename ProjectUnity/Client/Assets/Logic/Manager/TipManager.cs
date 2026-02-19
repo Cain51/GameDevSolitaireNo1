@@ -42,7 +42,7 @@ public class TipManager : ManagerBase
         txt.text = msg;
         Sequence seq = DOTween.Sequence();
         seq.Append(obj.transform.DOScale(Vector3.one,0.5f));
-        seq.Append(obj.transform.DOLocalMoveY(Screen.height / 2, 1));
+        seq.Append(obj.transform.DOLocalMoveY(Screen.height / 2, 2));
         seq.AppendCallback(() =>
         {
             GameObject.Destroy(obj);

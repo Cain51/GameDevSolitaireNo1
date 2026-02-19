@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class HoeSkill : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -10,16 +11,25 @@ public class HoeSkill : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public KeyCode skillkey;
     public string skillname ;
     public string skillscript ;
-
+    public GameObject mask;
     public int level = 0;
+    public bool unlock = false;
+    public bool skillActive {
+        get { return isacitve; }
+        set { 
+            isacitve = value;
+            mask.SetActive(!isacitve);
+        }
 
-    public bool skillActive = false;
+    }
+    bool isacitve = false;
     public UnityEvent myevent;
     public void Cast()
     {
         if (skillActive)
         {
             myevent.Invoke();
+
             skillActive = false;
         }
     }
