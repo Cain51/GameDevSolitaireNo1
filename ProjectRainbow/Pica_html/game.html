@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>无人红色皮卡的安保之旅</title>
+		<!-- 引入tailwindcss -->
+		<script src="https://cdn.tailwindcss.com"></script>
+		<!-- 文字效果 -->
+		<script>
+			tailwind.config = {
+				theme: {
+					extend: {
+						fontFamily: {
+							'chinese': ['Microsoft YaHei', 'SimHei', 'monospace'],
+						},
+						animation: {
+							'road-move': 'roadMove 2s linear infinite',
+							'truck-glow': 'truckGlow 1.5s ease-in-out infinite',
+						},
+						keyframes: {
+							roadMove: {
+								'0%': {
+									transform: 'translateX(50%)'
+								},
+								'100%': {
+									transform: 'translateX(-50%)'
+								},
+							},
+							truckGlow: {
+								'0%, 100%': {
+									textShadow: '0 0 10px rgba(196, 30, 58, 0.8)'
+								},
+								'50%': {
+									textShadow: '0 0 20px rgba(196, 30, 58, 1), 0 0 30px rgba(196, 30, 58, 0.5)'
+								},
+							},
+						},
+					},
+				},
+			}
+		</script>
+		<style>
+			body {
+				background: #171717;
+			}
+			
+			/* 事件触发字容器样式 */
+			#event-trigger-container {
+				will-change: transform;
+			}
+		</style>
+	</head>
+	<body class="min-h-screen flex flex-col items-center p-5 text-gray-200 font-chinese">
+		<div
+			class="w-full max-w-[800px] h-[500px] bg-[#0d0d0d] border-[3px] border-[#c41e3a] rounded-xl relative overflow-hidden shadow-[0_0_30px_rgba(196,30,58,0.3)]">
+
+
+			<div class="w-full h-full relative text-xl leading-none">
+				<!-- 公路 - 横向单行，从右向左移动 -->
+				<div id="road" class="absolute w-full h-full flex -bottom-[78%]"></div>
+				
+				<!-- 事件触发字容器 -->
+				<div id="event-trigger-container" class="fixed top-1/2 right-1/4 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20 opacity-0">
+					<span id="event-trigger-char" class="font-bold"></span>
+				</div>
+
+				<!-- 红色皮卡 - 默认显示，事件后可由JavaScript动态更新 -->
+				<div id="truck"
+					class="absolute left-1/4 top-2/3 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
+					<!-- 第1行: 黑黑黑黑黑黑皮卡皮卡皮黑黑 -->
+					<div class="flex justify-left whitespace-nowrap">
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">皮</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">卡</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">皮</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">卡</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">皮</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+					</div>
+					<!-- 第2行: 后车厢后车厢黑黑丨黑黑皮黑 -->
+					<div class="flex justify-left whitespace-nowrap">
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">后</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">车</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">厢</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">后</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">车</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">厢</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">丨</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">皮</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+					</div>
+					<!-- 第3行: 皮卡皮轮卡车门车门车轮门卡 -->
+					<div class="flex justify-left whitespace-nowrap">
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">皮</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">卡</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">皮</span>
+						<span class="text-[#63635E] font-bold text-[22px]">轮</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">卡</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">车</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">门</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">车</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">门</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">车</span>
+						<span class="text-[#63635E] font-bold text-[22px]">轮</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">门</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">卡</span>
+					</div>
+					<!-- 第4行: 皮卡轮轮轮车门车门轮轮轮卡 -->
+					<div class="flex justify-left whitespace-nowrap">
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">皮</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">卡</span>
+						<span class="text-[#63635E] font-bold text-[22px]">轮</span>
+						<span class="text-[#63635E] font-bold text-[22px]">轮</span>
+						<span class="text-[#63635E] font-bold text-[22px]">轮</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">车</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">门</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">车</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">门</span>
+						<span class="text-[#63635E] font-bold text-[22px]">轮</span>
+						<span class="text-[#63635E] font-bold text-[22px]">轮</span>
+						<span class="text-[#63635E] font-bold text-[22px]">轮</span>
+						<span class="text-[#c41e3a] font-bold text-[22px] animate-truck-glow">卡</span>
+					</div>
+					<!-- 第5行: 黑黑黑轮黑黑黑黑黑黑轮黑黑 -->
+					<div class="flex justify-left whitespace-nowrap">
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#63635E] font-bold text-[22px]">轮</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#63635E] font-bold text-[22px]">轮</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+						<span class="text-[#0d0d0d] font-bold text-[22px]">黑</span>
+					</div>
+				</div>
+			</div>
+			<button onclick="window.location.href='./index.html'"
+				class="absolute top-2.5 left-2.5 px-5 py-2 bg-[#c41e3a]/80 text-white border-none rounded-full cursor-pointer text-sm transition-all duration-300 hover:bg-[#c41e3a]">
+				返回
+			</button>
+
+		</div>
+
+		<div id="textArea"
+			class="w-full max-w-[800px] max-h-[150px] mt-5 p-5 bg-[rgba(20,20,30,0.8)] border-2 border-gray-800 rounded-xl min-h-[150px] text-base leading-relaxed text-gray-400 overflow-auto">
+			<p>欢迎来到红色皮卡的安保之旅！</p>
+			<p>至于你问为什么是红色皮卡？为什么是安保？</p>
+			<p>小编也不知道呢！</p>
+		</div>
+		<!-- 事件数据 -->
+		<script src="js/events_data.js"></script>
+		<!-- 道路运行脚本 -->
+		<script src="js/road.js"></script>
+		<!-- 文本框内容脚本 -->
+		<script src="js/text.js"></script>
+	</body>
+</html>

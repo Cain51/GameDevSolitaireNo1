@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无人红色皮卡的安保之旅</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'chinese': ['Microsoft YaHei', 'SimHei', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 1s ease-in',
+                        'fade-out': 'fadeOut 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeOut: {
+                            '0%': { opacity: '1', transform: 'translateY(0)' },
+                            '100%': { opacity: '0', transform: 'translateY(-30px)' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background: #171717;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center items-center overflow-hidden font-chinese">
+    <div class="decoration absolute top-[10%] left-[10%] opacity-10 text-[10rem] text-white pointer-events-none">小</div>
+    <div class="decoration absolute top-[50%] left-[5%] opacity-10 text-[10rem] text-white pointer-events-none">心</div>
+    <div class="decoration absolute top-[20%] right-[15%] opacity-10 text-[10rem] text-white pointer-events-none">福</div>
+    <div class="decoration absolute bottom-[10%] right-[10%] opacity-10 text-[10rem] text-white pointer-events-none">瑞</div>
+    
+    <div class="text-center animate-fade-in" id="container">
+        <h1 class="text-6xl text-gray-200 mb-4 tracking-[0.5rem] drop-shadow-[0_0_20px_rgba(196,30,58,0.5)]">
+            无人红色皮卡的安保之旅
+        </h1>
+        <button 
+            onclick="startGame()"
+            class="inline-block mt-20 px-16 py-5 text-2xl font-bold text-white uppercase tracking-[0.3rem] rounded-full cursor-pointer transition-all duration-300 ease-in-out shadow-[0_10px_30px_rgba(196,30,58,0.4)] bg-gradient-to-br from-[#c41e3a] to-[#8b0000] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(196,30,58,0.6)] hover:bg-gradient-to-br hover:from-[#e63950] hover:to-[#c41e3a] active:-translate-y-0.5"
+        >
+            START
+        </button>
+        <button 
+            onclick="resetGame()"
+            class="inline-block mt-4 px-8 py-3 text-sm font-bold text-gray-400 uppercase tracking-[0.2rem] rounded-full cursor-pointer transition-all duration-300 border-2 border-gray-600 hover:border-[#c41e3a] hover:text-[#c41e3a]"
+        >
+            重新开始
+        </button>
+        <p class="mt-5 text-gray-600 text-base tracking-[0.2rem]">点击开始公路之旅</p>
+    </div>
+
+    <script>
+        function startGame() {
+            document.getElementById('container').classList.remove('animate-fade-in');
+            document.getElementById('container').classList.add('animate-fade-out');
+            setTimeout(() => {
+                window.location.href = 'game.html';
+            }, 500);
+        }
+
+        function resetGame() {
+            // 清除游戏存档cookie
+            document.cookie = 'chinese_truck_game=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            
+            // 显示提示
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = '存档已清除！';
+            btn.classList.add('text-[#c41e3a]', 'border-[#c41e3a]');
+            
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.remove('text-[#c41e3a]', 'border-[#c41e3a]');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
