@@ -1,4 +1,4 @@
-using RG.Zeluda;
+﻿using RG.Zeluda;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,12 +13,6 @@ public class AssetItem : MonoBehaviour
         lbl_name.text = name;
     }
     public void OnClick() {
-		DownSelectPanel panel = GetComponentInParent<DownSelectPanel>();
-		if (panel == null)
-		{
-			panel = Object.FindObjectOfType<DownSelectPanel>();
-		}
-		if (panel == null) { return; }
-		panel.Select(index);
+       
     }
 }

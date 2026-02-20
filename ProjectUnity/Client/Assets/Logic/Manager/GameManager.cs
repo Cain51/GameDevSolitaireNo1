@@ -27,7 +27,7 @@ namespace RG.Zeluda
 			time = start_time;
 
 			DialogManager dm = CBus.Instance.GetManager(ManagerName.DialogManager) as DialogManager;
-			dm.ShowDialog("ï¿½ï¿½Ï·ï¿½ï¿½Ê¼", () =>
+			dm.ShowDialog("ÓÎÏ·¿ªÊ¼", () =>
 			{
 				UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
 				um.ClosePanel("LobbyPanel");
@@ -45,7 +45,7 @@ namespace RG.Zeluda
                     if (l == 2 || l == 3 || l == 5 || l == 7)
 					{
 
-                        TipManager.Tip("ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½ï¿½ï¿½ï¿½ÂµÄ¼ï¿½ï¿½Ü£ï¿½");
+                        TipManager.Tip("Âí¶ùÑ§»áÁËÐÂµÄ¼¼ÄÜ£¡");
                     }
 				};
                 AssetManager am = CBus.Instance.GetManager(ManagerName.AssetManager) as AssetManager;
@@ -69,65 +69,19 @@ namespace RG.Zeluda
 		}
 		public void RefreshAll()
 		{
-			UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
-			if (um == null) { return; }
-			MainPanel main = um.GetPanel("MainPanel") as MainPanel;
-			if (main != null)
-			{
-				main.SetDay(day);
-				main.SetTime(time);
-				main.RefreshBeg();
-			}
-			FoodPanel foodPanel = um.OpenPanel("FoodPanel") as FoodPanel;
-			if (foodPanel != null)
-			{
-				foodPanel.Refresh();
-			}
-			LevelManager levelManager = CBus.Instance.GetManager(ManagerName.LevelManager) as LevelManager;
-			if (levelManager != null)
-			{
-				levelManager.updateexp();
-			}
+
 		}
 
 		public void PlayerInit()
 		{
-			bag.Clear();
-			AssetManager am = CBus.Instance.GetManager(ManagerName.AssetManager) as AssetManager;
-			if (am != null)
-			{
-				am.assetDic.Clear();
-			}
-			if (StartData.inst != null)
-			{
-				if (am != null)
-				{
-					am.Add(1200001, StartData.inst.money, false);
-				}
-				foreach (var item in StartData.inst.item)
-				{
-					if (string.IsNullOrEmpty(item)) { continue; }
-					string[] inum = item.Split(':');
-					if (inum.Length < 2) { continue; }
-					int id;
-					int cnt;
-					if (int.TryParse(inum[0], out id) == false) { continue; }
-					if (int.TryParse(inum[1], out cnt) == false) { continue; }
-					if (bag.ContainsKey(id))
-					{
-						bag[id] += cnt;
-					}
-					else
-					{
-						bag.Add(id, cnt);
-					}
-					if (am != null)
-					{
-						am.Add(id, cnt, false);
-					}
-				}
-			}
-			RefreshAll();
+			//Money = StartData.inst.money;
+			//playerAsset = new PlayerAsset();
+
+			//foreach (var item in StartData.inst.item)
+			//{
+			//	string[] inum = item.Split(':');
+			//	playerAsset.AddItem(int.Parse(inum[0]), int.Parse(inum[1]));
+			//}
 		}
 		public void NextDayDailog()
 		{
@@ -141,7 +95,7 @@ namespace RG.Zeluda
 			GroundManager gdm = CBus.Instance.GetManager(ManagerName.GroundManager) as GroundManager;
 			gdm.DayEnd();
 
-			TipManager.Tip("ï¿½Âµï¿½Ò»ï¿½ì¿ªÊ¼ï¿½ï¿½ï¿½ï¿½");
+			TipManager.Tip("ÐÂµÄÒ»Ìì¿ªÊ¼À²£¡");
 			day++;
 			time = start_time;
 			UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
@@ -149,7 +103,7 @@ namespace RG.Zeluda
 			tp.StartTransition(() =>
 			{
 
-				AudioManager.Inst.Play("BGM/ï¿½Âµï¿½Ò»ï¿½ì¿ªÊ¼");
+				AudioManager.Inst.Play("BGM/ÐÂµÄÒ»Ìì¿ªÊ¼");
 
 				UIManager um1 = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
 				MainPanel main = um1.GetPanel("MainPanel") as MainPanel;
@@ -186,7 +140,7 @@ namespace RG.Zeluda
 					if (day == 2)
 					{
 						main.ismatchlocked = true;
-						TipManager.Tip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!");
+						TipManager.Tip("ÈüÂí³¡¿ª·ÅÁË!");
                     }
 				};
 			});
@@ -204,16 +158,7 @@ namespace RG.Zeluda
 		}
 		public void GameOver()
 		{
-			work = null;
-			TipManager.Tip("æ¸¸æˆç»“æŸ");
-			UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
-			if (um != null)
-			{
-				um.CloseAll();
-				um.OpenPanel("LobbyPanel");
-			}
-			day = 1;
-			time = start_time;
+
 		}
 		public bool CheckTime(int t)
 		{
@@ -236,7 +181,7 @@ namespace RG.Zeluda
 			}
 			if (work != null && (max_time - time + t) > work.starttime)
 			{
-				TipManager.Tip($"ï¿½ï¿½ï¿½Üµï¿½ï¿½ï¿½{work.starttime}ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½");
+				TipManager.Tip($"²»ÄÜµ¢Îó{work.starttime}µãµÄ¹¤×÷");
 				return false;
 			}
 			time -= t;
@@ -247,9 +192,9 @@ namespace RG.Zeluda
 			{
 				if ((max_time - time) >= work.starttime)
 				{
-					//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+					//¿ªÊ¼¹¤×÷
 					DialogPanel dp = um.OpenFloat("DialogPanel") as DialogPanel;
-					AudioManager.Inst.Play("BGM/ï¿½Í¶ï¿½Ê±ï¿½ä¿ªÊ¼");
+					AudioManager.Inst.Play("BGM/ÀÍ¶¯Ê±¼ä¿ªÊ¼");
 					dp.StartDialog(work.alert);
 					dp.OnCallback = () =>
 					{
@@ -290,7 +235,7 @@ namespace RG.Zeluda
 				}
 			}
 			main.RefreshBeg();
-			TipManager.Tip($"ï¿½ï¿½ï¿½ï¿½ï¿½{work.name} ï¿½ï¿½ï¿½ï¿½ï¿½{reward}");
+			TipManager.Tip($"Íê³ÉÁË{work.name} »ñµÃÁË{reward}");
 			work = null;
 		}
 		public static void Tip(string msg)

@@ -49,18 +49,7 @@ public class FurnacePanel : PanelBase
 	}
 	public void InitData()
 	{
-		if (items == null)
-		{
-			items = new List<FillItem>();
-		}
-		for (int i = 0; i < items.Count; i++)
-		{
-			if (items[i] != null)
-			{
-				items[i].ReleaseCard();
-				items[i].gameObject.SetActive(false);
-			}
-		}
+
 	}
 	public bool CheckCanFire()
 	{
@@ -72,17 +61,12 @@ public class FurnacePanel : PanelBase
 	}
 	public void FireCard()
 	{
-		if (CheckCanFire() == false)
-		{
-			TipManager.Tip("材料不足");
-			return;
-		}
+		if (CheckCanFire() == false) { return; }
 		foreach (FillItem item in items)
 		{
 			item.DestroyCard();
 		}
-		TipManager.Tip("已完成燃烧");
-		Close();
+		GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
 	}
 	public override void Open()
 	{

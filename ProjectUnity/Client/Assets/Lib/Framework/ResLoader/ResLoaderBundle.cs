@@ -1,45 +1,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
-/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ 2020/10/20 16:50:51
-/// ï¿½ï¿½ï¿½ï¿½AssetBundleï¿½Ðµï¿½ï¿½Ø²ï¿½
-/// ï¿½ï¿½AssetBundleManagerï¿½Ð¼ï¿½ï¿½Ø¶ï¿½Ó¦ï¿½ï¿½ï¿½Ø²ï¿½
+/// ´´½¨ÈÕÆÚ£º 2020/10/20 16:50:51
+/// ¼ÓÔØAssetBundleÖÐµÄËØ²Ä
+/// ´ÓAssetBundleManagerÖÐ¼ÓÔØ¶ÔÓ¦µÄËØ²Ä
 /// </summary>
 public class ResLoaderBundle : IResLoader
 {
     /// <summary>
-    /// bundleï¿½Ä¼ï¿½ï¿½ï¿½×º
+    /// bundleÎÄ¼þºó×º
     /// </summary>
     public static string extension = "asset";
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
+    /// ¹ØÁªÁÐ±í
     /// </summary>
     private Dictionary<string, string[]> _dependList;
 
     /// <summary>
-    /// ï¿½È´ï¿½ï¿½ì²½ï¿½ï¿½ï¿½ØµÄ¶ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ã·´ï¿½ï¿½
+    /// µÈ´ýÒì²½¼ÓÔØµÄ¶ÓÁÐ£¬·½±ã·´²é
     /// </summary>
     public Dictionary<string, ABUnit> _loadAsyncWaitDic;
     /// <summary>
-    /// ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ØµÄ¶ï¿½ï¿½ï¿½
+    /// ÕýÔÚ¼ÓÔØµÄ¶ÓÁÐ
     /// </summary>
     public Dictionary<string, ABUnit> _loadingAsyncDic;
     /// <summary>
-    /// ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ØºÃµï¿½ï¿½Ø²ï¿½ï¿½Ð±ï¿½
+    /// ÒÑ¾­¼ÓÔØºÃµÄËØ²ÄÁÐ±í
     /// </summary>
     public Dictionary<string, ABUnit> _loadedAssetDic;
     /// <summary>
-    /// ï¿½È´ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½Ø²ï¿½ï¿½Ð±ï¿½
-    /// ï¿½ÚµÈ´ï¿½É¾ï¿½ï¿½ï¿½ï¿½Í¾ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ø¾ï¿½ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½
+    /// µÈ´ý±»É¾³ýµÄËØ²ÄÁÐ±í
+    /// ÔÚµÈ´ýÉ¾³ýµÄÍ¾ÖÐÒªÊÇÐèÒª¼ÓÔØ¾ÍÄÃ³öÀ´ÓÃ
     /// </summary>
     public Dictionary<string, ABUnit> _unloadWaitList;
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½æ´¢Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½
+    /// ÓÃÓÚÁÙÊ±´æ´¢Òª²Ù×÷µÄ×ÊÔ´Ãû³Æ
     /// </summary>
     private List<ABUnit> _tempABUnitList;
 
     /// <summary>
-    /// ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ØºÃµï¿½ï¿½Ø²ï¿½ï¿½Ð±ï¿½
+    /// ÒÑ¾­¼ÓÔØºÃµÄËØ²ÄÁÐ±í
     /// </summary>
     public Dictionary<string, int> fileNames = new Dictionary<string, int>();
 
@@ -49,12 +49,12 @@ public class ResLoaderBundle : IResLoader
         Init();
     }
     /// <summary>
-    /// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
+    /// »ñÈ¡¹ØÁªÁÐ±í
     /// </summary>
     private void GetDependList()
     {
         _dependList = new Dictionary<string, string[]>();
-        //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
+        //»ñÈ¡¹ØÁª
         AssetBundle main;
         // AssetBundle.SetAssetBundleDecryptKey(HotfixSetting.Instance.bundleKey);
         if (GameSetting.Instance.IsResInPatch("Asset"))
@@ -103,28 +103,16 @@ public class ResLoaderBundle : IResLoader
 
     public void InitParams()
     {
-        if (_dependList == null || _dependList.Count == 0)
-        {
-            GetDependList();
-        }
     }
     public void Clear()
     {
-        UnloadRes(ABUnit.DisposType.ChangeScene);
-        _loadAsyncWaitDic.Clear();
-        _loadingAsyncDic.Clear();
-        _loadedAssetDic.Clear();
-        _unloadWaitList.Clear();
-        _tempABUnitList.Clear();
-#if UNITY_EDITOR
-        fileNames.Clear();
-#endif
+
     }
 
     public void Destroy()
     {
         OEF.Instance.Remove(this);
-        //ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½Í·Åµï¿½bundle
+        //ÊÍ·ÅËùÓÐÎ´ÊÍ·ÅµÄbundle
         AssetBundle.UnloadAllAssetBundles(true);
         _loadAsyncWaitDic = null;
         _loadingAsyncDic = null;
@@ -143,7 +131,7 @@ public class ResLoaderBundle : IResLoader
         UpdateUnloadList();
     }
     /// <summary>
-    /// ï¿½ï¿½ï¿½ÂµÈ´ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½
+    /// ¸üÐÂµÈ´ý¼ÓÔØ¶ÓÁÐ
     /// </summary>
     private void UpdateWaitList()
     {
@@ -151,7 +139,7 @@ public class ResLoaderBundle : IResLoader
         {
             return;
         }
-        //Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //Í¬Ê±¼ÓÔØÖÐÊýÁ¿³¬¹ýÉÏÏÞ
         if (_loadingAsyncDic.Count > GameSetting.Instance.abLoadingMax)
         {
             return;
@@ -164,13 +152,13 @@ public class ResLoaderBundle : IResLoader
                 StartLoadAsync(aBUnit);
             }
             _tempABUnitList.Add(aBUnit);
-            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            //³¬³ö¼ÓÔØÊýÁ¿
             if (_loadingAsyncDic.Count > GameSetting.Instance.abLoadingMax)
             {
                 break;
             }
         }
-        //ï¿½ÓµÈ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½
+        //´ÓµÈ´ý¶ÓÁÐÖÐÈ¥³ý
         int length = _tempABUnitList.Count;
         for (int i = 0; i < length; i++)
         {
@@ -178,7 +166,7 @@ public class ResLoaderBundle : IResLoader
         }
     }
     /// <summary>
-    /// ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½
+    /// ¸üÐÂ¼ÓÔØÖÐ¶ÓÁÐ
     /// </summary>
     private void UpdateLoadingList()
     {
@@ -189,7 +177,7 @@ public class ResLoaderBundle : IResLoader
         _tempABUnitList.Clear();
         foreach (ABUnit aBUnit in _loadingAsyncDic.Values)
         {
-            //ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            //ÒýÓÃ¶¼¼ÓÔØÍêÁË²ÅËã¼ÓÔØ
             if (aBUnit.dependLoadingCount < 1 && aBUnit.request != null && aBUnit.request.isDone == true)
             {
                 _tempABUnitList.Add(aBUnit);
@@ -202,7 +190,7 @@ public class ResLoaderBundle : IResLoader
         }
     }
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Ø¶ï¿½ï¿½ï¿½
+    /// ¸üÐÂÐ¶ÔØ¶ÓÁÐ
     /// </summary>
     private void UpdateUnloadList()
     {
@@ -213,7 +201,7 @@ public class ResLoaderBundle : IResLoader
         _tempABUnitList.Clear();
         foreach (ABUnit aBUnit in _unloadWaitList.Values)
         {
-            if (aBUnit.refCount > 0)//ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã£ï¿½È¡ï¿½ï¿½Ð¶ï¿½ï¿½
+            if (aBUnit.refCount > 0)//»¹ÔÚÊ¹ÓÃ£¬È¡ÏûÐ¶ÔØ
             {
                 _tempABUnitList.Add(aBUnit);
             }
@@ -237,7 +225,7 @@ public class ResLoaderBundle : IResLoader
     }
 
     /// <summary>
-    /// ï¿½ï¿½È¡Ò»ï¿½ï¿½ABUnit
+    /// »ñÈ¡Ò»¸öABUnit
     /// </summary>
     /// <returns></returns>
     private ABUnit GetABUnit(string bundleName)
@@ -247,7 +235,7 @@ public class ResLoaderBundle : IResLoader
         return rt;
     }
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½Æ»ï¿½È¡ï¿½ï¿½Ó¦ï¿½ï¿½Bundleï¿½ï¿½ï¿½ï¿½
+    /// ¸ù¾ÝËØ²ÄÃû³Æ»ñÈ¡¶ÔÓ¦µÄBundleÃû³Æ
     /// </summary>
     /// <returns></returns>
     private string GetBundleName(string resPath)
@@ -258,8 +246,8 @@ public class ResLoaderBundle : IResLoader
         return abName;
     }
     /// <summary>
-    /// ï¿½ï¿½È¡Ò»ï¿½ï¿½ï¿½Ø²ï¿½
-    /// ï¿½ï¿½ï¿½ABï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    /// »ñÈ¡Ò»¸öËØ²Ä
+    /// Èç¹ûAB²»´æÔÚÔòÍ¬²½¼ÓÔØ
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="iPath"></param>
@@ -297,7 +285,7 @@ public class ResLoaderBundle : IResLoader
         //return t;
     }
     /// <summary>
-    /// Ð¶ï¿½ï¿½ï¿½Ø²ï¿½
+    /// Ð¶ÔØËØ²Ä
     /// </summary>
     public void UnloadRes(string resPath)
     {
@@ -332,39 +320,39 @@ public class ResLoaderBundle : IResLoader
         RemoveRefCount(aBUnit, resPath);
     }
     /// <summary>
-    /// Ð¶ï¿½ï¿½Ö¸ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½ï¿½Ø²Ä£ï¿½
-    /// Ö»Ð¶ï¿½ï¿½Loadedï¿½Ð±ï¿½ï¿½Ðµï¿½ï¿½Ø²ï¿½
+    /// Ð¶ÔØÖ¸¶¨Ð¶ÔØÀàÐÍµÄËØ²Ä£¬
+    /// Ö»Ð¶ÔØLoadedÁÐ±íÖÐµÄËØ²Ä
     /// </summary>
     /// <param name="disposType"></param>
     public void UnloadRes(ABUnit.DisposType disposType)
     {
         switch (disposType)
         {
-            case ABUnit.DisposType.Restart://ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·
+            case ABUnit.DisposType.Restart://ÖØÆôÓÎÏ·
                 UnloadResRestart();
                 break;
-            case ABUnit.DisposType.ChangeScene://ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½
+            case ABUnit.DisposType.ChangeScene://ÇÐ»»³¡¾°
             default:
                 UnloadResChangeScene();
                 break;
         }
     }
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø²ï¿½
+    /// ÖØÆôÐ¶ÔØËùÓÐËØ²Ä
     /// </summary>
     private void UnloadResRestart()
     {
-        //ï¿½ï¿½ÕµÈ´ï¿½ï¿½Ð±ï¿½
+        //Çå¿ÕµÈ´ýÁÐ±í
         _loadAsyncWaitDic.Clear();
-        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½
+        //¼ÓÔØÖÐÁÐ±íÇåÀí
         _loadingAsyncDic.Clear();
-        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½,Ö±ï¿½ï¿½Ð¶ï¿½ï¿½
+        //ÇåÀí¼ÓÔØÍê³ÉÁÐ±í,Ö±½ÓÐ¶ÔØ
         foreach (ABUnit aBUnit in _loadedAssetDic.Values)
         {
             aBUnit.assetBundle.Unload(true);
         }
         _loadedAssetDic.Clear();
-        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½Ð±ï¿½
+        //Á¢¼´ÇåÀíÐ¶ÔØÁÐ±í
         foreach (ABUnit aBUnit in _unloadWaitList.Values)
         {
             aBUnit.assetBundle.Unload(true);
@@ -376,7 +364,7 @@ public class ResLoaderBundle : IResLoader
         _unloadWaitList.Clear();
     }
     /// <summary>
-    /// ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Restartï¿½ï¿½ï¿½Ø²Ä£ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Ø¶ï¿½ï¿½ï¿½
+    /// ÇÐ»»³¡¾°£¬³ýÁËRestartµÄËØ²Ä£¬È«²¿·ÅÈëÐ¶ÔØ¶ÓÁÐ
     /// </summary>
     private void UnloadResChangeScene()
     {
@@ -400,8 +388,8 @@ public class ResLoaderBundle : IResLoader
 #endif
     }
     /// <summary>
-    /// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
-    /// Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½null
+    /// »ñÈ¡ÒÀÀµÁÐ±í
+    /// Ã»ÓÐÒÀÀµ·µ»Ønull
     /// </summary>
     private string[] GetDepends(string bundleName)
     {
@@ -411,10 +399,10 @@ public class ResLoaderBundle : IResLoader
         }
         return null;
     }
-    #region ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½
+    #region ÒýÓÃ¼ÆÊýÆ÷
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½
-    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½
+    /// Ìí¼ÓÒ»¸öÒýÓÃ¼ÆÊý
+    /// »á¸øËùÓÐÒýÓÃÔö¼ÓÒ»¸öÒýÓÃ¼ÆÊý
     /// </summary>
     /// <param name="abName"></param>
     private void AddRefCount(ABUnit aBUnit, string resPath)
@@ -430,10 +418,10 @@ public class ResLoaderBundle : IResLoader
         }
     }
     /// <summary>
-    /// È¥ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    /// È¥³ýÒ»¸öÒýÓÃ
     /// </summary>
-    /// <param name="aBUnit">ï¿½ï¿½ÒªÈ¥ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ABUnit</param>
-    /// <param name="resPath">ï¿½ï¿½ï¿½ï¿½ï¿½Í·Åµï¿½ï¿½Ø²Äµï¿½Ö·</param>
+    /// <param name="aBUnit">ÐèÒªÈ¥³ýÒýÓÃµÄABUnit</param>
+    /// <param name="resPath">¾ßÌåÊÍ·ÅµÄËØ²ÄµØÖ·</param>
     private void RemoveRefCount(ABUnit aBUnit, string resPath)
     {
         if (aBUnit == null)
@@ -455,15 +443,15 @@ public class ResLoaderBundle : IResLoader
         }
     }
     /// <summary>
-    /// ï¿½ï¿½ï¿½Óµï¿½ï¿½È´ï¿½Ð¶ï¿½Ø¶ï¿½ï¿½ï¿½
+    /// Ìí¼Óµ½µÈ´ýÐ¶ÔØ¶ÓÁÐ
     /// </summary>
     private void AddUnloadWaitList(ABUnit aBUnit)
     {
         aBUnit.refCount = 0;
-        //ï¿½ï¿½Ê±Ð¶ï¿½ï¿½
+        //ÑÓÊ±Ð¶ÔØ
         aBUnit.unloadCountdown = GameSetting.Instance.abUnloadCountdownBase + _unloadWaitList.Count;
 #if UNITY_EDITOR
-        Debug.LogWarning("<color=#0000FFFF>ï¿½ï¿½ï¿½ï¿½È´ï¿½Ð¶ï¿½ï¿½ï¿½Ð±ï¿½:</color>" + aBUnit.bundleName + "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½" + aBUnit.unloadCountdown);
+        Debug.LogWarning("<color=#0000FFFF>¼ÓÈëµÈ´ýÐ¶ÔØÁÐ±í:</color>" + aBUnit.bundleName + "£¬µ¹¼ÆÊ±£º" + aBUnit.unloadCountdown);
 #endif
         if (!_unloadWaitList.ContainsKey(aBUnit.bundleName))
         {
@@ -472,28 +460,28 @@ public class ResLoaderBundle : IResLoader
     }
     #endregion
 
-    #region Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    #region Í¬²½¼ÓÔØ
     /// <summary>
-    /// Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½AssetBundle
+    /// Í¬²½¼ÓÔØAssetBundle
     /// </summary>
     /// <returns></returns>
     private ABUnit LoadAssetBundle(string bundleName, string resPath)
     {
         ABUnit aBUnit;
         //AssetBundle.SetAssetBundleDecryptKey(HotfixSetting.Instance.bundleKey);
-        if (_loadedAssetDic.ContainsKey(bundleName))//ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½
+        if (_loadedAssetDic.ContainsKey(bundleName))//ÒÑ¾­¼ÓÔØ
         {
             aBUnit = _loadedAssetDic[bundleName];
-            //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½
+            //¼ÇÂ¼ÒýÓÃ
             AddRefCount(aBUnit, resPath);
             return aBUnit;
         }
-        else if (_loadingAsyncDic.ContainsKey(bundleName))//ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½
+        else if (_loadingAsyncDic.ContainsKey(bundleName))//ÕýÔÚ¼ÓÔØ
         {
             aBUnit = _loadingAsyncDic[bundleName];
-            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            //ÒÀÀµÏî¼ÓÔØµÄÊ±ºò»á¼ÆËãÒýÓÃ
             aBUnit.ChangeRefCount(1, resPath);
-            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            //¼ÓÔØÒÀÀµ
             int length = aBUnit.dependList.Count;
             for (int i = 0; i < length; i++)
             {
@@ -502,11 +490,11 @@ public class ResLoaderBundle : IResLoader
             AfterLoaded(aBUnit);
             return aBUnit;
         }
-        else if (_loadAsyncWaitDic.ContainsKey(bundleName))//ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½
+        else if (_loadAsyncWaitDic.ContainsKey(bundleName))//µÈ´ý¼ÓÔØ
         {
             aBUnit = _loadAsyncWaitDic[bundleName];
             _loadAsyncWaitDic.Remove(bundleName);
-            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            //ÒÀÀµÏî¼ÓÔØµÄÊ±ºò»á¼ÆËãÒýÓÃ
             aBUnit.ChangeRefCount(1, resPath);
             int length = aBUnit.dependList.Count;
             for (int i = 0; i < length; i++)
@@ -529,7 +517,7 @@ public class ResLoaderBundle : IResLoader
             return aBUnit;
         }
         aBUnit = GetABUnit(bundleName);
-        //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½
+        //¼ÇÂ¼ÒýÓÃ
         AddRefCount(aBUnit, resPath);
         string path;
         if (GameSetting.Instance.IsResInPatch(bundleName))
@@ -542,14 +530,14 @@ public class ResLoaderBundle : IResLoader
         }
         AssetBundle ab = AssetBundle.LoadFromFile(path);
         aBUnit.assetBundle = ab;
-        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //¼ÓÔØÒÀÀµ
         LoadDependency(aBUnit, resPath);
         AfterLoaded(aBUnit);
         //AssetBundle.SetAssetBundleDecryptKey(null);
         return aBUnit;
     }
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bundle
+    /// ¼ÓÔØÒÀÀµµÄbundle
     /// </summary>
     /// <param name="key"></param>
     private void LoadDependency(ABUnit aBUnit, string resPath)
@@ -566,9 +554,9 @@ public class ResLoaderBundle : IResLoader
     }
     #endregion
 
-    #region ï¿½ì²½ï¿½ï¿½ï¿½ï¿½
+    #region Òì²½¼ÓÔØ
     /// <summary>
-    /// ï¿½ì²½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ô´
+    /// Òì²½¼ÓÔØÒ»¸ö×ÊÔ´
     /// </summary>
     /// <param name="bundleName"></param>
     /// <param name="callback"></param>
@@ -578,21 +566,21 @@ public class ResLoaderBundle : IResLoader
         LoadAssetBundleAsync(bundleName, resPath, callback);
     }
     /// <summary>
-    /// ï¿½ì²½ï¿½ï¿½ï¿½ï¿½ï¿½Ø²Ä£ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½
+    /// Òì²½¼ÓÔØËØ²Ä£¬Ìí¼Óµ½µÈ´ý¶ÓÁÐ
     /// </summary>
     /// <param name="bundleName"></param>
     private ABUnit LoadAssetBundleAsync(string bundleName, string resPath, System.Action callback)
     {
-        //ï¿½ï¿½ï¿½Óµï¿½ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½
+        //Ìí¼Óµ½µÈ´ý¶ÓÁÐ
         ABUnit aBUnit = GetABUnit(bundleName);
         AddRefCount(aBUnit, resPath);
-        //ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //ÏÈ¼ÓÔØÒÀÀµ
         LoadDependencyAsync(aBUnit, resPath);
         _loadAsyncWaitDic.Add(bundleName, aBUnit);
         return aBUnit;
     }
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bundle
+    /// ¼ÓÔØÒÀÀµµÄbundle
     /// </summary>
     /// <param name="key"></param>
     private void LoadDependencyAsync(ABUnit aBUnit, string resPath)
@@ -605,7 +593,7 @@ public class ResLoaderBundle : IResLoader
         }
     }
     /// <summary>
-    /// ï¿½ÓµÈ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½È¡ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+    /// ´ÓµÈ´ý¶ÓÁÐÖÐ»ñÈ¡¿ªÊ¼¼ÓÔØ
     /// </summary>
     /// <param name="aBUnit"></param>
     private void StartLoadAsync(ABUnit aBUnit)
@@ -616,23 +604,23 @@ public class ResLoaderBundle : IResLoader
     }
     #endregion
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÖ´ï¿½ÐµÄ·ï¿½ï¿½ï¿½
+    /// ¼ÓÔØÍê±ÏÒªÖ´ÐÐµÄ·½·¨
     /// </summary>
     private void AfterLoaded(ABUnit aBUnit)
     {
 #if UNITY_EDITOR && RESLOADER
-        Debug.Log("<color=#CC6411ff>ï¿½Ø²Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½</color>" + aBUnit.bundleName);
+        Debug.Log("<color=#CC6411ff>ËØ²Ä¹ÜÀí£º¼ÓÔØ</color>" + aBUnit.bundleName);
 #endif
         if (aBUnit.request != null)
         {
-            aBUnit.assetBundle = aBUnit.request.assetBundle;//ï¿½ì²½ï¿½ï¿½ï¿½ØµÄ»ï¿½×ªï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            aBUnit.assetBundle = aBUnit.request.assetBundle;//Òì²½¼ÓÔØµÄ»á×ª³ÉÍ¬²½¼ÓÔØ
         }
         if (_loadingAsyncDic.ContainsKey(aBUnit.bundleName))
         {
             _loadingAsyncDic.Remove(aBUnit.bundleName);
         }
         _loadedAssetDic.Add(aBUnit.bundleName, aBUnit);
-        //ï¿½ï¿½ï¿½Æµï¿½Loadedï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½callBackï¿½ï¿½ï¿½ï¿½ï¿½Ü»Øµï¿½ï¿½Ð»ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½Ø²Ä£ï¿½Ë³ï¿½ò·´¹ï¿½ï¿½ï¿½ï¿½Í´ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½Øºï¿½ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½
+        //ÏÈÒÆµ½Loaded¶ÓÁÐÔÙÖ´ÐÐcallBack£¬¿ÉÄÜ»Øµ÷ÖÐ»á¼ÓÔØµ±Ç°ËØ²Ä£¬Ë³Ðò·´¹ýÀ´¾Í´íÎóµÄ²»»á¼ÓÔØºóÐøËØ²ÄÁË
         if (aBUnit.callBackList.Count > 0)
         {
             System.Action callBack;
