@@ -87,7 +87,7 @@ public class MapPanel : PanelBase
 	public override void Close()
 	{
 		isOpen = false;
-		AudioManager.Inst.Play("BGM/�����ť");
+		AudioManager.Inst.Play("BGM/点击按钮");
 		gameObject.SetActive(false);
 		base.Close();
 		UIManager uiManager = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;

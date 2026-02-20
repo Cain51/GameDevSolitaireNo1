@@ -15,7 +15,7 @@ public class LobbyPanel : PanelBase
 		//gm.Start();
 		v_start.gameObject.SetActive(true);
 		v_start.loopPointReached += OnVideoFinished;
-		AudioManager.Inst.Play("BGM/µã»÷°´Å¥");
+		AudioManager.Inst.Play("BGM/ç‚¹å‡»æŒ‰é’®");
 	}
 
 	public override void Close()

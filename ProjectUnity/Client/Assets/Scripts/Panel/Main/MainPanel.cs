@@ -51,7 +51,7 @@ public class MainPanel : PanelBase
 	}
 	public void OnRelaxClick()
 	{
-		AudioManager.Inst.Play("BGM/��ĥʱ��");
+		AudioManager.Inst.Play("BGM/消磨时间");
 		GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
 		gm.CostTime(1);
 	}
@@ -70,7 +70,7 @@ public class MainPanel : PanelBase
 			return;
 		}
 		map = uiManager.OpenPanel("MapPanel") as MapPanel;
-		AudioManager.Inst.Play("BGM/�����ť");
+		AudioManager.Inst.Play("BGM/点击按钮");
 		map.InitMap();
 	}
 	public void Hoe()
@@ -153,7 +153,7 @@ public class MainPanel : PanelBase
 	}
 	public void RefreshBeg()
 	{
-		AudioManager.Inst.Play("BGM/ʧȥ����");
+		AudioManager.Inst.Play("BGM/失去道具");
 		GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
 		AssetFactory af = CBus.Instance.GetFactory(FactoryName.AssetFactory) as AssetFactory;
 		foreach (var item in begItem)

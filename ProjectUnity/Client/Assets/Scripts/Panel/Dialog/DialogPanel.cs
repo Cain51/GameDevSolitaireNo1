@@ -10,13 +10,13 @@ public class DialogPanel : PanelBase
 	public Text lbl_name;
 	public GameObject go_name;
 	public Text lbl_content;
-	public GameObject buttonPrefab;  // °´Å¥Ô¤ÖÆ¼ş
-	public Transform buttonContainer; // ´æ·Å°´Å¥µÄÈİÆ÷
-	public DialogGraph dialogGraph;  // Ö¸ÏòÔÚXNode±à¼­Æ÷ÖĞ´´½¨µÄDialogGraph
+	public GameObject buttonPrefab;  // ï¿½ï¿½Å¥Ô¤ï¿½Æ¼ï¿½
+	public Transform buttonContainer; // ï¿½ï¿½Å°ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	public DialogGraph dialogGraph;  // Ö¸ï¿½ï¿½ï¿½ï¿½XNodeï¿½à¼­ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½DialogGraph
 	private DialogNode currentNode;
-	private int currentTextIndex = 0;  // µ±Ç°Õ¹Ê¾µÄ¶Ô»°¶ÎÂäË÷Òı
-	public float typingSpeed = 0.05f;  // ´ò×Ö»úĞ§¹ûÃ¿¸ö×Ö·ûµÄÏÔÊ¾¼ä¸ô
-	private Coroutine typingCoroutine; // ±£´æ´ò×Ö»úĞ§¹ûµÄĞ­³Ì
+	private int currentTextIndex = 0;  // ï¿½ï¿½Ç°Õ¹Ê¾ï¿½Ä¶Ô»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	public float typingSpeed = 0.05f;  // ï¿½ï¿½ï¿½Ö»ï¿½Ğ§ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½
+	private Coroutine typingCoroutine; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½Ğ§ï¿½ï¿½ï¿½ï¿½Ğ­ï¿½ï¿½
 	private string graphName;
 	private string m_sentence;
 	public SpeakPronounce speak;
@@ -29,7 +29,7 @@ public class DialogPanel : PanelBase
 		currentTextIndex = 0;
 		isSimple = false;
 		DisplayCurrentNode();
-		AudioManager.Inst.Play("BGM/¶Ô»°¿òÕ¹¿ª");
+		AudioManager.Inst.Play("BGM/å¯¹è¯æ¡†å±•å¼€");
 	}
 	public void StartDialog(string gn)
 	{
@@ -41,7 +41,7 @@ public class DialogPanel : PanelBase
 		currentTextIndex = 0;
 		isSimple = false;
 		DisplayCurrentNode();
-		AudioManager.Inst.Play("BGM/¶Ô»°¿òÕ¹¿ª");
+		AudioManager.Inst.Play("BGM/å¯¹è¯æ¡†å±•å¼€");
 	}
 	public void ShowSimple(string name, string sentence)
 	{
@@ -49,20 +49,20 @@ public class DialogPanel : PanelBase
 		isSimple = true;
         m_sentence = sentence;
         typingCoroutine = StartCoroutine(TypeSentence(sentence));
-		AudioManager.Inst.Play("BGM/¶Ô»°¿òÕ¹¿ª");
+		AudioManager.Inst.Play("BGM/å¯¹è¯æ¡†å±•å¼€");
 		speak.ConvertAndSpeak(sentence);
 	}
 	private void DisplayCurrentNode()
 	{
 		if (currentNode == null) return;
 
-		// Çå¿ÕÏÖÓĞ°´Å¥
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ°ï¿½Å¥
 		foreach (Transform child in buttonContainer)
 		{
 			Destroy(child.gameObject);
 		}
 
-		// Í£Ö¹µ±Ç°µÄ´ò×Ö»úĞ­³Ì£¨Èç¹ûÓĞµÄ»°£©
+		// Í£Ö¹ï¿½ï¿½Ç°ï¿½Ä´ï¿½ï¿½Ö»ï¿½Ğ­ï¿½Ì£ï¿½ï¿½ï¿½ï¿½ï¿½ĞµÄ»ï¿½ï¿½ï¿½
 		if (typingCoroutine != null)
 		{
 			StopCoroutine(typingCoroutine);
@@ -70,13 +70,13 @@ public class DialogPanel : PanelBase
         }
 
      
-        // Öğ¶ÎÕ¹Ê¾¶Ô»°
+        // ï¿½ï¿½ï¿½Õ¹Ê¾ï¿½Ô»ï¿½
         if (currentTextIndex < currentNode.dialogText.Count)
 		{
 			LoadReward();
 			string dialog = currentNode.dialogText[currentTextIndex];
 			speak.ConvertAndSpeak(dialog);
-			// Æô¶¯ĞÂµÄ´ò×Ö»úĞ§¹ûĞ­³Ì
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ÂµÄ´ï¿½ï¿½Ö»ï¿½Ğ§ï¿½ï¿½Ğ­ï¿½ï¿½
 			typingCoroutine = StartCoroutine(TypeSentence(dialog));
 
 		}
@@ -94,7 +94,7 @@ public class DialogPanel : PanelBase
 			else
 			{
                 LoadScene();
-                // ´´½¨Ñ¡Ïî°´Å¥
+                // ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½î°´Å¥
                 for (int i = 0; i < currentNode.choices.Count; i++)
 				{
 					CreateChoiceButton(currentNode.choices[i].choiceText, i);
@@ -104,7 +104,7 @@ public class DialogPanel : PanelBase
 		}
 	}
 
-	// ´ò×Ö»úĞ§¹ûµÄĞ­³Ì
+	// ï¿½ï¿½ï¿½Ö»ï¿½Ğ§ï¿½ï¿½ï¿½ï¿½Ğ­ï¿½ï¿½
 	private IEnumerator TypeSentence(string sentence)
 	{
 		if (currentNode.speakerid != 0)
@@ -137,13 +137,13 @@ public class DialogPanel : PanelBase
 			}
 		}
 
-		lbl_content.text = "";  // ÏÈÇå¿ÕÎÄ±¾¿ò
+		lbl_content.text = "";  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
 		foreach (char letter in sentence.ToCharArray())
 		{
-			lbl_content.text += letter;  // Öğ×ÖÏÔÊ¾
-			yield return new WaitForSeconds(typingSpeed);  // Ã¿¸ö×Ö·ûµÄÏÔÊ¾Ê±¼ä¼ä¸ô
+			lbl_content.text += letter;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
+			yield return new WaitForSeconds(typingSpeed);  // Ã¿ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾Ê±ï¿½ï¿½ï¿½ï¿½
 		}
-		typingCoroutine = null; // Íê³É´ò×ÖĞ§¹ûºó½«Ğ­³ÌÒıÓÃÖÃÎª¿Õ
+		typingCoroutine = null; // ï¿½ï¿½É´ï¿½ï¿½ï¿½Ğ§ï¿½ï¿½ï¿½ï¿½Ğ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½
 
 
     }
@@ -160,56 +160,56 @@ public class DialogPanel : PanelBase
     }
 	void SetLayer(Transform objTransform, int layer)
 	{
-		// ÉèÖÃµ±Ç°ÎïÌåµÄ Layer
+		// ï¿½ï¿½ï¿½Ãµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ Layer
 		objTransform.gameObject.layer = layer;
 
-		// µİ¹éÉèÖÃËùÓĞ×ÓÎïÌåµÄ Layer
+		// ï¿½İ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Layer
 		foreach (Transform child in objTransform)
 		{
 			SetLayer(child, layer);
 		}
 	}
-	// ´´½¨Ñ¡Ôñ°´Å¥
+	// ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½Å¥
 	private void CreateChoiceButton(string choiceText, int index)
 	{
 		GameObject buttonObject = Instantiate(buttonPrefab, buttonContainer);
 		buttonObject.SetActive(true);
 		Button button = buttonObject.GetComponent<Button>();
-		button.GetComponentInChildren<Text>().text = choiceText;  // ÉèÖÃ°´Å¥ÎÄ±¾
+		button.GetComponentInChildren<Text>().text = choiceText;  // ï¿½ï¿½ï¿½Ã°ï¿½Å¥ï¿½Ä±ï¿½
 
-		// ÉèÖÃ°´Å¥µã»÷ÊÂ¼ş
+		// ï¿½ï¿½ï¿½Ã°ï¿½Å¥ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		button.onClick.AddListener(() => OnChoiceButtonClicked(index));
 	}
 
-	// °´Å¥µã»÷ÊÂ¼ş´¦Àí
+	// ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 	private void OnChoiceButtonClicked(int index)
 	{
 		DialogChoice choice = currentNode.choices[index];
 		GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
 		if (choice.IsChoiceAvailable(gm.bag) == false)
 		{
-			//µ¯tips
-			TipManager.Tip("Ìõ¼ş²»×ã");
+			//ï¿½ï¿½tips
+			TipManager.Tip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 			return;
 		}
-		// ¸ù¾İÍæ¼ÒµÄÑ¡ÔñÌø×ªµ½¶ÔÓ¦µÄ½Úµã
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ä½Úµï¿½
 		currentNode = currentNode.GetOutputPort("nextNode " + index).Connection.node as DialogNode;
-		currentTextIndex = 0; // ÖØÖÃÎÄ±¾Ë÷Òı
-		DisplayCurrentNode(); // ÏÔÊ¾ÏÂÒ»¸ö¶Ô»°½Úµã
+		currentTextIndex = 0; // ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½
+		DisplayCurrentNode(); // ï¿½ï¿½Ê¾ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ô»ï¿½ï¿½Úµï¿½
 	}
 
 	public void NextSegmentOrChooseOption()
 	{
-		//// Èç¹û´ò×Ö»úĞ§¹ûÎ´Íê³É£¬Á¢¼´Íê³Éµ±Ç°ÎÄ±¾ÏÔÊ¾
+		//// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½Ğ§ï¿½ï¿½Î´ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éµï¿½Ç°ï¿½Ä±ï¿½ï¿½ï¿½Ê¾
 		//if (typingCoroutine != null)
 		//{
 		//	if(currentNode.dialogText.Count<= currentTextIndex){
-		//		lbl_content.text = currentNode.dialogText[currentTextIndex - 1]; // Á¢¼´ÏÔÊ¾ÍêÕûÎÄ±¾
+		//		lbl_content.text = currentNode.dialogText[currentTextIndex - 1]; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½
 		//	}
-  //          StopCoroutine(typingCoroutine); // Í£Ö¹´ò×Ö»úĞ­³Ì
-  //          typingCoroutine = null;  // ´ò×Ö»úĞ­³ÌÒÑ½áÊø
+  //          StopCoroutine(typingCoroutine); // Í£Ö¹ï¿½ï¿½ï¿½Ö»ï¿½Ğ­ï¿½ï¿½
+  //          typingCoroutine = null;  // ï¿½ï¿½ï¿½Ö»ï¿½Ğ­ï¿½ï¿½ï¿½Ñ½ï¿½ï¿½ï¿½
 
-		//	return;  // ·µ»Ø£¬µÈ´ıÍæ¼ÒÔÙ´Îµã»÷¼ÌĞøÏÂÒ»¶Î
+		//	return;  // ï¿½ï¿½ï¿½Ø£ï¿½ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½Ù´Îµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 		//}
 		if (typingCoroutine != null) { return; }
 		if (isSimple == true) { Close(); return; }
@@ -224,7 +224,7 @@ public class DialogPanel : PanelBase
 		{
 			AssetFactory assetFactory = CBus.Instance.GetFactory(FactoryName.AssetFactory) as AssetFactory;
 			AssetCA ca = assetFactory.GetCA(item.k) as AssetCA;
-			reward += $"»ñµÃ:{ca.name}x{1} ";
+			reward += $"ï¿½ï¿½ï¿½:{ca.name}x{1} ";
 			if (gameManager.bag.ContainsKey(item.k))
 			{
 				gameManager.bag[item.k] += item.v;
@@ -238,7 +238,7 @@ public class DialogPanel : PanelBase
 		{
 			AssetFactory assetFactory = CBus.Instance.GetFactory(FactoryName.AssetFactory) as AssetFactory;
 			AssetCA ca = assetFactory.GetCA(item.k) as AssetCA;
-			reward += $"ËğÊ§:{ca.name}x{1} ";
+			reward += $"ï¿½ï¿½Ê§:{ca.name}x{1} ";
 			if (gameManager.bag.ContainsKey(item.k))
 			{
 				gameManager.bag[item.k] -= item.v;
@@ -263,7 +263,7 @@ public class DialogPanel : PanelBase
 		//if (currentNode.rewards.Count == 0) { return; }
 
 		
-		//ÊÇ·ñ´ò¶Ï
+		//ï¿½Ç·ï¿½ï¿½ï¿½
 		if (currentNode.eventid != 0) {
 			EventManager eventManager = CBus.Instance.GetManager(ManagerName.EventManager) as EventManager;
 			eventManager.TriggerEvent(currentNode.eventid);

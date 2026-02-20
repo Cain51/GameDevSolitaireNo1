@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TransitionPanel : PanelBase
 {
-	public CanvasGroup canvasGroup; // 需要设置为黑色 Image 的 CanvasGroup
+	public CanvasGroup canvasGroup; // 锟斤拷要锟斤拷锟斤拷为锟斤拷色 Image 锟斤拷 CanvasGroup
 	public float transitionTime = 1f;
 	public Action OnClose;
 
@@ -18,12 +18,12 @@ public class TransitionPanel : PanelBase
 
 	private IEnumerator Transition()
 	{
-		AudioManager.Inst.Play("BGM/场景切换");
-		// 拉黑
+		AudioManager.Inst.Play("BGM/鍦烘櫙鍒囨崲");
+		// 锟斤拷锟斤拷
 		yield return Fade(1);
-		// 这里可以执行需要的操作，比如加载新场景
+		// 锟斤拷锟斤拷锟斤拷锟街达拷锟斤拷锟揭拷牟锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟铰筹拷锟斤拷
 		OnClose();
-		yield return new WaitForSeconds(1f); // 等待一段时间
+		yield return new WaitForSeconds(1f); // 锟饺达拷一锟斤拷时锟斤拷
 		
 		yield return Fade(0);
 		Close();
@@ -46,6 +46,6 @@ public class TransitionPanel : PanelBase
 			yield return null;
 		}
 
-		canvasGroup.alpha = targetAlpha; // 确保最终值准确
+		canvasGroup.alpha = targetAlpha; // 确锟斤拷锟斤拷锟斤拷值准确
 	}
 }
