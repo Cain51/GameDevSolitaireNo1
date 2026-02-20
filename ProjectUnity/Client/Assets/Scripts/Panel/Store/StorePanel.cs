@@ -8,17 +8,20 @@ public class StorePanel : PanelBase
 
 	public override void Init()
 	{
-		
+		buyer = null;
 	}
 
 	public void OnClickOK()
 	{
-
+		Close();
+		TipManager.Tip("交易已确认");
 	}
 	public void OnClickCancel()
 	{
+		Close();
 	}
     public void OnClickClose()
     {
+		Close();
     }
 }

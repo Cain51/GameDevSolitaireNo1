@@ -1,4 +1,4 @@
-﻿using RG.Zeluda;
+using RG.Zeluda;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,12 +31,40 @@ public class DayItem : MonoBehaviour, ISelectItem
     }
     public void OnClick()
     {
-		
-    
+		DownSelectPanel panel = Object.FindObjectOfType<DownSelectPanel>();
+		if (panel == null) { return; }
+		panel.item = this;
+		if (actionData == null)
+		{
+			if (CBus.Instance.HasFactory("ActionFactory") == false) { return; }
+			ActionFactory factory = CBus.Instance.GetFactory("ActionFactory") as ActionFactory;
+			if (factory == null) { return; }
+			panel.Draw(transform.position, factory.GetAllCA());
+		}
+		else
+		{
+			AssetFactory factory = CBus.Instance.GetFactory(FactoryName.AssetFactory) as AssetFactory;
+			if (factory == null) { return; }
+			panel.Draw(transform.position, factory.GetAllCA());
+		}
     }
 
     public void Select(CABase data)
     {
-		
+		if (data == null) { return; }
+		ActionCA action = data as ActionCA;
+		if (action != null)
+		{
+			actionData = action;
+			baseData = null;
+			Refresh();
+			return;
+		}
+		AssetCA asset = data as AssetCA;
+		if (asset != null)
+		{
+			baseData = asset;
+			Refresh();
+		}
     }
 }

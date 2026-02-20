@@ -6,35 +6,35 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 /***
  * 
- * Ö»ÓÐÇ°ÈýÌìµÄÄÚÈÝ£¬ÆäËû³¡¾°Î´ÖÆ×÷¡£
+ * Ö»ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-ÈüÂíÐ¡ÓÎÏ· :
-Ð´ËÄ¸öÂíÆ¥µÄ¼¼ÄÜ
-ÂíÆ¥¾­ÑéÖµ½ø¶ÈÌõÕ¹Ê¾
-Êó±êÐü¸¡¼¼ÄÜÏÔÊ¾¼¼ÄÜÃû³Æ
-±ÈÈü½áÊøºóµ¯´°ÏÔÊ¾½á¹ûºÍ½áÊø°´Å¥
-ÓÎÏ·½áÊøºó£¬µ¯³ö¶Ô»°£ººÃÒ®£¡Ê§°Üºóµ¯³ö£ºÏÂ´ÎÒ»¶¨Ö®ÀàµÄ¶Ô»°£»
-Ã¿ÌìÖ»ÄÜÈüÒ»´ÎÂí;
-ÈüÂíÃ¿ÎåÌìÒ»´Î,Ã¿ÌìÔçÉÏ12µãÒÔÇ°¿ÉÒÔ²Î¼Ó;
-ÂíÆ¥Ãû³Æ/Î»ÖÃËæ»ú»¯
-ÖÆ×÷¼¼ÄÜÍ¼±êºÍÈüÂí/Âí³¡µÄÍ¼Æ¬;
-Íæ¼Ò²ÄÖÊ
-ÈüÂí¶¯»­
-¼¼ÄÜ°´¼üÌáÊ¾ÓëÊ¹ÓÃºóµÄÏ¨ÃðÕÚÕÖ£¬Î´¼¤»îÕÚÕÖ
-¼¼ÄÜÊÍ·ÅÒôÐ§;
-ÈüÂíbgm£»
-ÊýÖµµ÷Õû;
-È¡Ïû×¢ÊÍ
-¼¼ÄÜµÈ¼¶¼ì²âÉèÖÃ
-ÌáÊ¾Î´½âËø
+ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½Ï· :
+Ð´ï¿½Ä¸ï¿½ï¿½ï¿½Æ¥ï¿½Ä¼ï¿½ï¿½ï¿½
+ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹Ê¾
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½óµ¯´ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Í½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥
+ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬µï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½ï¿½ï¿½Ò®ï¿½ï¿½Ê§ï¿½Üºóµ¯³ï¿½ï¿½ï¿½ï¿½Â´ï¿½Ò»ï¿½ï¿½Ö®ï¿½ï¿½Ä¶Ô»ï¿½ï¿½ï¿½
+Ã¿ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½;
+ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½,Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½12ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ô²Î¼ï¿½;
+ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½/Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½Í¼Æ¬;
+ï¿½ï¿½Ò²ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½Ü°ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ê¹ï¿½Ãºï¿½ï¿½Ï¨ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½Ð§;
+ï¿½ï¿½ï¿½ï¿½bgmï¿½ï¿½
+ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½;
+È¡ï¿½ï¿½×¢ï¿½ï¿½
+ï¿½ï¿½ï¿½ÜµÈ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½Ê¾Î´ï¿½ï¿½ï¿½ï¿½
 
-Î´ÊµÏÖ£º
-Âí¶ùÉý¼¶Ê±µÄÒôÐ§£»
-Èç¹ûÁ¬ÐøÈý´Î»ñÊ¤£¬ÏÂ´Î½øÈëÈü³¡»á½øÈë¶Ô»°£º¸æÖªÊäµô±ÈÈü»á»ñµÃxxxx£»
-ÓÎÏ·½áÊøºó°´ÕÕÅÅÃûÂí¶ù»ñµÃ¾­ÑéÖµ£»
-ÄÁ²ÝÖÖÖ²ÓÅ»¯
+Î´Êµï¿½Ö£ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ê¤ï¿½ï¿½ï¿½Â´Î½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½ï¿½ï¿½Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½xxxxï¿½ï¿½
+ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ï¿½ï¿½Öµï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö²ï¿½Å»ï¿½
 
-Ê§°ÜÊý´Îºó£¬ºÃÐÄÁÚ¾Ó°ïÃ¦¿ª¿Ñ¸ûµØ£º
+Ê§ï¿½ï¿½ï¿½ï¿½ï¿½Îºó£¬ºï¿½ï¿½ï¿½ï¿½Ú¾Ó°ï¿½Ã¦ï¿½ï¿½ï¿½Ñ¸ï¿½ï¿½Ø£ï¿½
 GroundManager gm = CBus.Instance.GetManager(ManagerName.GroundManager) as GroundManager;
 gm.BuildGround(9);
  * 
@@ -167,7 +167,7 @@ public class MatchPanel : PanelBase
 
         matchInit();
 
-        ShowDialog(() => matchStart(), "ÈüÂí¿ªÊ¼");
+        ShowDialog(() => matchStart(), "ï¿½ï¿½ï¿½ï¿½Ê¼");
         //matchStart();
         if (trackRect != null)
             trackRect.sizeDelta = new Vector2(trackLength, trackRect.sizeDelta.y);
@@ -192,13 +192,13 @@ public class MatchPanel : PanelBase
         isRacing = false;
         UpdateRaceUI();
 
-        if (winner == "Íæ¼Ò")
+        if (winner == "ï¿½ï¿½ï¿½")
         {
-            ShowDialog(() => ShowMatchResultPanel(), "ÈüÂíÊ¤Àû");
+            ShowDialog(() => ShowMatchResultPanel(), "ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½ï¿½");
         }
         else
         {
-            ShowDialog(() => ShowMatchResultPanel(), "ÈüÂíÊ§Àû");
+            ShowDialog(() => ShowMatchResultPanel(), "ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½");
         }
 
     }
@@ -229,7 +229,7 @@ public class MatchPanel : PanelBase
             {
                 if (Input.GetKeyDown(skill.skillkey))
                 {
-                    AudioManager.Inst.Play("BGM/µã»÷°´Å¥");
+                    AudioManager.Inst.Play("BGM/ï¿½ï¿½ï¿½ï¿½ï¿½Å¥");
                     if (skill.skillActive)
                     {
                         skill.Cast();
@@ -238,9 +238,9 @@ public class MatchPanel : PanelBase
                     else
                     { 
                         if(skill.unlock)
-                            TipManager.Tip("Î´½âËø¸Ã¼¼ÄÜ!");
+                            TipManager.Tip("Î´ï¿½ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½!");
                         else
-                            TipManager.Tip("ÎÞ·¨ÔÙÊ¹ÓÃÁË!");
+                            TipManager.Tip("ï¿½Þ·ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½!");
                     }
                 }
             }
@@ -273,7 +273,7 @@ public class MatchPanel : PanelBase
 
             float percent = Mathf.Clamp01(h.position / finishLine) * 100f;
 
-            txt.text = $"{h.name} : {percent:F0}%\nËÙ¶È: {h.speed:F2}";
+            txt.text = $"{h.name} : {percent:F0}%\nï¿½Ù¶ï¿½: {h.speed:F2}";
         }
 
         var player = horses.Find(x => x.isPlayer);
@@ -287,7 +287,7 @@ public class MatchPanel : PanelBase
         }
 
         if (skillHintText != null && !isSkllShowing)
-            skillHintText.text = "°´ÏÂ¼¼ÄÜ¼ü¿ÉÊ¹ÓÃ¼¼ÄÜ!\nÃ¿¸ö¼¼ÄÜÖ»ÄÜÊ¹ÓÃÒ»´Î";
+            skillHintText.text = "ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Ü¼ï¿½ï¿½ï¿½Ê¹ï¿½Ã¼ï¿½ï¿½ï¿½!\nÃ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Ê¹ï¿½ï¿½Ò»ï¿½ï¿½";
     }
 
     void UpdateRaceUI()
@@ -303,7 +303,7 @@ public class MatchPanel : PanelBase
                     i.gameObject.SetActive(false);
                 }
                 raceStatusText.gameObject.SetActive(true);
-                raceStatusText.text = $"±ÈÈüÒÑ½áÊø£¬Ê¤Õß£º{winner}";
+                raceStatusText.text = $"ï¿½ï¿½ï¿½ï¿½ï¿½Ñ½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½ß£ï¿½{winner}";
                 return;
             }
             else
@@ -321,7 +321,7 @@ public class MatchPanel : PanelBase
             if (txt != null)
             {
 
-                txt.text = $"{h.name} : 0%  ËÙ¶È:{h.speed:F2}";
+                txt.text = $"{h.name} : 0%  ï¿½Ù¶ï¿½:{h.speed:F2}";
             }
         }
 
@@ -389,8 +389,8 @@ public class MatchPanel : PanelBase
         matchResultPanel.SetActive(true);
 
         if (resultText != null)
-            resultText.text = $"±ÈÈü½áÊø!\nÊ¤Õß:{winner}";
-        AudioManager.Inst.Play("BGM/ÐÂµÄÒ»Ìì¿ªÊ¼");
+            resultText.text = $"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!\nÊ¤ï¿½ï¿½:{winner}";
+        AudioManager.Inst.Play("BGM/ï¿½Âµï¿½Ò»ï¿½ì¿ªÊ¼");
     }
 
 #endregion

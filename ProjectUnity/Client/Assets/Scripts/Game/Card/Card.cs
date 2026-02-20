@@ -34,11 +34,20 @@ public class Card : MonoBehaviour
 	}
 	public void Pop()
 	{
-
+		transform.SetAsLastSibling();
+		transform.localScale = Vector3.one * 1.05f;
 	}
 	public void Clone()
 	{
-
+		UIManager uiManager = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+		if (uiManager == null) { return; }
+		CardPanel cardPanel = uiManager.GetPanel("CardPanel") as CardPanel;
+		if (cardPanel == null) { return; }
+		Card newCard = cardPanel.InitCard(srcid, id, type);
+		if (newCard == null) { return; }
+		newCard.SetOwner(isOwner);
+		Vector3 pos = transform.position;
+		newCard.transform.position = new Vector3(pos.x + 20, pos.y - 20, pos.z);
 	}
 	public void SetOwner(bool isPlayer) {
 		isOwner = isPlayer;

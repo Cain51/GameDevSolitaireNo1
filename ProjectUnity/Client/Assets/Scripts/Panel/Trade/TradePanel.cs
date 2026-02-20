@@ -33,12 +33,13 @@ public class TradePanel : PanelBase
 	}
 	public void SetCharacter(CharacterCA e)
 	{
-		
 		ResetItems();
+		Open();
 	}
 	public void SetEvent(EventsCA ca)
 	{
-		
+		ResetItems();
+		Open();
 	}
 	public void ResetItems()
 	{
@@ -62,36 +63,39 @@ public class TradePanel : PanelBase
 				item.ReleaseCard();
 			}
 		}
-		//if (selfItem == null)
-		//{
-		//	selfItem = new List<FillItem>();
-		//	for (int i = 0; i < 8; i++)
-		//	{
-		//		GameObject item = GameObject.Instantiate(pfb_item);
-		//		item.transform.SetParent(tran_self);
-		//		item.transform.localPosition = Vector3.zero;
-		//		item.transform.localEulerAngles = Vector3.zero;
-		//		selfItem.Add(item.gameObject.GetComponent<FillItem>());
-		//	}
-		//}
-		//else
-		//{
-		//	foreach (var item in selfItem)
-		//	{
-		//		item.ReleaseCard();
-		//	}
-		//}
+		if (selfItem == null)
+		{
+			selfItem = new List<FillItem>();
+			for (int i = 0; i < 8; i++)
+			{
+				GameObject item = GameObject.Instantiate(pfb_item);
+				item.transform.SetParent(tran_self);
+				item.transform.localPosition = Vector3.zero;
+				item.transform.localEulerAngles = Vector3.zero;
+				item.transform.localScale = Vector3.one;
+				selfItem.Add(item.gameObject.GetComponent<FillItem>());
+			}
+		}
+		else
+		{
+			foreach (var item in selfItem)
+			{
+				item.ReleaseCard();
+			}
+		}
 	}
 	public void Trade()
 	{
 		if (CheckTrade() == false) { return; }
 		foreach (var item in guestItem)
 		{
+			if (item.card == null) { continue; }
 			item.card.SetOwner(true);
 			item.ReleaseCard();
 		}
 		foreach (var item in selfItem)
 		{
+			if (item.card == null) { continue; }
 			item.card.SetOwner(false);
 			item.DestroyCard();
 		}
@@ -104,17 +108,19 @@ public class TradePanel : PanelBase
 		foreach (var item in guestItem)
 		{
 			AssetCA ca = item.GetCardAssetCA();
+			if (ca == null) { continue; }
 			guestCost += ca.cost;
 		}
 		int selfCost = 0;
 		foreach (var item in selfItem)
 		{
 			AssetCA ca = item.GetCardAssetCA();
+			if (ca == null) { continue; }
 			selfCost += ca.cost;
 		}
 		if (selfCost < guestCost)
 		{
-			//µ¯ÌáÊ¾
+			TipManager.Tip("ä»·å€¼ä¸è¶³");
 			return false;
 		}
 		return true;

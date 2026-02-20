@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using System;
 
 public class SkillBase
 {
+	public event Action OnCast;
 	public void Cast()
 	{
-
+		OnCast?.Invoke();
 	}
 }
