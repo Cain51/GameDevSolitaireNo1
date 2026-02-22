@@ -57,6 +57,11 @@ public class Entrance : MonoBehaviour
 		if (enableGM && Input.GetKeyDown(KeyCode.F9))
 		{
 			GM_SkipDialog();
+			LobbyPanel lobbyPanel = FindObjectOfType<LobbyPanel>();
+			if (lobbyPanel != null)
+			{
+				lobbyPanel.SkipStartVideo();
+			}
 		}
 	}
 	private void OnGUI()

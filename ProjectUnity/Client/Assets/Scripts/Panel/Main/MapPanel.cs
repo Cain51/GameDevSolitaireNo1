@@ -39,8 +39,7 @@ public class MapPanel : PanelBase
 			.Select(caItem => caItem as MapCA)
 			.Where(map => map != null)
 			.Where(map => map.id != currentMapId)
-			.Where(map => map.unlockday <= gameManager.day)
-			.Where(map => map.opentime != null && map.opentime.Contains(gameManager.GetCurTime()))
+			.Where(map => map.name == "海边" || (map.unlockday <= gameManager.day && map.opentime != null && map.opentime.Contains(gameManager.GetCurTime())))
 			.OrderBy(map => map.id)
 			.ToList();
 		cas = availableMaps.ToArray();
@@ -70,9 +69,38 @@ public class MapPanel : PanelBase
 		gameObject.SetActive(false);
 		base.Close();
 		UIManager uiManager = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+		SceneLoadManager slm = CBus.Instance.GetManager(ManagerName.SceneLoadManager) as SceneLoadManager;
+		MapCA mapCa = slm != null ? slm.mapCA : null;
+		if (mapCa == null)
+		{
+			GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+			MapFactory mf = CBus.Instance.GetFactory(FactoryName.MapFactory) as MapFactory;
+			if (gm != null && mf != null)
+			{
+				mapCa = mf.GetCA(gm.prisonRooms[gm.roomIdx]) as MapCA;
+			}
+		}
 		if (uiManager != null)
 		{
-			uiManager.OpenPanelIgnoreToggle("GroundPanel");
+			bool showGroundPanel = false;
+			if (mapCa != null)
+			{
+				string name = mapCa.name != null ? mapCa.name.Trim() : string.Empty;
+				showGroundPanel = name == "农场" || name == "你的农场" || name == "养鸡场";
+			}
+			if (showGroundPanel)
+			{
+				uiManager.OpenPanelIgnoreToggle("GroundPanel");
+			}
+			else
+			{
+				uiManager.HidePanel("GroundPanel");
+			}
+		}
+		MainPanel mainPanel = uiManager != null ? uiManager.GetPanel("MainPanel") as MainPanel : null;
+		if (mainPanel != null)
+		{
+			mainPanel.RefreshActionButtons();
 		}
 	}
 

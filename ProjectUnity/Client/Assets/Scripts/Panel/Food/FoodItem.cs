@@ -13,6 +13,9 @@ public class FoodItem : MonoBehaviour
 	{
 		ResManager res = CBus.Instance.GetManager(ManagerName.ResManager) as ResManager;
 		img_icon.sprite = res.GetRes<Sprite>(ca.respath);
+		img_icon.preserveAspect = true;
+		img_icon.useSpriteMesh = true;
+		number = -1;
 		Refresh(num);
 	}
 	public void Refresh(int num)

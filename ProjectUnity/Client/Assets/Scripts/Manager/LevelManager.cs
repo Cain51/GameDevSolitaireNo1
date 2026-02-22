@@ -36,6 +36,12 @@ public class LevelManager : ManagerBase
         OnExpChanged?.Invoke(CurrentExp, GetRequiredExp());
 
     }
+	public void SetState(int level, int exp)
+	{
+		Level = Math.Max(1, Math.Min(level, MaxLevel));
+		CurrentExp = Math.Max(0, exp);
+		OnExpChanged?.Invoke(CurrentExp, GetRequiredExp());
+	}
 	public int GetRequiredExp()
 	{
 		return ExponentialFormula(Level);

@@ -124,7 +124,7 @@ public class UIManager : ManagerBase
 		panelDic.Clear();
 	}
 
-	private void HidePanel(string key)
+	public void HidePanel(string key)
 	{
 		if (panelDic.ContainsKey(key) == false) { return; }
 		PanelBase panel = panelDic[key];

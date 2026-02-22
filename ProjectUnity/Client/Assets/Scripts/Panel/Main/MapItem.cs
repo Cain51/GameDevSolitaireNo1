@@ -15,7 +15,14 @@ public class MapItem : MonoBehaviour
 	public void Init(MapCA map)
 	{
 		mapCA = map;
-		img_icon.sprite = Resources.Load<Sprite>(map.icon);
+		UIManager uiManager = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+		GroundPanel groundPanel = uiManager != null ? uiManager.GetPanel("GroundPanel") as GroundPanel : null;
+		Sprite targetSprite = groundPanel != null ? groundPanel.GetBackgroundSpriteByName(map.name) : null;
+		if (targetSprite == null)
+		{
+			targetSprite = Resources.Load<Sprite>(map.icon);
+		}
+		img_icon.sprite = targetSprite;
 		lbl_name.text = map.name;
 	}
 	public void OnClick()

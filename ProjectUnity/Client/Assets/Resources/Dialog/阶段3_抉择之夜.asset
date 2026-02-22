@@ -1,0 +1,206 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &9100000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba079efee81c01f428b2629519b1031a, type: 3}
+  m_Name: "\u62E9\u62E9\u4E4B\u591C"
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -296, y: -472}
+  ports:
+    keys:
+    - input
+    - nextNode
+    - nextNode 0
+    - nextNode 1
+    values:
+    - _fieldName: input
+      _node: {fileID: 9100000000000000001}
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: nextNode
+      _node: {fileID: 9100000000000000001}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: nextNode 0
+      _node: {fileID: 9100000000000000001}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: input
+        node: {fileID: 9100000000000000002}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 1
+    - _fieldName: nextNode 1
+      _node: {fileID: 9100000000000000001}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: input
+        node: {fileID: 9100000000000000003}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 1
+  input: 
+  speakerid: 1200001
+  ani: Talking
+  rewards: []
+  cost: []
+  dialogText:
+  - "\u6E05\u6668\uFF0C\u6211\u6536\u5230\u4E86\u4E24\u5C01\u4FE1\u3002"
+  - "\u4E00\u5C01\u6765\u81EA\u51EF\u6069\uFF0C\u8BB8\u6211\u9000\u51FA\u8C03\u67E5\u6362\u5F97\u540D\u9A6C\u4E0E\u8865\u507F\u3002"
+  - "\u53E6\u4E00\u5C01\u6765\u81EA\u533F\u540D\u4EBA\uFF0C\u7EA6\u6211\u53BB\u77FF\u6D1E\u4EA4\u51FA\u8BC1\u636E\u3002"
+  choices:
+  - choiceText: "\u63A5\u53D7\u51EF\u6069\u7684\u6761\u4EF6"
+    conditions: []
+  - choiceText: "\u8D76\u8D74\u77FF\u6D1E\u8D74\u7EA6"
+    conditions: []
+  nextNode: {fileID: 0}
+  scene: 
+  prefab: 
+  endingDescription: 
+  eventid: 0
+--- !u!114 &9100000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba079efee81c01f428b2629519b1031a, type: 3}
+  m_Name: "\u51EF\u6069\u7EBF"
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 56, y: -504}
+  ports:
+    keys:
+    - input
+    - nextNode
+    values:
+    - _fieldName: input
+      _node: {fileID: 9100000000000000002}
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: nextNode 0
+        node: {fileID: 9100000000000000001}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: nextNode
+      _node: {fileID: 9100000000000000002}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  input: 
+  speakerid: 1200001
+  ani: Talking
+  rewards: []
+  cost: []
+  dialogText:
+  - "\u6211\u6295\u5411\u4E86\u51EF\u6069\u6240\u6307\u7684\u7EBF\u8DEF\uFF0C\u4E0D\u518D\u8FFD\u95EE\u7236\u4EB2\u7684\u7ACB\u573A\u3002"
+  choices: []
+  nextNode: {fileID: 0}
+  scene: 
+  prefab: 
+  endingDescription: Ending.Kane
+  eventid: 0
+--- !u!114 &9100000000000000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba079efee81c01f428b2629519b1031a, type: 3}
+  m_Name: "\u533F\u540D\u7EBF"
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 56, y: -248}
+  ports:
+    keys:
+    - input
+    - nextNode
+    values:
+    - _fieldName: input
+      _node: {fileID: 9100000000000000003}
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: nextNode 1
+        node: {fileID: 9100000000000000001}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: nextNode
+      _node: {fileID: 9100000000000000003}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  input: 
+  speakerid: 1200001
+  ani: Talking
+  rewards: []
+  cost: []
+  dialogText:
+  - "\u6211\u5E26\u4E0A\u8BC1\u636E\uFF0C\u5411\u77FF\u6D1E\u8D70\u53BB\u3002"
+  choices: []
+  nextNode: {fileID: 0}
+  scene: 
+  prefab: 
+  endingDescription: Ending.Rebel
+  eventid: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0adb7cbcff07d16499b27566a20258a9, type: 3}
+  m_Name: "\u9636\u6BB53_\u62A9\u62E9\u4E4B\u591C"
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: 9100000000000000001}
+  - {fileID: 9100000000000000002}
+  - {fileID: 9100000000000000003}

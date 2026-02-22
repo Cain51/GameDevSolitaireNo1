@@ -219,15 +219,18 @@ public class MatchPanel : PanelBase
         {
             ShowVictoryDialog(() =>
             {
-                if (showStreakDialog && gm != null)
+                ShowStage2IntroIfNeeded(() =>
                 {
-                    gm.matchStreakDialogShown = true;
-                    ShowStreakDialog(ShowMatchResultPanel);
-                }
-                else
-                {
-                    ShowMatchResultPanel();
-                }
+                    if (showStreakDialog && gm != null)
+                    {
+                        gm.matchStreakDialogShown = true;
+                        ShowStreakDialog(ShowMatchResultPanel);
+                    }
+                    else
+                    {
+                        ShowMatchResultPanel();
+                    }
+                });
             });
         }
         else
@@ -443,6 +446,25 @@ public class MatchPanel : PanelBase
         DialogPanel dp = um.OpenFloat("DialogPanel") as DialogPanel;
         dp.ShowSimple("市长凯恩", "你已经连赢了三把了，只要你能输掉下一把，我就给你……（听不清了）", 1200002);
         dp.OnCloseCallback = onClose;
+    }
+    private void ShowStage2IntroIfNeeded(Action onComplete)
+    {
+        GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+        if (gm == null)
+        {
+            onComplete?.Invoke();
+            return;
+        }
+        if (gm.firstRaceWin == false)
+        {
+            gm.OnFirstRaceWin();
+            UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+            DialogPanel dp = um.OpenFloat("DialogPanel") as DialogPanel;
+            dp.ShowSimple("市长凯恩", "干得漂亮！你和马的默契让我刮目相看。要不要加入市赛马队？那里能让你走得更远。", 1200002);
+            dp.OnCloseCallback = onComplete;
+            return;
+        }
+        onComplete?.Invoke();
     }
 
     private List<Horse> GetRankedHorses()

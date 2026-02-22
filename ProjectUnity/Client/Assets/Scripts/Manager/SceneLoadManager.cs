@@ -29,6 +29,11 @@ public class SceneLoadManager : ManagerBase
 		mapCA = ca;
 
 		string sceneName = ca.scene;
+		if (string.IsNullOrEmpty(sceneName) || sceneName == "Shop")
+		{
+			LoadPrefab();
+			return;
+		}
 
 		if (curScene.name != null)
 		{
@@ -52,6 +57,11 @@ public class SceneLoadManager : ManagerBase
 	{
 		MapFactory mf = CBus.Instance.GetFactory(FactoryName.MapFactory) as MapFactory;
 		mapCA = mf.GetCA(id) as MapCA;
+		if (mapCA != null && (string.IsNullOrEmpty(mapCA.scene) || mapCA.scene == "Shop"))
+		{
+			LoadPrefab();
+			return;
+		}
 		if (curScene.name != null)
 		{
 			if (curScene.name == mapCA.scene)
@@ -92,6 +102,19 @@ public class SceneLoadManager : ManagerBase
 		if (backgroundSprite != null)
 		{
 			UpdateLobbyBackground(backgroundSprite);
+		}
+		MainPanel mainPanel = um.GetPanel("MainPanel") as MainPanel;
+		if (mainPanel != null)
+		{
+			mainPanel.RefreshActionButtons();
+		}
+		if (gm != null)
+		{
+			bool tutorialShown = gm.TryShowMapTutorial(mapCA);
+			if (!tutorialShown)
+			{
+				gm.TryTriggerMapClue(mapCA);
+			}
 		}
 		//GameObject obj = Resources.Load<GameObject>(mapCA.prefab[day]);
 		//pfb_obj = GameObject.Instantiate(obj);

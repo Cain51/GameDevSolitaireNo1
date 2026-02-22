@@ -195,6 +195,10 @@ public class DialogPanel : PanelBase
 			TipManager.Tip("条件不足");
 			return;
 		}
+		if (gm != null && graphName == "游戏开始" && choice.choiceText == "离开")
+		{
+			gm.pendingStartRanchTutorial = true;
+		}
 		// 根据玩家的选择跳转到对应的节点
 		currentNode = currentNode.GetOutputPort("nextNode " + index).Connection.node as DialogNode;
 		currentTextIndex = 0; // 重置文本索引
@@ -305,6 +309,19 @@ public class DialogPanel : PanelBase
 		if (currentNode.eventid != 0) {
 			EventManager eventManager = CBus.Instance.GetManager(ManagerName.EventManager) as EventManager;
 			eventManager.TriggerEvent(currentNode.eventid);
+		}
+		if (string.IsNullOrEmpty(currentNode.endingDescription) == false)
+		{
+			GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+			if (gm != null)
+			{
+				gm.HandleDialogEnding(graphName, currentNode.endingDescription);
+			}
+		}
+		GameManager gameManager = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+		if (gameManager != null)
+		{
+			gameManager.TriggerInitialRanchTutorialIfPending();
 		}
 		
 		OnCallback?.Invoke();

@@ -25,6 +25,12 @@ public class GroundPanel : PanelBase
 		SceneLoadManager slm = CBus.Instance.GetManager(ManagerName.SceneLoadManager) as SceneLoadManager;
 		if (slm == null || slm.mapCA == null) { return null; }
 		string mapName = slm.mapCA.name;
+		return GetBackgroundSpriteByName(mapName);
+	}
+
+	public Sprite GetBackgroundSpriteByName(string mapName)
+	{
+		if (mapBackgrounds == null || mapBackgrounds.Length == 0) { return null; }
 		if (string.IsNullOrEmpty(mapName)) { return null; }
 		if (mapName.StartsWith("你的")) { mapName = mapName.Substring(2); }
 		mapName = mapName.Trim();
