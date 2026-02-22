@@ -31,50 +31,28 @@ public class MapPanel : PanelBase
 		}
 		MapFactory mapFactory = CBus.Instance.GetFactory(FactoryName.MapFactory) as MapFactory;
 		CABase[] ca = mapFactory.GetAllCA();
-		cas = new MapCA[ca.Length];
 
 		GameManager gameManager = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
 		SceneLoadManager slm = CBus.Instance.GetManager(ManagerName.SceneLoadManager) as SceneLoadManager;
-
-
-		MapCA mca = mapFactory.GetCA(gameManager.prisonRooms[gameManager.roomIdx]) as MapCA;
-		if (slm.curScene.name != null)
+		int currentMapId = slm.mapCA != null ? slm.mapCA.id : gameManager.prisonRooms[gameManager.roomIdx];
+		List<MapCA> availableMaps = ca
+			.Select(caItem => caItem as MapCA)
+			.Where(map => map != null)
+			.Where(map => map.id != currentMapId)
+			.Where(map => map.name == "海边" || (map.unlockday <= gameManager.day && map.opentime != null && map.opentime.Contains(gameManager.GetCurTime())))
+			.OrderBy(map => map.id)
+			.ToList();
+		cas = availableMaps.ToArray();
+		for (int i = 0; i < availableMaps.Count; i++)
 		{
-			if (slm.curScene.name != mca.scene)
-			{
-				List<int> open = new List<int>(mca.opentime);
-				if (open.Contains(gameManager.GetCurTime()) == true)
-				{
-					GameObject obj = GameObject.Instantiate(pfb_item, trans_content);
-					obj.SetActive(true);
-					MapItem item = obj.GetComponent<MapItem>();
-					item.Init(mca);
-				}
-			}
-		}
-
-		int idx = 0;
-		foreach (var caItem in ca)
-		{
-			MapCA map = caItem as MapCA;
-			if (slm.curScene.name != null)
-			{
-				if (slm.curScene.name == map.scene) { continue; }
-			}
-			if (map.unlockday > gameManager.day) { continue; }
-
-			List<int> open = new List<int>(map.opentime);
-			if (open.Contains(gameManager.GetCurTime()) == false) { continue; }
-			cas[idx] = map;
 			GameObject obj = GameObject.Instantiate(pfb_item, trans_content);
 			obj.SetActive(true);
 			MapItem item = obj.GetComponent<MapItem>();
-			item.Init(map);
-			idx++;
+			item.Init(availableMaps[i]);
 		}
 		if (trans_content.childCount == 0)
 		{
-			TipManager.Tip("��ʱû�п��ƶ��ĵص㣡");
+			TipManager.Tip("此时没有可移动的地点！");
 			Close();
 		}
 
@@ -86,9 +64,44 @@ public class MapPanel : PanelBase
 	}
 	public override void Close()
 	{
-		AudioManager.Inst.Play("BGM/�����ť");
+		isOpen = false;
+		AudioManager.Inst.Play("BGM/点击按钮");
 		gameObject.SetActive(false);
 		base.Close();
+		UIManager uiManager = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+		SceneLoadManager slm = CBus.Instance.GetManager(ManagerName.SceneLoadManager) as SceneLoadManager;
+		MapCA mapCa = slm != null ? slm.mapCA : null;
+		if (mapCa == null)
+		{
+			GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+			MapFactory mf = CBus.Instance.GetFactory(FactoryName.MapFactory) as MapFactory;
+			if (gm != null && mf != null)
+			{
+				mapCa = mf.GetCA(gm.prisonRooms[gm.roomIdx]) as MapCA;
+			}
+		}
+		if (uiManager != null)
+		{
+			bool showGroundPanel = false;
+			if (mapCa != null)
+			{
+				string name = mapCa.name != null ? mapCa.name.Trim() : string.Empty;
+				showGroundPanel = name == "农场" || name == "你的农场" || name == "养鸡场";
+			}
+			if (showGroundPanel)
+			{
+				uiManager.OpenPanelIgnoreToggle("GroundPanel");
+			}
+			else
+			{
+				uiManager.HidePanel("GroundPanel");
+			}
+		}
+		MainPanel mainPanel = uiManager != null ? uiManager.GetPanel("MainPanel") as MainPanel : null;
+		if (mainPanel != null)
+		{
+			mainPanel.RefreshActionButtons();
+		}
 	}
 
 

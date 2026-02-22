@@ -11,11 +11,14 @@ public class LobbyPanel : PanelBase
 	public void OnStartGameClick()
 	{
 		go_start.SetActive(false);
-		//GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
-		//gm.Start();
+		GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+		if (gm != null)
+		{
+			gm.PrepareStartGame();
+		}
 		v_start.gameObject.SetActive(true);
 		v_start.loopPointReached += OnVideoFinished;
-		AudioManager.Inst.Play("BGM/µã»÷°´Å¥");
+		AudioManager.Inst.Play("BGM/ï¿½ï¿½ï¿½ï¿½ï¿½Å¥");
 	}
 
 	public override void Close()
@@ -29,7 +32,17 @@ public class LobbyPanel : PanelBase
 		v_start.loopPointReached -= OnVideoFinished;
 		Close();
 		GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
-		gm.Start();
+		if (gm != null)
+		{
+			gm.StartFromLobby();
+		}
+	}
+	public void SkipStartVideo()
+	{
+		if (v_start == null) { return; }
+		if (v_start.gameObject.activeSelf == false) { return; }
+		v_start.Stop();
+		OnVideoFinished(v_start);
 	}
 	public void OnExitGameClick()
 	{

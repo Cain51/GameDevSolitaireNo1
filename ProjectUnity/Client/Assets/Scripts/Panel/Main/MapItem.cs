@@ -15,31 +15,24 @@ public class MapItem : MonoBehaviour
 	public void Init(MapCA map)
 	{
 		mapCA = map;
-		img_icon.sprite = Resources.Load<Sprite>(map.icon);
+		UIManager uiManager = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+		GroundPanel groundPanel = uiManager != null ? uiManager.GetPanel("GroundPanel") as GroundPanel : null;
+		Sprite targetSprite = groundPanel != null ? groundPanel.GetBackgroundSpriteByName(map.name) : null;
+		if (targetSprite == null)
+		{
+			targetSprite = Resources.Load<Sprite>(map.icon);
+		}
+		img_icon.sprite = targetSprite;
 		lbl_name.text = map.name;
 	}
 	public void OnClick()
 	{
-		GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
-		//#if !UNITY_EDITOR
-		//		if (gm.CostTime(2) == false)
-		//		{
-		//			TipManager.Tip("时间不足2小时");
-		//			return;
-		//		}
-		//#endif
-		if (gm.CheckTime(2) == false)
-		{
-			TipManager.Tip("时间不足2小时");
-			return;
-		}
 		UIManager uiManager = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
 		uiManager.ClosePanel("MapPanel");
 		TransitionPanel tp = uiManager.OpenFloat("TransitionPanel") as TransitionPanel;
 		tp.StartTransition(() => {
 			SceneLoadManager slm = CBus.Instance.GetManager(ManagerName.SceneLoadManager) as SceneLoadManager;
 			slm.Load(mapCA);
-			gm.CostTime(2);
 		});
 	}
 }

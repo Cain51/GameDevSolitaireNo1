@@ -4,11 +4,11 @@ public class PreloadHandler
 {
     private CBus _cBus;
     /// <summary>
-    /// Ô¤¼ÓÔØËØ²ÄÁĞ±í
+    /// é¢„åŠ è½½ç´ æåˆ—è¡¨
     /// </summary>
     private List<string> _preloadList;
     /// <summary>
-    /// ÒÑ¾­´¦Àí¹ıµÄIDÁĞ±í£¬·ÀÖ¹ÖØ¸´´¦Àí
+    /// å·²ç»å¤„ç†è¿‡çš„IDåˆ—è¡¨ï¼Œé˜²æ­¢é‡å¤å¤„ç†
     /// </summary>
     private List<int> _idList;
     public PreloadHandler()
@@ -22,7 +22,7 @@ public class PreloadHandler
 
     }
     /// <summary>
-    /// ×¼±¸¼ÓÔØ
+    /// å‡†å¤‡åŠ è½½
     /// </summary>
     public void Prepare()
     {
@@ -30,8 +30,8 @@ public class PreloadHandler
         _idList.Clear();
     }
     /// <summary>
-    /// ³õÊ¼»¯
-    /// ÔÚ¿ªÊ¼»ñÈ¡ËØ²ÄÁĞ±íÖ®Ç°ĞèÒª³õÊ¼»¯Ò»´Î
+    /// åˆå§‹åŒ–
+    /// åœ¨å¼€å§‹è·å–ç´ æåˆ—è¡¨ä¹‹å‰éœ€è¦åˆå§‹åŒ–ä¸€æ¬¡
     /// </summary>
     public void Clear()
     {
@@ -40,7 +40,7 @@ public class PreloadHandler
         _idList.Clear();
     }
     /// <summary>
-    /// Ïú»Ù
+    /// é”€æ¯
     /// </summary>
     public void Destroy()
     {
@@ -48,7 +48,7 @@ public class PreloadHandler
         _idList = null;
     }
     /// <summary>
-    /// Ìí¼ÓÒ»¸öid
+    /// æ·»åŠ ä¸€ä¸ªid
     /// </summary>
     public void AddId(int id)
     {
@@ -61,14 +61,14 @@ public class PreloadHandler
         }
     }
     /// <summary>
-    /// Ìí¼ÓËØ²Ä
+    /// æ·»åŠ ç´ æ
     /// </summary>
     public void AddRes(string res)
     {
         _preloadList.Add(res);
     }
     /// <summary>
-    /// »ñÈ¡Ô¤¼ÓÔØËØ²ÄÁĞ±í
+    /// è·å–é¢„åŠ è½½ç´ æåˆ—è¡¨
     /// </summary>
     /// <returns></returns>
     public List<string> GetResList()

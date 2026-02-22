@@ -24,6 +24,7 @@ namespace RG.Zeluda
 		public Dictionary<int, int> assetDic = new Dictionary<int, int>();
 
 		private Dictionary<int, Dictionary<int, int>> dayIDPrice = new Dictionary<int, Dictionary<int, int>>();
+		private Dictionary<int, int> eggDayCount = new Dictionary<int, int>();
 	
 		protected override void Init()
 		{
@@ -97,6 +98,58 @@ namespace RG.Zeluda
 				Add(mat.id, mat.cnt);
 			}
 			isUpdate = true;
+		}
+		public void AddEggs(int count, int day)
+		{
+			if (count <= 0) { return; }
+			Add(1100006, count);
+			if (eggDayCount.ContainsKey(day))
+			{
+				eggDayCount[day] += count;
+			}
+			else
+			{
+				eggDayCount.Add(day, count);
+			}
+		}
+		public int GetNonCurrentDayEggCount(int day)
+		{
+			if (eggDayCount.Count == 0) { return 0; }
+			int total = 0;
+			foreach (var item in eggDayCount)
+			{
+				if (item.Key != day)
+				{
+					total += item.Value;
+				}
+			}
+			return total;
+		}
+		public void ConsumeNonCurrentDayEggs(int day)
+		{
+			if (eggDayCount.Count == 0) { return; }
+			int removeCount = 0;
+			List<int> removeDays = new List<int>();
+			foreach (var item in eggDayCount)
+			{
+				if (item.Key != day)
+				{
+					removeCount += item.Value;
+					removeDays.Add(item.Key);
+				}
+			}
+			for (int i = 0; i < removeDays.Count; i++)
+			{
+				eggDayCount.Remove(removeDays[i]);
+			}
+			if (removeCount > 0)
+			{
+				Add(1100006, -removeCount);
+				if (assetDic.ContainsKey(1100006) && assetDic[1100006] <= 0)
+				{
+					assetDic.Remove(1100006);
+				}
+			}
 		}
 
 

@@ -16,7 +16,7 @@ public class Character : Product
 	{
 
 	}
-	/// Ö»ÔÚĞÂ½¨Ê±µ÷ÓÃ´Ë·½·¨
+	/// åªåœ¨æ–°å»ºæ—¶è°ƒç”¨æ­¤æ–¹æ³•
 	/// </summary>
 	protected override void Init()
 	{
@@ -24,9 +24,9 @@ public class Character : Product
 		base.Init();
 	}
 	/// <summary>
-	/// Êı¾İ³õÊ¼»¯
-	/// ĞÂ½¨ºÍÖØÓÃµÄÊ±ºòµ÷ÓÃ´Ë·½·¨
-	/// ĞÂ½¨Ê±ÔÚInitÖ®ºóÖ´ĞĞ
+	/// æ•°æ®åˆå§‹åŒ–
+	/// æ–°å»ºå’Œé‡ç”¨çš„æ—¶å€™è°ƒç”¨æ­¤æ–¹æ³•
+	/// æ–°å»ºæ—¶åœ¨Initä¹‹åæ‰§è¡Œ
 	/// </summary>
 	protected override void InitParams()
 	{
@@ -49,21 +49,21 @@ public class Character : Product
 		//eventsPanel.SetData();
 	}
 	/// <summary>
-	/// »ØÊÕ
-	/// ÊÍ·ÅÒıÓÃ¶ÔÏó
-	/// ÄÚ´æ³ØÂúÁË»òÕß¹¤³§Ïú»Ù×Ô¶¯µ÷ÓÃDestroy
+	/// å›æ”¶
+	/// é‡Šæ”¾å¼•ç”¨å¯¹è±¡
+	/// å†…å­˜æ± æ»¡äº†æˆ–è€…å·¥å‚é”€æ¯è‡ªåŠ¨è°ƒç”¨Destroy
 	/// </summary>
 	protected override void RecyclePrivate()
 	{
-		//ÊÍ·ÅĞ´ÔÚBaseÖ®Ç°£¬Base¿ÉÄÜ´¥·¢Destroy£¬µ¼ÖÂ¶ÔÏóÎªnull
+		//é‡Šæ”¾å†™åœ¨Baseä¹‹å‰ï¼ŒBaseå¯èƒ½è§¦å‘Destroyï¼Œå¯¼è‡´å¯¹è±¡ä¸ºnull
 
 		GameObject.Destroy(view);
 		base.RecyclePrivate();
 	}
 	/// <summary>
-	/// Ïú»Ù
-	/// ËùÓĞ¶ÔÏóÖÃnull
-	/// Ö»ÔÚRecycle·½·¨ÖĞµ÷ÓÃ
+	/// é”€æ¯
+	/// æ‰€æœ‰å¯¹è±¡ç½®null
+	/// åªåœ¨Recycleæ–¹æ³•ä¸­è°ƒç”¨
 	/// </summary>
 	public override void Destroy()
 	{

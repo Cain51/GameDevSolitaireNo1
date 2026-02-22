@@ -1,30 +1,30 @@
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;  // È·±£ÒıÓÃ DoTween ÃüÃû¿Õ¼ä
+using DG.Tweening;  // ç¡®ä¿å·²å¼•å…¥ DoTween å‘½åç©ºé—´
 
 public class TipPanel : PanelBase
 {
-	public GameObject tipPrefab;  // ÌáÊ¾¿òÔ¤ÖÆ¼ş
-	public Transform tipContainer;  // ·ÅÖÃÌáÊ¾¿òµÄÈİÆ÷
-	public float tipDuration = 2.0f;  // ÌáÊ¾³ÖĞøÊ±¼ä
-	public float moveDistance = 100.0f;  // ÌáÊ¾¿òÏòÉÏÒÆ¶¯µÄ¾àÀë
+	public GameObject tipPrefab;  // æç¤ºæ¡†é¢„åˆ¶ä»¶
+	public Transform tipContainer;  // ç”¨äºå­˜æ”¾æç¤ºæ¡†çš„å®¹å™¨
+	public float tipDuration = 2.0f;  // æç¤ºæŒç»­æ—¶é—´
+	public float moveDistance = 100.0f;  // æç¤ºæ¡†å‘ä¸Šç§»åŠ¨çš„è·ç¦»
 
 	public void TipLog(string message)
 	{
-		// Éú³ÉÌáÊ¾¿ò
+		// åˆ›å»ºæç¤ºæ¡†
 		GameObject tipObject = Instantiate(tipPrefab, tipContainer);
-		Text tipText = tipObject.GetComponentInChildren<Text>();  // ¼ÙÉèÌáÊ¾¿òÖĞÓĞÒ»¸ö Text ×é¼şÏÔÊ¾ÏûÏ¢
-		tipText.text = message;  // ÉèÖÃÌáÊ¾ÄÚÈİ
+		Text tipText = tipObject.GetComponentInChildren<Text>();  // è·å–æç¤ºæ¡†ä¸­çš„ Text ç»„ä»¶ç”¨äºæ˜¾ç¤ºä¿¡æ¯
+		tipText.text = message;  // è®¾ç½®æç¤ºå†…å®¹
 
-		// ¶¯»­£ºÌáÊ¾¿òÏòÉÏÒÆ¶¯²¢Öğ½¥ÏûÊ§
+		// ä½¿ç”¨åŠ¨ç”»è®©æç¤ºæ¡†å‘ä¸Šç§»åŠ¨å¹¶é€æ¸æ¶ˆå¤±
 		RectTransform tipRect = tipObject.GetComponent<RectTransform>();
-		CanvasGroup canvasGroup = tipObject.AddComponent<CanvasGroup>();  // ÎªÌáÊ¾¿òÌí¼Ó CanvasGroup ÓÃÓÚ¿ØÖÆÍ¸Ã÷¶È
+		CanvasGroup canvasGroup = tipObject.AddComponent<CanvasGroup>();  // ä¸ºæç¤ºæ¡†æ·»åŠ  CanvasGroup ä»¥ä¾¿æ§åˆ¶é€æ˜åº¦
 
-		// ¿ªÊ¼¶¯»­
-		tipRect.DOAnchorPosY(tipRect.anchoredPosition.y + moveDistance, tipDuration).SetEase(Ease.OutCubic);  // ÏòÉÏÒÆ¶¯
+		// å¼€å§‹åŠ¨ç”»
+		tipRect.DOAnchorPosY(tipRect.anchoredPosition.y + moveDistance, tipDuration).SetEase(Ease.OutCubic);  // æç¤ºæ¡†ç§»åŠ¨
 		canvasGroup.DOFade(0, tipDuration).SetEase(Ease.Linear).OnComplete(() =>
 		{
-			// ¶¯»­½áÊøºóÏú»ÙÌáÊ¾¿ò
+			// é”€æ¯æç¤ºæ¡†
 			Destroy(tipObject);
 		});
 	}

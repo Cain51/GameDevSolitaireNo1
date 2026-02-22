@@ -2,54 +2,54 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
-/// ´´½¨ÈÕÆÚ£º 2021/2/20 12:33:02
-/// AssetBundleËØ²Äµ¥Ôª
+/// åˆ›å»ºæ—¥æœŸï¼š 2021/2/20 12:33:02
+/// AssetBundleç´ æå•å…ƒ
 /// </summary>
 public class ABUnit
 {
     /// <summary>
-    /// ±£´æµÄËØ²Ä
+    /// ä¿å­˜çš„ç´ æ
     /// </summary>
     public AssetBundle assetBundle;
     /// <summary>
-    /// bundleµÄµØÖ·
+    /// bundleçš„åœ°å€
     /// </summary>
     public string bundleName;
     /// <summary>
-    /// Òì²½¼ÓÔØRequest
+    /// å¼‚æ­¥åŠ è½½Request
     /// </summary>
     public AssetBundleCreateRequest request;
     /// <summary>
-    /// ÒıÓÃ¼ÆÊı
+    /// å¼•ç”¨è®¡æ•°
     /// </summary>
     public int refCount;
     /// <summary>
-    /// ¼ÓÔØÍê±ÏºóµÄ»Øµ÷º¯ÊıÁĞ±í
+    /// åŠ è½½å®Œæ¯•åçš„å›è°ƒå‡½æ•°åˆ—è¡¨
     /// </summary>
     public List<Action> callBackList;
     /// <summary>
-    /// ÒÀÀµÁĞ±í
+    /// ä¾èµ–åˆ—è¡¨
     /// </summary>
     public List<ABUnit> dependList;
     /// <summary>
-    /// µ±Ç°ÕıÔÚ¼ÓÔØÖĞµÄÒÀÀµËØ²ÄÊıÁ¿
+    /// å½“å‰æ­£åœ¨åŠ è½½ä¸­çš„ä¾èµ–ç´ ææ•°é‡
     /// </summary>
     public int dependLoadingCount;
     /// <summary>
-    /// Ğ¶ÔØÀàĞÍ
+    /// å¸è½½ç±»å‹
     /// </summary>
     public DisposType disposType;
     /// <summary>
-    /// Ğ¶ÔØÀàĞÍ
+    /// å¸è½½ç±»å‹
     /// </summary>
     public enum DisposType
     {
-        Immediately,//Ã»ÓĞÒıÓÃºóÁ¢¼´Ğ¶ÔØ£¬Ä¬ÈÏĞ¶ÔØ·½Ê½
-        Restart,//ÖØÆôĞ¶ÔØ
-        ChangeScene//ÇĞ»»³¡¾°Ğ¶ÔØ
+        Immediately,//æ²¡æœ‰å¼•ç”¨åç«‹å³å¸è½½ï¼Œé»˜è®¤å¸è½½æ–¹å¼
+        Restart,//é‡å¯å¸è½½
+        ChangeScene//åˆ‡æ¢åœºæ™¯å¸è½½
     }
     /// <summary>
-    /// Ğ¶ÔØµ¹¼ÆÊ±
+    /// å¸è½½å€’è®¡æ—¶
     /// </summary>
     public int unloadCountdown;
 
@@ -58,7 +58,7 @@ public class ABUnit
         Init();
     }
     /// <summary>
-    /// ³õÊ¼»¯
+    /// åˆå§‹åŒ–
     /// </summary>
     private void Init()
     {
@@ -72,7 +72,7 @@ public class ABUnit
     public void Destroy()
     {
 #if UNITY_EDITOR && RESLOADER
-        Debug.Log("<color=#FF0000>ËØ²Ä¹ÜÀí£ºÏú»Ù</color>" + bundleName);
+        Debug.Log("<color=#FF0000>ç´ æç®¡ç†å™¨é”€æ¯</color>" + bundleName);
 #endif
         if (assetBundle != null)
         {
@@ -84,7 +84,7 @@ public class ABUnit
         dependList = null;
     }
     /// <summary>
-    /// ÒÀÀµÏî¼ÓÔØÍê±Ï
+    /// ä¾èµ–é¡¹åŠ è½½å®Œæ¯•
     /// </summary>
     public void AfterDependLoaded()
     {
@@ -93,7 +93,7 @@ public class ABUnit
 
     public Dictionary<string, int> resPathCnt = new Dictionary<string, int>();
     /// <summary>
-    /// ĞŞ¸ÄÒıÓÃÊıÁ¿
+    /// ä¿®æ”¹å¼•ç”¨æ•°é‡
     /// </summary>
     public void ChangeRefCount(int count, string resPath)
     {

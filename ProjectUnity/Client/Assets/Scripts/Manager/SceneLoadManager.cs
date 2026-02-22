@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SceneLoadManager : ManagerBase
 {
@@ -28,11 +29,20 @@ public class SceneLoadManager : ManagerBase
 		mapCA = ca;
 
 		string sceneName = ca.scene;
+		if (string.IsNullOrEmpty(sceneName) || sceneName == "Shop")
+		{
+			LoadPrefab();
+			return;
+		}
 
 		if (curScene.name != null)
 		{
 
-			if (curScene.name == sceneName) { return; }
+			if (curScene.name == sceneName)
+			{
+				LoadPrefab();
+				return;
+			}
 			if (pfb_obj != null)
 			{
 				GameObject.Destroy(pfb_obj);
@@ -41,15 +51,24 @@ public class SceneLoadManager : ManagerBase
 		}
 		LoadSceneParameters parameters = new LoadSceneParameters(LoadSceneMode.Additive);
 		curScene = SceneManager.LoadScene(sceneName, parameters);
-		LoadPrefab(); // µ÷ÓÃ³É¹¦»Øµ÷
+		LoadPrefab(); // ï¿½ï¿½ï¿½Ã³É¹ï¿½ï¿½Øµï¿½
 	}
 	public void Load(int id)
 	{
 		MapFactory mf = CBus.Instance.GetFactory(FactoryName.MapFactory) as MapFactory;
 		mapCA = mf.GetCA(id) as MapCA;
+		if (mapCA != null && (string.IsNullOrEmpty(mapCA.scene) || mapCA.scene == "Shop"))
+		{
+			LoadPrefab();
+			return;
+		}
 		if (curScene.name != null)
 		{
-			if (curScene.name == mapCA.scene) { return; }
+			if (curScene.name == mapCA.scene)
+			{
+				LoadPrefab();
+				return;
+			}
 			if (pfb_obj != null)
 			{
 				GameObject.Destroy(pfb_obj);
@@ -58,7 +77,7 @@ public class SceneLoadManager : ManagerBase
 		}
 		LoadSceneParameters parameters = new LoadSceneParameters(LoadSceneMode.Additive);
 		curScene = SceneManager.LoadScene(mapCA.scene, parameters);
-		LoadPrefab(); // µ÷ÓÃ³É¹¦»Øµ÷
+		LoadPrefab(); // ï¿½ï¿½ï¿½Ã³É¹ï¿½ï¿½Øµï¿½
 	}
 
 	public void LoadPrefab()
@@ -71,9 +90,32 @@ public class SceneLoadManager : ManagerBase
 		}
 		GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
 		int day = Mathf.Clamp(gm.day - 1, 0, mapCA.prefab.Length - 1);
-        //Ëæ×ÅÌìÊýÔö¼Ó£¬µØÍ¼»á¼ÓÔØ²»Í¬µÄÔ¤ÖÆÌå?
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½Ø²ï¿½Í¬ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½?
         UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
 		um.OpenPanel(mapCA.prefab[day]);
+		GroundPanel groundPanel = um.GetPanel(mapCA.prefab[day]) as GroundPanel;
+		Sprite backgroundSprite = null;
+		if (groundPanel != null)
+		{
+			backgroundSprite = groundPanel.GetBackgroundSprite();
+		}
+		if (backgroundSprite != null)
+		{
+			UpdateLobbyBackground(backgroundSprite);
+		}
+		MainPanel mainPanel = um.GetPanel("MainPanel") as MainPanel;
+		if (mainPanel != null)
+		{
+			mainPanel.RefreshActionButtons();
+		}
+		if (gm != null)
+		{
+			bool tutorialShown = gm.TryShowMapTutorial(mapCA);
+			if (!tutorialShown)
+			{
+				gm.TryTriggerMapClue(mapCA);
+			}
+		}
 		//GameObject obj = Resources.Load<GameObject>(mapCA.prefab[day]);
 		//pfb_obj = GameObject.Instantiate(obj);
 		//pfb_obj.transform.position = Vector3.zero;
@@ -81,18 +123,18 @@ public class SceneLoadManager : ManagerBase
 
 		//if (startPoint == null)
 		//{
-		//	CharacterController.Inst.transform.position = Vector3.zero;
-		//	CharacterController.Inst.transform.eulerAngles = Vector3.zero;
-		//	CharacterController.Inst.agent.destination = Vector3.zero;
+		//	PlayerCharacterController.Inst.transform.position = Vector3.zero;
+		//	PlayerCharacterController.Inst.transform.eulerAngles = Vector3.zero;
+		//	PlayerCharacterController.Inst.agent.destination = Vector3.zero;
 		//}
 		//else {
-		//	CharacterController.Inst.transform.position = startPoint.position;
-		//	CharacterController.Inst.transform.eulerAngles = startPoint.eulerAngles;
-		//	CharacterController.Inst.agent.destination = startPoint.position;
+		//	PlayerCharacterController.Inst.transform.position = startPoint.position;
+		//	PlayerCharacterController.Inst.transform.eulerAngles = startPoint.eulerAngles;
+		//	PlayerCharacterController.Inst.agent.destination = startPoint.position;
 		//}
 
-		//CharacterController.Inst.ani.Play(mapCA.pani);
-		//CharacterController.Inst.moveLock = mapCA.ctrl == 0;
+		//PlayerCharacterController.Inst.ani.Play(mapCA.pani);
+		//PlayerCharacterController.Inst.moveLock = mapCA.ctrl == 0;
 
 	}
 	public void LoadSimplePrefab(string prefab)
@@ -106,5 +148,52 @@ public class SceneLoadManager : ManagerBase
 		GameObject obj = Resources.Load<GameObject>(prefab);
 		pfb_obj = GameObject.Instantiate(obj);
 		pfb_obj.transform.position = Vector3.zero;
+	}
+
+	private void UpdateLobbyBackground(Sprite backgroundSprite)
+	{
+		if (backgroundSprite == null)
+		{
+			Debug.LogWarning("SceneLoadManager: Background sprite is null.");
+			return;
+		}
+		Scene lobbyScene = SceneManager.GetSceneByName("Lobby");
+		if (!lobbyScene.IsValid() || !lobbyScene.isLoaded)
+		{
+			for (int i = 0; i < SceneManager.sceneCount; i++)
+			{
+				Scene scene = SceneManager.GetSceneAt(i);
+				if (!scene.isLoaded) { continue; }
+				if (scene.name == "Lobby" || scene.path.Replace("\\", "/").EndsWith("/Lobby.unity"))
+				{
+					lobbyScene = scene;
+					break;
+				}
+			}
+		}
+		if (!lobbyScene.IsValid() || !lobbyScene.isLoaded)
+		{
+			Debug.LogError("SceneLoadManager: Lobby scene not found or not loaded.");
+			return;
+		}
+		GameObject[] roots = lobbyScene.GetRootGameObjects();
+		bool found = false;
+		for (int i = 0; i < roots.Length; i++)
+		{
+			GameObject root = roots[i];
+			Transform canvasTransform = root.name == "Canvas" ? root.transform : root.transform.Find("Canvas");
+			if (canvasTransform == null) { continue; }
+			Transform backgroundTransform = canvasTransform.Find("Image");
+			if (backgroundTransform == null) { continue; }
+			Image backgroundImage = backgroundTransform.GetComponent<Image>();
+			if (backgroundImage == null) { continue; }
+			backgroundImage.sprite = backgroundSprite;
+			found = true;
+			return;
+		}
+		if (!found)
+		{
+			Debug.LogError("SceneLoadManager: Could not find Canvas/Image in Lobby scene.");
+		}
 	}
 }

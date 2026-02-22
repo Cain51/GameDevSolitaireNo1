@@ -5,20 +5,20 @@ namespace RG.Unity5.SpringBone
 {
 	public class SpringBone : MonoBehaviour
 	{
-		//´Î¤Î¥Ü©`¥ó
+		// å­éª¨éª¼
 		public Transform child;
 
-		//¥Ü©`¥ó¤ÎÏò¤­
+		// éª¨éª¼è½´å‘
 		public Vector3 boneAxis = new Vector3(-1.0f, 0.0f, 0.0f);
 		public float radius = 0.05f;
 
-		//¸÷SpringBone¤ËÔO¶¨¤µ¤ì¤Æ¤¤¤ëstiffnessForce¤ÈdragForce¤òÊ¹ÓÃ¤¹¤ë¤«£¿
+		// æ˜¯å¦ä½¿ç”¨å„éª¨éª¼ç‹¬ç«‹çš„åˆšæ€§ä¸é˜»å°¼å‚æ•°
 		public bool isUseEachBoneForceSettings = false;
 
-		//¥Ğ¥Í¤¬‘ø¤ëÁ¦
+		// åˆšæ€§ç³»æ•°
 		public float stiffnessForce = 0.01f;
 
-		//Á¦¤ÎœpË¥Á¦
+		// é˜»å°¼ç³»æ•°
 		public float dragForce = 0.4f;
 		public Vector3 springForce = new Vector3(0.0f, -0.0001f, 0.0f);
 		public SpringCollider[] colliders;
@@ -70,7 +70,7 @@ namespace RG.Unity5.SpringBone
 		{
 			//Kobayashi
 			org = trs;
-			//»ØÜ¤ò¥ê¥»¥Ã¥È
+			// é‡ç½®æ—‹è½¬
 			trs.localRotation = Quaternion.identity * localRotation;
 
 			float sqrDt = Time.deltaTime * Time.deltaTime;
@@ -83,16 +83,16 @@ namespace RG.Unity5.SpringBone
 
 			force += springForce / sqrDt;
 
-			//Ç°¥Õ¥ì©`¥à¤È‚¤¬Í¬¤¸¤Ë¤Ê¤é¤Ê¤¤¤è¤¦¤Ë
+			// é™åˆ¶éª¨éª¼é•¿åº¦
 			Vector3 temp = currTipPos;
 
 			//verlet
 			currTipPos = (currTipPos - prevTipPos) + currTipPos + (force * sqrDt);
 
-			//éL¤µ¤òÔª¤Ë‘ø¤¹
+			// ä¿æŒé•¿åº¦ä¸å˜
 			currTipPos = ((currTipPos - trs.position).normalized * springLength) + trs.position;
 
-			//ĞnÍ»ÅĞ¶¨
+			// ç¢°æ’æ£€æµ‹
 			for (int i = 0; i < colliders.Length; i++)
 			{
 				if (Vector3.Distance(currTipPos, colliders[i].transform.position) <= (radius + colliders[i].radius))
@@ -107,7 +107,7 @@ namespace RG.Unity5.SpringBone
 
 			prevTipPos = temp;
 
-			//»ØÜ¤òßmÓÃ£»
+			// åº”ç”¨æ—‹è½¬
 			Vector3 aimVector = trs.TransformDirection(boneAxis);
 			Quaternion aimRotation = Quaternion.FromToRotation(aimVector, currTipPos - trs.position);
 			//original

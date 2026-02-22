@@ -8,20 +8,20 @@ public class CameraRaycasterAdder : EditorWindow
 	[MenuItem("Tools/Add Physics Raycaster to Cameras in Active Scene")]
 	public static void AddPhysicsRaycasterToCameras()
 	{
-		// »ñÈ¡µ±Ç°»î¶¯µÄ³¡¾°
+		// è·å–å½“å‰æ´»åŠ¨çš„åœºæ™¯
 		var activeScene = EditorSceneManager.GetActiveScene();
 
-		// ±éÀú³¡¾°ÖĞµÄËùÓĞ¸ùGameObject
+		// éå†åœºæ™¯ä¸­çš„æ‰€æœ‰æ ¹GameObject
 		foreach (GameObject obj in activeScene.GetRootGameObjects())
 		{
-			// ²éÕÒCamera×é¼ş
+			// æŸ¥æ‰¾Cameraç»„ä»¶
 			Camera camera = obj.GetComponent<Camera>();
 			if (camera != null)
 			{
-				// ¼ì²éÊÇ·ñÒÑ´æÔÚPhysicsRaycaster
+				// æ£€æŸ¥æ˜¯å¦å·²å­˜åœ¨PhysicsRaycaster
 				if (camera.GetComponent<PhysicsRaycaster>() == null)
 				{
-					// Ìí¼ÓPhysicsRaycaster×é¼ş
+					// æ·»åŠ PhysicsRaycasterç»„ä»¶
 					camera.gameObject.AddComponent<PhysicsRaycaster>();
 					Debug.Log($"Added PhysicsRaycaster to Camera: {camera.name} in scene: {activeScene.name}");
 				}

@@ -38,7 +38,7 @@ public class DialogManager : ManagerBase
 		}
 		if (gm.CheckTime(1) == false)
 		{
-			TipManager.Tip("时间不足1小时");
+			TipManager.Tip("鏃堕棿涓嶈冻1灏忔椂");
 			return;
 		}
 		DialogPanel dp = uiManager.OpenFloat("DialogPanel") as DialogPanel;

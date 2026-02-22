@@ -13,20 +13,20 @@ public class DataCenterCsvEditor : EditorWindow
     private bool isDirty = false;
     private Vector2 mapScrollPos;
 
-    [MenuItem("Tools/DataCenter CSV±à¼­Æ÷")]
+    [MenuItem("Tools/DataCenter CSVç¼–è¾‘å™¨")]
     public static void ShowWindow()
     {
-        GetWindow<DataCenterCsvEditor>("CSV±à¼­Æ÷");
+        GetWindow<DataCenterCsvEditor>("CSVç¼–è¾‘å™¨");
     }
 
     void OnGUI()
     {
-        GUILayout.Label("CSVÎÄ¼şÂ·¾¶", EditorStyles.boldLabel);
+        GUILayout.Label("CSVæ–‡ä»¶è·¯å¾„", EditorStyles.boldLabel);
         csvPath = EditorGUILayout.TextField(csvPath);
 
-        if (GUILayout.Button("Ñ¡ÔñCSVÎÄ¼ş"))
+        if (GUILayout.Button("é€‰æ‹©CSVæ–‡ä»¶"))
         {
-            string path = EditorUtility.OpenFilePanel("Ñ¡ÔñCSV", Application.streamingAssetsPath + DataCenter.dataPath, "csv");
+            string path = EditorUtility.OpenFilePanel("é€‰æ‹©CSV", Application.streamingAssetsPath + DataCenter.dataPath, "csv");
             if (!string.IsNullOrEmpty(path))
             {
                 csvPath = path;
@@ -37,15 +37,15 @@ public class DataCenterCsvEditor : EditorWindow
         if (csvTable != null)
         {
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
-            EditorGUILayout.LabelField("CSVÄÚÈİ", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("CSVå†…å®¹", EditorStyles.boldLabel);
 
-            // ÏÔÊ¾±íÍ·
+            // æ˜¾ç¤ºè¡¨å¤´
             EditorGUILayout.BeginHorizontal();
             foreach (DataColumn col in csvTable.Columns)
                 EditorGUILayout.LabelField(col.ColumnName, GUILayout.Width(100));
             EditorGUILayout.EndHorizontal();
 
-            // ÏÔÊ¾Êı¾İĞĞ
+            // æ˜¾ç¤ºæ•°æ®è¡Œ
             for (int i = 0; i < csvTable.Rows.Count; i++)
             {
                 EditorGUILayout.BeginHorizontal();
@@ -63,17 +63,17 @@ public class DataCenterCsvEditor : EditorWindow
             }
             EditorGUILayout.EndScrollView();
 
-            if (GUILayout.Button("±£´æ²¢¸²¸ÇCSVÎÄ¼ş") && isDirty)
+            if (GUILayout.Button("ä¿å­˜å¹¶è¦†ç›–CSVæ–‡ä»¶") && isDirty)
             {
                 SaveCsv();
                 isDirty = false;
-                EditorUtility.DisplayDialog("±£´æ³É¹¦", "CSVÎÄ¼şÒÑ¸²¸Ç±£´æ", "È·¶¨");
+                EditorUtility.DisplayDialog("ä¿å­˜æˆåŠŸ", "CSVæ–‡ä»¶å·²è¦†ç›–ä¿å­˜", "ç¡®å®š");
             }
         }
 
-        // ¼¯³ÉCBusµØÍ¼Êı¾İµ÷ÊÔ
+        // é›†æˆCBusåœ°å›¾æ•°æ®è°ƒè¯•
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("µØÍ¼Êı¾İµ÷ÊÔ£¨CBus£©", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("åœ°å›¾æ•°æ®è°ƒè¯•ï¼ˆCBusï¼‰", EditorStyles.boldLabel);
         if (Application.isPlaying)
         {
             var mapFactory = CBus.Instance.GetFactory("MapFactory") as MapFactory;
@@ -83,7 +83,7 @@ public class DataCenterCsvEditor : EditorWindow
                 if (allMaps != null && allMaps.Length > 0)
                 {
                     mapScrollPos = EditorGUILayout.BeginScrollView(mapScrollPos, GUILayout.Height(200));
-                    // ±íÍ·
+                    // è¡¨å¤´
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField("id", GUILayout.Width(60));
                     EditorGUILayout.LabelField("name", GUILayout.Width(120));
@@ -92,7 +92,7 @@ public class DataCenterCsvEditor : EditorWindow
                     EditorGUILayout.LabelField("opentime", GUILayout.Width(120));
                     EditorGUILayout.EndHorizontal();
 
-                    // Êı¾İĞĞ
+                    // æ•°æ®è¡Œ
                     foreach (var ca in allMaps)
                     {
                         var map = ca as MapCA;
@@ -109,17 +109,17 @@ public class DataCenterCsvEditor : EditorWindow
                 }
                 else
                 {
-                    EditorGUILayout.LabelField("Î´ÕÒµ½ÈÎºÎµØÍ¼Êı¾İ¡£");
+                    EditorGUILayout.LabelField("æœªæ‰¾åˆ°ä»»ä½•åœ°å›¾æ•°æ®ã€‚");
                 }
             }
             else
             {
-                EditorGUILayout.LabelField("MapFactoryÎ´³õÊ¼»¯»òÎ´×¢²á¡£");
+                EditorGUILayout.LabelField("MapFactoryæœªåˆå§‹åŒ–æˆ–æœªæ³¨å†Œã€‚");
             }
         }
         else
         {
-            EditorGUILayout.HelpBox("µØÍ¼Êı¾İµ÷ÊÔĞèÔÚÓÎÏ·ÔËĞĞÊ±Ê¹ÓÃ¡£", MessageType.Info);
+            EditorGUILayout.HelpBox("åœ°å›¾æ•°æ®è°ƒè¯•éœ€åœ¨æ¸¸æˆè¿è¡Œæ—¶ä½¿ç”¨ã€‚", MessageType.Info);
         }
     }
 
@@ -132,14 +132,14 @@ public class DataCenterCsvEditor : EditorWindow
     void SaveCsv()
     {
         StringBuilder sb = new StringBuilder();
-        // Ğ´±íÍ·
+        // å†™è¡¨å¤´
         for (int i = 0; i < csvTable.Columns.Count; i++)
         {
             sb.Append(csvTable.Columns[i].ColumnName);
             if (i < csvTable.Columns.Count - 1) sb.Append(",");
         }
         sb.AppendLine();
-        // Ğ´Êı¾İ
+        // å†™æ•°æ®
         for (int i = 0; i < csvTable.Rows.Count; i++)
         {
             for (int j = 0; j < csvTable.Columns.Count; j++)

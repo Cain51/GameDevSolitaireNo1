@@ -26,6 +26,10 @@ namespace RG.Zeluda
 			ca.name = Convert.ToString(row["name"]);
 			ca.cost = Convert.ToInt32(row["cost"]);
 			ca.respath = Convert.ToString(row["resPath"]);
+			if (id == 1100003 || id == 1100005 || id == 1100006)
+			{
+				ca.sptype = AssetType.Food;
+			}
 			_caDic[id] = ca;
 		}
 	}

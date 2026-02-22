@@ -54,16 +54,27 @@ public class ResLoaderEditor : IResLoader
                 finalPath = "Assets\\" + finalPath + ".txt";
                 break;
             default:
-                Debug.LogError("Î´ÖªËØ²ÄÀàÐÍ£º" + type.Name);
+                Debug.LogError("Î´Öªï¿½Ø²ï¿½ï¿½ï¿½ï¿½Í£ï¿½" + type.Name);
                 finalPath = "Assets\\" + finalPath;
                 break;
         }
 
         T t = AssetDatabase.LoadAssetAtPath<T>(finalPath);
+        if (t == null && !string.IsNullOrEmpty(path))
+        {
+            switch (type.Name)
+            {
+                case "Sprite":
+                case "Texture2D":
+                    string resourcesPath = "Assets\\Resources\\" + path + ".png";
+                    t = AssetDatabase.LoadAssetAtPath<T>(resourcesPath);
+                    break;
+            }
+        }
 
         if (t == null && !string.IsNullOrEmpty(path))
         {
-            Debug.LogError("»ñÈ¡ËØ²ÄÊ§°Ü£º" + path);
+            Debug.LogError("ï¿½ï¿½È¡ï¿½Ø²ï¿½Ê§ï¿½Ü£ï¿½" + path);
         }
 
         return t;
@@ -81,16 +92,16 @@ public class ResLoaderEditor : IResLoader
 
     }
     /// <summary>
-    /// Ð¶ÔØÖ¸¶¨ËØ²Ä£¬ÒýÓÃ¼ÆÊýÆ÷-1
+    /// Ð¶ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ø²Ä£ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½-1
     /// </summary>
     public void UnloadRes(string resPath)
     {
 
     }
     /// <summary>
-    /// Ð¶ÔØÖ¸¶¨Ð¶ÔØÀàÐÍµÄËØ²Ä£¬
-    /// Ö±½ÓÐ¶ÔØ
-    /// Ö»Ð¶ÔØLoadedÁÐ±íÖÐµÄËØ²Ä
+    /// Ð¶ï¿½ï¿½Ö¸ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½ï¿½Ø²Ä£ï¿½
+    /// Ö±ï¿½ï¿½Ð¶ï¿½ï¿½
+    /// Ö»Ð¶ï¿½ï¿½Loadedï¿½Ð±ï¿½ï¿½Ðµï¿½ï¿½Ø²ï¿½
     /// </summary>
     /// <param name="disposType"></param>
     public void UnloadRes(ABUnit.DisposType disposType)

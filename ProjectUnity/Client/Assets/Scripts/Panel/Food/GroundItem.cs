@@ -23,4 +23,16 @@ public class GroundItem : MonoBehaviour
 		}
 		g.view.img_seed.gameObject.SetActive(g.id != 0);
 	}
+	public void RefreshChicken(Sprite sprite, bool isFull)
+	{
+		if (img_icon != null)
+		{
+			img_icon.sprite = sprite;
+			img_icon.color = isFull ? new Color(1f, 0.75f, 0.75f, 1f) : Color.white;
+		}
+		if (img_seed != null)
+		{
+			img_seed.gameObject.SetActive(false);
+		}
+	}
 }

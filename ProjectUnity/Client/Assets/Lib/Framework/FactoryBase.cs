@@ -9,39 +9,39 @@ public class FactoryBase
 {
 	public virtual int GetFactoryCode() { return 0; }
 	/// <summary>
-	/// <id,CA>,µÚÒ»´ÎÊ¹ÓÃÊ±Ìí¼Ó
+	/// <id,CA>,ç¬¬ä¸€æ¬¡ä½¿ç”¨æ—¶æ·»åŠ 
 	/// </summary>
 	protected Dictionary<int, CABase> _caDic;
 	/// <summary>
-	/// ÄÚ´æ³Ø<id,²úÆ·>
+	/// å†…å­˜æ± <id,äº§å“>
 	/// </summary>
 	private Dictionary<int, LinkedList<Product>> _memoryPool;
 	/// <summary>
-	/// ÄÚ´æ³Øµ±Ç°ÈİÁ¿
+	/// å†…å­˜æ± å½“å‰å®¹é‡
 	/// </summary>
 	private int _memoryPoolCount = 0;
 	/// <summary>
-	/// ÄÚ´æ³Øµ¥ÀàĞÍÈİÁ¿ÉÏÏŞ
+	/// å†…å­˜æ± å•ç±»å‹å®¹é‡ä¸Šé™
 	/// </summary>
 	protected int _memoryPoolCapacityEach = 0;
 	/// <summary>
-	/// ÄÚ´æ³Ø×ÜÈİÁ¿ÉÏÏŞ
+	/// å†…å­˜æ± æ€»å®¹é‡ä¸Šé™
 	/// </summary>
 	protected int _memoryPoolCapacityTotal = 0;
 	/// <summary>
-	/// µ±Ç°ÉúĞ§²úÆ·ÁĞ±í
+	/// å½“å‰ç”Ÿæ•ˆäº§å“åˆ—è¡¨
 	/// </summary>
 	private List<Product> _productList;
 	/// <summary>
-	/// ¹¤³§ÇåÀí±ê¼Ç
+	/// å·¥å‚æ¸…ç†æ ‡è®°
 	/// </summary>
 	private bool _isClear;
 	/// <summary>
-	/// ÇĞ»»³¡¾°µÄÊ±ºòĞèÒª½øĞĞµÄ²Ù×÷
+	/// åˆ‡æ¢åœºæ™¯çš„æ—¶å€™éœ€è¦è¿›è¡Œçš„æ“ä½œ
 	/// </summary>
 	public OperationType changeSceneOperation;
 	/// <summary>
-	/// CBUSÒıÓÃ
+	/// CBUSå¼•ç”¨
 	/// </summary>
 	public CBus _cbus;
 	public FactoryBase()
@@ -63,9 +63,9 @@ public class FactoryBase
 		_isClear = false;
 	}
 	/// <summary>
-	/// Éú²ú²úÆ·
+	/// ç”Ÿäº§äº§å“
 	/// </summary>
-	/// <param name="id">²úÆ·ID</param>
+	/// <param name="id">äº§å“ID</param>
 	/// <returns></returns>
 	public virtual Product Produce(int id)
 	{
@@ -76,7 +76,7 @@ public class FactoryBase
 			rt = CreateClass(id);
 		}
 		OEF.Instance.debuggingObject = rt;
-		RegProduct(rt);//×¢²á¹ÜÀíµ±Ç°ÉúĞ§²úÆ·
+		RegProduct(rt);//æ³¨å†Œç®¡ç†å½“å‰ç”Ÿæ•ˆäº§å“
 
 		rt.produceFrame = CBus.Instance.currentFrame;
 		rt.produceIndex = CBus.Instance.produceIndex;
@@ -86,16 +86,16 @@ public class FactoryBase
 		return rt;
 	}
 	/// <summary>
-	/// ´´½¨¶ÔÏóÊµÀı
+	/// åˆ›å»ºå¯¹è±¡å®ä¾‹
 	/// </summary>
-	/// <param name="id">¶ÔÏóµÄid</param>
+	/// <param name="id">å¯¹è±¡çš„id</param>
 	/// <returns></returns>
 	protected virtual Product CreateClass(int id)
 	{
 		return null;
 	}
 	/// <summary>
-	/// »ñÈ¡Ö¸¶¨IDµÄCA
+	/// è·å–æŒ‡å®šIDçš„CA
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
@@ -104,12 +104,12 @@ public class FactoryBase
 		CABase rt = null;
 		if (!_caDic.ContainsKey(id) || isRefresh)
 		{
-			//´ÓÎ´Ê¹ÓÃ¹ı£¬»ñÈ¡×é×°ĞÂµÄCA
+			//ä»æœªä½¿ç”¨è¿‡ï¼Œè·å–ç»„è£…æ–°çš„CA
 			CreateCA(id);
 		}
 		if (_caDic.ContainsKey(id))
 		{
-			//¿ÉÄÜ¹¤³§²»°üº¬¶ÔÓ¦Ä£ĞÍµ¼ÖÂ·µ»ØÎª¿Õ
+			//å¯èƒ½å·¥å‚ä¸åŒ…å«å¯¹åº”æ¨¡å‹å¯¼è‡´è¿”å›ä¸ºç©º
 			rt = _caDic[id];
 		}
 		return rt;
@@ -121,9 +121,9 @@ public class FactoryBase
 		_caDic[id] = ca;
 	}
 	/// <summary>
-	/// ´ÓÄÚ´æ³ØÖĞÖØÓÃ
+	/// ä»å†…å­˜æ± ä¸­é‡ç”¨
 	/// </summary>
-	/// <param name="id">ÖØÓÃ¶ÔÏóid</param>
+	/// <param name="id">é‡ç”¨å¯¹è±¡id</param>
 	/// <returns></returns>
 	protected Product Reuse(int id)
 	{
@@ -133,7 +133,7 @@ public class FactoryBase
 			LinkedListNode<Product> node = _memoryPool[id].First;
 			if (node != null)
 			{
-				//»ØÊÕÖ®ºóÏÂÒ»Ö¡²Å¿ÉÒÔÊ¹ÓÃ
+				//å›æ”¶ä¹‹åä¸‹ä¸€å¸§æ‰å¯ä»¥ä½¿ç”¨
 				if (node.Value.lastRecycleFrame < _cbus.currentFrame)
 				{
 					rt = node.Value;
@@ -147,7 +147,7 @@ public class FactoryBase
 
 	}
 	/// <summary>
-	/// Éú³ÉËùÓĞµÄCA
+	/// ç”Ÿæˆæ‰€æœ‰çš„CA
 	/// </summary>
 	public virtual void PreLoadAllCA()
 	{
@@ -174,35 +174,35 @@ public class FactoryBase
 		return rel;
 	}
 	/// <summary>
-	/// ÇåÀíËùÓĞµ±Ç°ÉúĞ§µÄ²úÆ·
+	/// æ¸…ç†æ‰€æœ‰å½“å‰ç”Ÿæ•ˆçš„äº§å“
 	/// </summary>
 	private void ClearProducts()
 	{
 		int length = _productList.Count;
 		while (--length > -1)
 		{
-			_productList[length].Recycle();//×¢ÏúÔÚrecycleÖĞ×ö
+			_productList[length].Recycle();//æ³¨é”€åœ¨recycleä¸­åš
 		}
 	}
-	//×¢²áµ±Ç°ÉúĞ§²úÆ·
+	//æ³¨å†Œå½“å‰ç”Ÿæ•ˆäº§å“
 	private void RegProduct(Product product)
 	{
 		_productList.Add(product);
 	}
-	//×¢Ïúµ±Ç°ÉúĞ§²úÆ·
+	//æ³¨é”€å½“å‰ç”Ÿæ•ˆäº§å“
 	private void UnregProduct(Product product)
 	{
 		_productList.Remove(product);
 	}
 	/// <summary>
-	/// ÇåÀíÊÍ·Å
+	/// æ¸…ç†é‡Šæ”¾
 	/// </summary>
 	public virtual void Clear()
 	{
 		_isClear = true;
-		//µ±Ç°²úÆ·ÇåÀí
+		//å½“å‰äº§å“æ¸…ç†
 		ClearProducts();
-		//ÄÚ´æ³ØÇåÀí
+		//å†…å­˜æ± æ¸…ç†
 		foreach (LinkedList<Product> link in _memoryPool.Values)
 		{
 			link.Clear();
@@ -217,7 +217,7 @@ public class FactoryBase
 		_memoryPoolCount = 0;
 	}
 	/// <summary>
-	/// Ïú»Ù
+	/// é”€æ¯
 	/// </summary>
 	public virtual void Destroy()
 	{
@@ -226,21 +226,21 @@ public class FactoryBase
 		_memoryPool = null;
 	}
 	/// <summary>
-	/// ÄÚ´æ³Ø
+	/// å†…å­˜æ± 
 	/// </summary>
-	/// <param name="product">±£´æµÄ²úÆ·¶ÔÏó</param>
-	/// <param name="recycle">ÄÚ´æ³ØÁ´±í½ÚµãµÄRecycle·½·¨£¬Ò»°ãÊ¹ÓÃ²úÆ·µÄDestroy·½·¨</param>
+	/// <param name="product">ä¿å­˜çš„äº§å“å¯¹è±¡</param>
+	/// <param name="recycle">å†…å­˜æ± é“¾è¡¨èŠ‚ç‚¹çš„Recycleæ–¹æ³•ï¼Œä¸€èˆ¬ä½¿ç”¨äº§å“çš„Destroyæ–¹æ³•</param>
 	public void Recycle(Product product, Action recycle = null)
 	{
-		//×¢Ïúµ±Ç°ÉúĞ§²úÆ·
+		//æ³¨é”€å½“å‰ç”Ÿæ•ˆäº§å“
 		UnregProduct(product);
-		//¹¤³§±»Ïú»Ù£¬Ö±½ÓÏú»Ù²úÆ·
+		//å·¥å‚è¢«é”€æ¯ï¼Œç›´æ¥é”€æ¯äº§å“
 		if (_isClear)
 		{
 			product.Destroy();
 			return;
 		}
-		//²»ĞèÒªÄÚ´æ³Ø
+		//ä¸éœ€è¦å†…å­˜æ± 
 		if (_memoryPoolCapacityTotal < 1)
 		{
 			product.Destroy();
@@ -251,20 +251,20 @@ public class FactoryBase
 		{
 			_memoryPool[id] = new LinkedList<Product>();
 		}
-		//Õâ¸öÀàĞÍµÄÒÑ¾­´ïµ½µ¥ÀàĞÍÊıÁ¿ÉÏÏŞ
+		//è¿™ä¸ªç±»å‹çš„å·²ç»è¾¾åˆ°å•ç±»å‹æ•°é‡ä¸Šé™
 		if (_memoryPool[id].Count >= _memoryPoolCapacityEach)
 		{
 			product.Destroy();
 			return;
 		}
-		//³¬³ö´æ´¢ÉÏÏŞÃ¿¸öÀàĞÍ-1
+		//è¶…å‡ºå­˜å‚¨ä¸Šé™æ¯ä¸ªç±»å‹-1
 		if (_memoryPoolCount > _memoryPoolCapacityTotal)
 		{
 			foreach (LinkedList<Product> link in _memoryPool.Values)
 			{
 				if (link.Count > 0)
 				{
-					//È¥³ı×îºóÒ»¸ö£¬×îºóÒ»¸ö×îÓĞ¿ÉÄÜÊÇµ±Ç°Ö¡»ØÊÕµÄ£¬Òªµ½ÏÂÒ»Ö¡²Å¿ÉÒÔÓÃ
+					//å»é™¤æœ€åä¸€ä¸ªï¼Œæœ€åä¸€ä¸ªæœ€æœ‰å¯èƒ½æ˜¯å½“å‰å¸§å›æ”¶çš„ï¼Œè¦åˆ°ä¸‹ä¸€å¸§æ‰å¯ä»¥ç”¨
 					link.Last.Value.Destroy();
 					link.RemoveLast();
 					--_memoryPoolCount;

@@ -57,16 +57,11 @@ public class UIManager : ManagerBase
 	}
 	public PanelBase OpenPanel(string key, Action closeAction = null)
 	{
-		if (panelDic.ContainsKey(key))
-		{
-			PanelBase p = panelDic[key];
-			p.Open();
-			return p;
-		}
-		PanelBase panel = CreatePanel(key, closeAction);
-		panel.gameObject.SetActive(true);
-		panel.Open();
-		return panel;
+		return OpenPanelInternal(key, closeAction, false);
+	}
+	public PanelBase OpenPanelIgnoreToggle(string key, Action closeAction = null)
+	{
+		return OpenPanelInternal(key, closeAction, true);
 	}
 
 	public PanelBase CreatePanel(string key, Action closeAction = null)
@@ -83,7 +78,7 @@ public class UIManager : ManagerBase
 
 		go_panel.transform.localPosition = Vector3.zero;
 		go_panel.transform.localRotation = Quaternion.identity;
-		go_panel.transform.SetSiblingIndex(go_panel.transform.childCount);
+		PlacePanelSibling(go_panel.transform, key);
 		go_panel.gameObject.SetActive(false);
 		panelDic.Add(key, panel);
 		return panel;
@@ -104,7 +99,7 @@ public class UIManager : ManagerBase
 		PanelBase panel = go_panel.GetComponent<PanelBase>();
 		panel.Init();
 		panel.OnCloseCallback = closeAction;
-		go_panel.transform.parent = tran_float;
+		go_panel.transform.SetParent(tran_float, false);
 		go_panel.transform.localPosition = Vector3.zero;
 		floatDic.Add(key, panel);
 		return panel;
@@ -127,5 +122,54 @@ public class UIManager : ManagerBase
 			GameObject.Destroy(p.gameObject);
 		}
 		panelDic.Clear();
+	}
+
+	public void HidePanel(string key)
+	{
+		if (panelDic.ContainsKey(key) == false) { return; }
+		PanelBase panel = panelDic[key];
+		panel.Close();
+		panel.gameObject.SetActive(false);
+	}
+
+	private void PlacePanelSibling(Transform panelTransform, string key)
+	{
+		int lastIndex = tran_canvas.childCount - 1;
+		Transform background = tran_canvas.Find("Image");
+		if (key == "MainPanel" && background != null)
+		{
+			int targetIndex = background.GetSiblingIndex() + 1;
+			if (targetIndex > lastIndex) { targetIndex = lastIndex; }
+			panelTransform.SetSiblingIndex(targetIndex);
+			return;
+		}
+		panelTransform.SetSiblingIndex(lastIndex);
+	}
+
+	private PanelBase OpenPanelInternal(string key, Action closeAction, bool ignoreToggle)
+	{
+		if (ignoreToggle == false)
+		{
+			if (key == "MapPanel")
+			{
+				HidePanel("GroundPanel");
+			}
+			else if (key == "GroundPanel")
+			{
+				HidePanel("MapPanel");
+			}
+		}
+		if (panelDic.ContainsKey(key))
+		{
+			PanelBase p = panelDic[key];
+			p.gameObject.SetActive(true);
+			p.Open();
+			PlacePanelSibling(p.transform, key);
+			return p;
+		}
+		PanelBase panel = CreatePanel(key, closeAction);
+		panel.gameObject.SetActive(true);
+		panel.Open();
+		return panel;
 	}
 }

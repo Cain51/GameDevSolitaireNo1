@@ -550,6 +550,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pfb_item: {fileID: 6186108606671610841}
   tran_content: {fileID: 4047319005782854903}
+  img_bg: {fileID: 4047319005594996660}
+  mapBackgrounds:
+  - {fileID: 21300000, guid: f0d5555a356dc644d9a19a73973c9fcd, type: 3}
+  - {fileID: 21300000, guid: 31ded3bb9363cd641940129c53bfe30f, type: 3}
+  - {fileID: 21300000, guid: 650598aee62d6994a9872adf47c8e198, type: 3}
+  - {fileID: 21300000, guid: 9e457d70436f0bf4b9de4e16c70148a0, type: 3}
+  - {fileID: 21300000, guid: 04dc4ebf390cc414793e8e21fa2ba2d4, type: 3}
+  - {fileID: 21300000, guid: 73c4827b6fff5f947b6c591e9533185d, type: 3}
+  - {fileID: 21300000, guid: 4c6811d4572d3e347b481b51ec2b34b3, type: 3}
+  - {fileID: 21300000, guid: d67f33483bc5b144d917b1d978f9fc03, type: 3}
+  - {fileID: 21300000, guid: a57d5c89a941b5b489bd906a11002cbf, type: 3}
 --- !u!1 &4537555791519610879
 GameObject:
   m_ObjectHideFlags: 0

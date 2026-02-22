@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class CharacterController : MonoBehaviour
+public class PlayerCharacterController : MonoBehaviour
 {
-	public static CharacterController Inst;
-	public float moveSpeed = 3.5f; // ÒÆ¶¯ËÙ¶È
+	public static PlayerCharacterController Inst;
+	public float moveSpeed = 3.5f; // ç§»åŠ¨é€Ÿåº¦
 	public NavMeshAgent agent;
 	public Animator ani;
 	public bool moveLock = false;
@@ -29,9 +29,9 @@ public class CharacterController : MonoBehaviour
 
 	void MoveWithWASD()
 	{
-		// »ñÈ¡ÊäÈë
-		float horizontal = Input.GetAxis("Horizontal"); // AºÍD¼ü
-		float vertical = Input.GetAxis("Vertical"); // WºÍS¼ü
+		// è·å–è¾“å…¥
+		float horizontal = Input.GetAxis("Horizontal"); // Aé”®Dé”®
+		float vertical = Input.GetAxis("Vertical"); // Wé”®Sé”®
 		if (horizontal != 0 || vertical != 0)
 		{
 			ani.Play("move");
@@ -39,10 +39,10 @@ public class CharacterController : MonoBehaviour
 
 			if (direction.magnitude >= 0.1f)
 			{
-				// ¼ÆËãÄ¿±êÎ»ÖÃ
+				// è®¡ç®—ç›®æ ‡ä½ç½®
 				Vector3 targetPosition = transform.position + direction * moveSpeed * Time.deltaTime;
 
-				// ÉèÖÃ NavMeshAgent µÄÄ¿±êÎ»ÖÃ
+				// è®¾ç½® NavMeshAgent çš„ç›®æ ‡ä½ç½®
 				agent.SetDestination(targetPosition);
 			}
 		}

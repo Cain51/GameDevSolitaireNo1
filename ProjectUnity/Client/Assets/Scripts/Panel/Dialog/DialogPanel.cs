@@ -10,17 +10,18 @@ public class DialogPanel : PanelBase
 	public Text lbl_name;
 	public GameObject go_name;
 	public Text lbl_content;
-	public GameObject buttonPrefab;  // °´Å¥Ô¤ÖÆ¼ş
-	public Transform buttonContainer; // ´æ·Å°´Å¥µÄÈİÆ÷
-	public DialogGraph dialogGraph;  // Ö¸ÏòÔÚXNode±à¼­Æ÷ÖĞ´´½¨µÄDialogGraph
+	public GameObject buttonPrefab;  // æŒ‰é’®é¢„åˆ¶ä»¶
+	public Transform buttonContainer; // å­˜æ”¾æŒ‰é’®çš„å®¹å™¨
+	public DialogGraph dialogGraph;  // æŒ‡å‘åœ¨XNodeç¼–è¾‘å™¨ä¸­åˆ›å»ºçš„DialogGraph
 	private DialogNode currentNode;
-	private int currentTextIndex = 0;  // µ±Ç°Õ¹Ê¾µÄ¶Ô»°¶ÎÂäË÷Òı
-	public float typingSpeed = 0.05f;  // ´ò×Ö»úĞ§¹ûÃ¿¸ö×Ö·ûµÄÏÔÊ¾¼ä¸ô
-	private Coroutine typingCoroutine; // ±£´æ´ò×Ö»úĞ§¹ûµÄĞ­³Ì
+	private int currentTextIndex = 0;  // å½“å‰å±•ç¤ºçš„å¯¹è¯æ®µè½ç´¢å¼•
+	public float typingSpeed = 0.05f;  // æ‰“å­—æœºæ•ˆæœæ¯ä¸ªå­—ç¬¦çš„æ˜¾ç¤ºé—´éš”
+	private Coroutine typingCoroutine; // ä¿å­˜æ‰“å­—æœºæ•ˆæœçš„åç¨‹
 	private string graphName;
 	private string m_sentence;
 	public SpeakPronounce speak;
 	private bool isSimple = false;
+	private int simpleSpeakerId = 0;
 	public Action OnCallback;
 	public void StartDialog(DialogNode startNode)
 	{
@@ -29,7 +30,7 @@ public class DialogPanel : PanelBase
 		currentTextIndex = 0;
 		isSimple = false;
 		DisplayCurrentNode();
-		AudioManager.Inst.Play("BGM/¶Ô»°¿òÕ¹¿ª");
+		AudioManager.Inst.Play("BGM/å¯¹è¯æ¡†å±•å¼€");
 	}
 	public void StartDialog(string gn)
 	{
@@ -41,28 +42,29 @@ public class DialogPanel : PanelBase
 		currentTextIndex = 0;
 		isSimple = false;
 		DisplayCurrentNode();
-		AudioManager.Inst.Play("BGM/¶Ô»°¿òÕ¹¿ª");
+		AudioManager.Inst.Play("BGM/å¯¹è¯æ¡†å±•å¼€");
 	}
-	public void ShowSimple(string name, string sentence)
+	public void ShowSimple(string name, string sentence, int speakerId = 0)
 	{
 		lbl_name.text = name;
 		isSimple = true;
+		simpleSpeakerId = speakerId;
         m_sentence = sentence;
         typingCoroutine = StartCoroutine(TypeSentence(sentence));
-		AudioManager.Inst.Play("BGM/¶Ô»°¿òÕ¹¿ª");
+		AudioManager.Inst.Play("BGM/å¯¹è¯æ¡†å±•å¼€");
 		speak.ConvertAndSpeak(sentence);
 	}
 	private void DisplayCurrentNode()
 	{
 		if (currentNode == null) return;
 
-		// Çå¿ÕÏÖÓĞ°´Å¥
+		// æ¸…ç©ºç°æœ‰æŒ‰é’®
 		foreach (Transform child in buttonContainer)
 		{
 			Destroy(child.gameObject);
 		}
 
-		// Í£Ö¹µ±Ç°µÄ´ò×Ö»úĞ­³Ì£¨Èç¹ûÓĞµÄ»°£©
+		// åœæ­¢å½“å‰çš„æ‰“å­—æœºåç¨‹ï¼ˆå¦‚æœæœ‰çš„è¯ï¼‰
 		if (typingCoroutine != null)
 		{
 			StopCoroutine(typingCoroutine);
@@ -70,13 +72,13 @@ public class DialogPanel : PanelBase
         }
 
      
-        // Öğ¶ÎÕ¹Ê¾¶Ô»°
+        // é€æ®µå±•ç¤ºå¯¹è¯
         if (currentTextIndex < currentNode.dialogText.Count)
 		{
 			LoadReward();
 			string dialog = currentNode.dialogText[currentTextIndex];
 			speak.ConvertAndSpeak(dialog);
-			// Æô¶¯ĞÂµÄ´ò×Ö»úĞ§¹ûĞ­³Ì
+			// å¯åŠ¨æ–°çš„æ‰“å­—æœºæ•ˆæœåç¨‹
 			typingCoroutine = StartCoroutine(TypeSentence(dialog));
 
 		}
@@ -94,7 +96,7 @@ public class DialogPanel : PanelBase
 			else
 			{
                 LoadScene();
-                // ´´½¨Ñ¡Ïî°´Å¥
+                // åˆ›å»ºé€‰é¡¹æŒ‰é’®
                 for (int i = 0; i < currentNode.choices.Count; i++)
 				{
 					CreateChoiceButton(currentNode.choices[i].choiceText, i);
@@ -104,13 +106,14 @@ public class DialogPanel : PanelBase
 		}
 	}
 
-	// ´ò×Ö»úĞ§¹ûµÄĞ­³Ì
+	// æ‰“å­—æœºæ•ˆæœçš„åç¨‹
 	private IEnumerator TypeSentence(string sentence)
 	{
-		if (currentNode.speakerid != 0)
+		int speakerId = isSimple ? simpleSpeakerId : currentNode.speakerid;
+		if (speakerId != 0)
 		{
 			CharacterFactory cf = CBus.Instance.GetFactory(FactoryName.CharacterFactory) as CharacterFactory;
-			CharacterCA cca = cf.GetCA(currentNode.speakerid) as CharacterCA;
+			CharacterCA cca = cf.GetCA(speakerId) as CharacterCA;
 			foreach (Transform c in tran_node)
 			{
 				Destroy(c.gameObject);
@@ -137,13 +140,13 @@ public class DialogPanel : PanelBase
 			}
 		}
 
-		lbl_content.text = "";  // ÏÈÇå¿ÕÎÄ±¾¿ò
+		lbl_content.text = "";  // å…ˆæ¸…ç©ºæ–‡æœ¬æ¡†
 		foreach (char letter in sentence.ToCharArray())
 		{
-			lbl_content.text += letter;  // Öğ×ÖÏÔÊ¾
-			yield return new WaitForSeconds(typingSpeed);  // Ã¿¸ö×Ö·ûµÄÏÔÊ¾Ê±¼ä¼ä¸ô
+			lbl_content.text += letter;  // é€å­—æ˜¾ç¤º
+			yield return new WaitForSeconds(typingSpeed);  // æ¯ä¸ªå­—ç¬¦çš„æ˜¾ç¤ºæ—¶é—´é—´éš”
 		}
-		typingCoroutine = null; // Íê³É´ò×ÖĞ§¹ûºó½«Ğ­³ÌÒıÓÃÖÃÎª¿Õ
+		typingCoroutine = null; // å®Œæˆæ‰“å­—æ•ˆæœåå°†åç¨‹å¼•ç”¨ç½®ä¸ºç©º
 
 
     }
@@ -160,61 +163,100 @@ public class DialogPanel : PanelBase
     }
 	void SetLayer(Transform objTransform, int layer)
 	{
-		// ÉèÖÃµ±Ç°ÎïÌåµÄ Layer
+		// è®¾ç½®å½“å‰ç‰©ä½“çš„ Layer
 		objTransform.gameObject.layer = layer;
 
-		// µİ¹éÉèÖÃËùÓĞ×ÓÎïÌåµÄ Layer
+		// é€’å½’è®¾ç½®æ‰€æœ‰å­ç‰©ä½“çš„ Layer
 		foreach (Transform child in objTransform)
 		{
 			SetLayer(child, layer);
 		}
 	}
-	// ´´½¨Ñ¡Ôñ°´Å¥
+	// åˆ›å»ºé€‰æ‹©æŒ‰é’®
 	private void CreateChoiceButton(string choiceText, int index)
 	{
 		GameObject buttonObject = Instantiate(buttonPrefab, buttonContainer);
 		buttonObject.SetActive(true);
 		Button button = buttonObject.GetComponent<Button>();
-		button.GetComponentInChildren<Text>().text = choiceText;  // ÉèÖÃ°´Å¥ÎÄ±¾
+		button.GetComponentInChildren<Text>().text = choiceText;  // è®¾ç½®æŒ‰é’®æ–‡æœ¬
 
-		// ÉèÖÃ°´Å¥µã»÷ÊÂ¼ş
+		// è®¾ç½®æŒ‰é’®ç‚¹å‡»äº‹ä»¶
 		button.onClick.AddListener(() => OnChoiceButtonClicked(index));
 	}
 
-	// °´Å¥µã»÷ÊÂ¼ş´¦Àí
+	// æŒ‰é’®ç‚¹å‡»äº‹ä»¶å¤„ç†
 	private void OnChoiceButtonClicked(int index)
 	{
 		DialogChoice choice = currentNode.choices[index];
 		GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
 		if (choice.IsChoiceAvailable(gm.bag) == false)
 		{
-			//µ¯tips
-			TipManager.Tip("Ìõ¼ş²»×ã");
+			//å¼¹tips
+			TipManager.Tip("æ¡ä»¶ä¸è¶³");
 			return;
 		}
-		// ¸ù¾İÍæ¼ÒµÄÑ¡ÔñÌø×ªµ½¶ÔÓ¦µÄ½Úµã
+		if (gm != null && graphName == "æ¸¸æˆå¼€å§‹" && choice.choiceText == "ç¦»å¼€")
+		{
+			gm.pendingStartRanchTutorial = true;
+		}
+		// æ ¹æ®ç©å®¶çš„é€‰æ‹©è·³è½¬åˆ°å¯¹åº”çš„èŠ‚ç‚¹
 		currentNode = currentNode.GetOutputPort("nextNode " + index).Connection.node as DialogNode;
-		currentTextIndex = 0; // ÖØÖÃÎÄ±¾Ë÷Òı
-		DisplayCurrentNode(); // ÏÔÊ¾ÏÂÒ»¸ö¶Ô»°½Úµã
+		currentTextIndex = 0; // é‡ç½®æ–‡æœ¬ç´¢å¼•
+		DisplayCurrentNode(); // æ˜¾ç¤ºä¸‹ä¸€ä¸ªå¯¹è¯èŠ‚ç‚¹
 	}
 
 	public void NextSegmentOrChooseOption()
 	{
-		//// Èç¹û´ò×Ö»úĞ§¹ûÎ´Íê³É£¬Á¢¼´Íê³Éµ±Ç°ÎÄ±¾ÏÔÊ¾
+		//// å¦‚æœæ‰“å­—æœºæ•ˆæœæœªå®Œæˆï¼Œç«‹å³å®Œæˆå½“å‰æ–‡æœ¬æ˜¾ç¤º
 		//if (typingCoroutine != null)
 		//{
 		//	if(currentNode.dialogText.Count<= currentTextIndex){
-		//		lbl_content.text = currentNode.dialogText[currentTextIndex - 1]; // Á¢¼´ÏÔÊ¾ÍêÕûÎÄ±¾
+		//		lbl_content.text = currentNode.dialogText[currentTextIndex - 1]; // ç«‹å³æ˜¾ç¤ºå®Œæ•´æ–‡æœ¬
 		//	}
-  //          StopCoroutine(typingCoroutine); // Í£Ö¹´ò×Ö»úĞ­³Ì
-  //          typingCoroutine = null;  // ´ò×Ö»úĞ­³ÌÒÑ½áÊø
+  //          StopCoroutine(typingCoroutine); // åœæ­¢æ‰“å­—æœºåç¨‹
+  //          typingCoroutine = null;  // æ‰“å­—æœºåç¨‹å·²ç»“æŸ
 
-		//	return;  // ·µ»Ø£¬µÈ´ıÍæ¼ÒÔÙ´Îµã»÷¼ÌĞøÏÂÒ»¶Î
+		//	return;  // è¿”å›ï¼Œç­‰å¾…ç©å®¶å†æ¬¡ç‚¹å‡»ç»§ç»­ä¸‹ä¸€æ®µ
 		//}
 		if (typingCoroutine != null) { return; }
 		if (isSimple == true) { Close(); return; }
 
 		currentTextIndex++;
+		DisplayCurrentNode();
+	}
+	public void SkipAll()
+	{
+		if (typingCoroutine != null)
+		{
+			StopCoroutine(typingCoroutine);
+			typingCoroutine = null;
+		}
+		if (isSimple == true)
+		{
+			Close();
+			return;
+		}
+		if (currentNode == null)
+		{
+			Close();
+			return;
+		}
+		if (currentNode.choices != null && currentNode.choices.Count > 0)
+		{
+			GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+			for (int i = 0; i < currentNode.choices.Count; i++)
+			{
+				DialogChoice choice = currentNode.choices[i];
+				if (gm == null || choice.IsChoiceAvailable(gm.bag))
+				{
+					currentNode = currentNode.GetOutputPort("nextNode " + i).Connection.node as DialogNode;
+					currentTextIndex = 0;
+					DisplayCurrentNode();
+					return;
+				}
+			}
+		}
+		currentTextIndex = currentNode.dialogText.Count;
 		DisplayCurrentNode();
 	}
 	public void LoadReward() {
@@ -224,7 +266,7 @@ public class DialogPanel : PanelBase
 		{
 			AssetFactory assetFactory = CBus.Instance.GetFactory(FactoryName.AssetFactory) as AssetFactory;
 			AssetCA ca = assetFactory.GetCA(item.k) as AssetCA;
-			reward += $"»ñµÃ:{ca.name}x{1} ";
+			reward += $"è·å¾—:{ca.name}x{1} ";
 			if (gameManager.bag.ContainsKey(item.k))
 			{
 				gameManager.bag[item.k] += item.v;
@@ -238,7 +280,7 @@ public class DialogPanel : PanelBase
 		{
 			AssetFactory assetFactory = CBus.Instance.GetFactory(FactoryName.AssetFactory) as AssetFactory;
 			AssetCA ca = assetFactory.GetCA(item.k) as AssetCA;
-			reward += $"ËğÊ§:{ca.name}x{1} ";
+			reward += $"æŸå¤±:{ca.name}x{1} ";
 			if (gameManager.bag.ContainsKey(item.k))
 			{
 				gameManager.bag[item.k] -= item.v;
@@ -263,10 +305,23 @@ public class DialogPanel : PanelBase
 		//if (currentNode.rewards.Count == 0) { return; }
 
 		
-		//ÊÇ·ñ´ò¶Ï
+		//æ˜¯å¦æ‰“æ–­
 		if (currentNode.eventid != 0) {
 			EventManager eventManager = CBus.Instance.GetManager(ManagerName.EventManager) as EventManager;
 			eventManager.TriggerEvent(currentNode.eventid);
+		}
+		if (string.IsNullOrEmpty(currentNode.endingDescription) == false)
+		{
+			GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+			if (gm != null)
+			{
+				gm.HandleDialogEnding(graphName, currentNode.endingDescription);
+			}
+		}
+		GameManager gameManager = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+		if (gameManager != null)
+		{
+			gameManager.TriggerInitialRanchTutorialIfPending();
 		}
 		
 		OnCallback?.Invoke();

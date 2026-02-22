@@ -9,40 +9,40 @@ public class DataCenterViewerWindow : EditorWindow
     private int selectedTableIndex = 0;
     private Vector2 scrollPos;
 
-    [MenuItem("Tools/DataCenter Êı¾İ²é¿´Æ÷")]
+    [MenuItem("Tools/DataCenter æ•°æ®æŸ¥çœ‹å™¨")]
     public static void ShowWindow()
     {
-        GetWindow<DataCenterViewerWindow>("DataCenter Êı¾İ²é¿´Æ÷");
+        GetWindow<DataCenterViewerWindow>("DataCenter æ•°æ®æŸ¥çœ‹å™¨");
     }
 
     void OnGUI()
     {
         if (!Application.isPlaying)
         {
-            EditorGUILayout.HelpBox("ÇëÔÚÓÎÏ·ÔËĞĞÊ±Ê¹ÓÃ¡£", MessageType.Info);
+            EditorGUILayout.HelpBox("è¯·åœ¨æ¸¸æˆè¿è¡Œæ—¶ä½¿ç”¨ã€‚", MessageType.Info);
             return;
         }
 
         if (DataCenter.data == null || DataCenter.data.Count == 0)
         {
-            EditorGUILayout.HelpBox("DataCenter ÉĞÎ´¼ÓÔØÈÎºÎÊı¾İ¡£", MessageType.Warning);
-            if (GUILayout.Button("ÊÖ¶¯³õÊ¼»¯ DataCenter"))
+            EditorGUILayout.HelpBox("DataCenter å°šæœªåŠ è½½ä»»ä½•æ•°æ®ã€‚", MessageType.Warning);
+            if (GUILayout.Button("æ‰‹åŠ¨åˆå§‹åŒ– DataCenter"))
             {
                 DataCenter.InitWWW();
             }
             return;
         }
 
-        // »ñÈ¡ËùÓĞ±íÃû
+        // è·å–æ‰€æœ‰è¡¨å
         if (tableNames == null || tableNames.Length != DataCenter.data.Count)
         {
             var keys = new List<string>(DataCenter.data.Keys);
             tableNames = keys.ToArray();
         }
 
-        // ±íÑ¡Ôñ
+        // è¡¨é€‰æ‹©
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("Ñ¡ÔñÊı¾İ±í£º", GUILayout.Width(80));
+        EditorGUILayout.LabelField("é€‰æ‹©æ•°æ®è¡¨ï¼š", GUILayout.Width(80));
         selectedTableIndex = EditorGUILayout.Popup(selectedTableIndex, tableNames);
         EditorGUILayout.EndHorizontal();
 
@@ -53,11 +53,11 @@ public class DataCenterViewerWindow : EditorWindow
 
         if (table == null || table.Count == 0)
         {
-            EditorGUILayout.LabelField("¸Ã±íÎŞÊı¾İ¡£");
+            EditorGUILayout.LabelField("è¯¥è¡¨æ— æ•°æ®ã€‚");
             return;
         }
 
-        // »ñÈ¡ÁĞÃû
+        // è·å–åˆ—å
         DataRow firstRow = null;
         foreach (var row in table.Values)
         {
@@ -66,7 +66,7 @@ public class DataCenterViewerWindow : EditorWindow
         }
         if (firstRow == null)
         {
-            EditorGUILayout.LabelField("¸Ã±íÎŞÊı¾İ¡£");
+            EditorGUILayout.LabelField("è¯¥è¡¨æ— æ•°æ®ã€‚");
             return;
         }
 
@@ -76,10 +76,10 @@ public class DataCenterViewerWindow : EditorWindow
             columns.Add(col.ColumnName);
         }
 
-        // Êı¾İÕ¹Ê¾
+        // æ•°æ®å±•ç¤º
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
-        // ±íÍ·
+        // è¡¨å¤´
         EditorGUILayout.BeginHorizontal();
         foreach (var col in columns)
         {
@@ -87,7 +87,7 @@ public class DataCenterViewerWindow : EditorWindow
         }
         EditorGUILayout.EndHorizontal();
 
-        // Êı¾İĞĞ
+        // æ•°æ®è¡Œ
         foreach (var kv in table)
         {
             EditorGUILayout.BeginHorizontal();

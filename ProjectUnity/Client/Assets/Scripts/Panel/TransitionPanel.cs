@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TransitionPanel : PanelBase
 {
-	public CanvasGroup canvasGroup; // ĞèÒªÉèÖÃÎªºÚÉ« Image µÄ CanvasGroup
+	public CanvasGroup canvasGroup; // éœ€è¦è®¾ç½®ä¸ºé»‘è‰² Image çš„ CanvasGroup
 	public float transitionTime = 1f;
 	public Action OnClose;
 
@@ -18,12 +18,12 @@ public class TransitionPanel : PanelBase
 
 	private IEnumerator Transition()
 	{
-		AudioManager.Inst.Play("BGM/³¡¾°ÇĞ»»");
-		// À­ºÚ
+		AudioManager.Inst.Play("BGM/åœºæ™¯åˆ‡æ¢");
+		// æ‹‰é»‘
 		yield return Fade(1);
-		// ÕâÀï¿ÉÒÔÖ´ĞĞĞèÒªµÄ²Ù×÷£¬±ÈÈç¼ÓÔØĞÂ³¡¾°
+		// è¿™é‡Œå¯ä»¥æ‰§è¡Œéœ€è¦çš„æ“ä½œï¼Œæ¯”å¦‚åŠ è½½æ–°åœºæ™¯
 		OnClose();
-		yield return new WaitForSeconds(1f); // µÈ´ıÒ»¶ÎÊ±¼ä
+		yield return new WaitForSeconds(1f); // ç­‰å¾…ä¸€æ®µæ—¶é—´
 		
 		yield return Fade(0);
 		Close();
@@ -46,6 +46,6 @@ public class TransitionPanel : PanelBase
 			yield return null;
 		}
 
-		canvasGroup.alpha = targetAlpha; // È·±£×îÖÕÖµ×¼È·
+		canvasGroup.alpha = targetAlpha; // ç¡®ä¿æœ€ç»ˆå€¼å‡†ç¡®
 	}
 }
