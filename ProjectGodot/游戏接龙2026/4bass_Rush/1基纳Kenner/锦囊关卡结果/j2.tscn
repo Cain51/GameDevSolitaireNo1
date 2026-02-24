@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://lycv7s4p7g8b"]
+
+[ext_resource type="Script" uid="uid://pujrec713n8" path="res://1基纳Kenner/锦囊关卡结果/button2.gd" id="1_1007w"]
+
+[node name="J2" type="Node2D" unique_id=2070949431]
+
+[node name="TextEdit" type="TextEdit" parent="." unique_id=1776695540]
+offset_left = 51.0
+offset_top = 27.0
+offset_right = 1070.0
+offset_bottom = 382.0
+theme_override_font_sizes/font_size = 37
+text = "你摸到了背上的纹身
+然后纹身开启了传送门
+你被传送到了一个陌生的地方"
+
+[node name="Button" type="Button" parent="." unique_id=1397258661]
+offset_left = 373.0
+offset_top = 416.0
+offset_right = 769.0
+offset_bottom = 580.0
+theme_override_font_sizes/font_size = 56
+text = "点击继续"
+script = ExtResource("1_1007w")
+
+[connection signal="pressed" from="Button" to="Button" method="_on_pressed"]

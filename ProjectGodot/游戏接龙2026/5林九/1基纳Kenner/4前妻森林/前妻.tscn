@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://mqj62po0yxhb"]
+
+[ext_resource type="Texture2D" uid="uid://btkmb2wfax4es" path="res://1基纳Kenner/4前妻森林/前妻森林.png" id="1_vr7mf"]
+[ext_resource type="Script" uid="uid://bi43t0omdp70v" path="res://1基纳Kenner/4前妻森林/b1.gd" id="2_2mhix"]
+[ext_resource type="Script" uid="uid://c4grfr1o6ostj" path="res://1基纳Kenner/4前妻森林/b2.gd" id="3_t3sxg"]
+[ext_resource type="Script" uid="uid://dgb5jq8nxdn8x" path="res://1基纳Kenner/4前妻森林/b3.gd" id="4_0vrvy"]
+
+[node name="前妻" type="Node2D" unique_id=1389552341]
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=476539567]
+offset_right = 1150.0
+offset_bottom = 624.0
+texture = ExtResource("1_vr7mf")
+expand_mode = 1
+
+[node name="TextEdit" type="TextEdit" parent="." unique_id=1376434227]
+offset_left = 21.0
+offset_top = 360.0
+offset_right = 695.0
+offset_bottom = 598.0
+theme_override_font_sizes/font_size = 38
+text = "你再次睁开眼
+发现自己身处在森林中，面前是
+你的前妻
+她正缓缓想你走来"
+
+[node name="Button" type="Button" parent="." unique_id=1701260214]
+offset_left = 803.0
+offset_top = 230.0
+offset_right = 1134.0
+offset_bottom = 318.0
+theme_override_font_sizes/font_size = 58
+text = "选项1：跑！"
+script = ExtResource("2_2mhix")
+
+[node name="Button2" type="Button" parent="." unique_id=524867847]
+offset_left = 807.0
+offset_top = 445.0
+offset_right = 1138.0
+offset_bottom = 1157.0
+theme_override_font_sizes/font_size = 58
+text = "选项3：啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"
+autowrap_mode = 2
+script = ExtResource("3_t3sxg")
+
+[node name="Button3" type="Button" parent="." unique_id=486478362]
+offset_left = 758.0
+offset_top = 339.0
+offset_right = 1129.0
+offset_bottom = 427.0
+theme_override_font_sizes/font_size = 48
+text = "选项2：跪下磕头"
+script = ExtResource("4_0vrvy")
+
+[connection signal="pressed" from="Button" to="Button" method="_on_pressed"]
+[connection signal="pressed" from="Button2" to="Button2" method="_on_pressed"]
+[connection signal="pressed" from="Button3" to="Button3" method="_on_pressed"]

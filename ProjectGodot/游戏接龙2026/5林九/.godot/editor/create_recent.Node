@@ -1,0 +1,14 @@
+MarginContainer
+RichTextLabel
+Label
+VBoxContainer
+ColorRect
+Control
+Button
+Node2D
+Camera2D
+Panel
+TextureRect
+CanvasLayer
+Node
+TextEdit
