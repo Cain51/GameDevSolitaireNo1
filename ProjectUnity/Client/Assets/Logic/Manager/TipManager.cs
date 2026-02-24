@@ -1,4 +1,4 @@
-﻿using DG.Tweening;
+using DG.Tweening;
 using RG.Zeluda;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,13 +36,30 @@ public class TipManager : ManagerBase
         UIManager uiManager = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
         GameObject obj = GameObject.Instantiate(Resources.Load<GameObject>("Prefab/tip"));
         obj.transform.SetParent(uiManager.tran_float, false);
-        obj.transform.localPosition = Vector3.zero;
+        obj.transform.localPosition = new Vector3(0, 279, 0);
         obj.transform.localScale = Vector3.zero;
         Text txt = obj.GetComponentInChildren<Text>();
         txt.text = msg;
+
+        // 动态调整宽度
+        RectTransform bgRect = obj.GetComponent<RectTransform>();
+        // 获取文本的首选宽度（不强制刷新Canvas，直接计算）
+        float textWidth = txt.preferredWidth;
+        // 加上一些边距，例如左右各50像素
+        float newWidth = textWidth + 100f;
+        // 也可以设置一个最小宽度，防止太短
+        if (newWidth < 200f) newWidth = 200f;
+        
+        bgRect.sizeDelta = new Vector2(newWidth, bgRect.sizeDelta.y);
+
         Sequence seq = DOTween.Sequence();
-        seq.Append(obj.transform.DOScale(Vector3.one,0.5f));
-        seq.Append(obj.transform.DOLocalMoveY(Screen.height / 2, 2));
+        seq.Append(obj.transform.DOScale(Vector3.one,0.2f));
+        // 增加中间的悬停时间：先在中间停留一会，再向上飘动
+        seq.AppendInterval(1.0f); // 停留1秒
+        // 使用相对移动 DOLocalMoveY 并且加上 "Relative" 参数，或者手动计算目标位置
+        // 为了保证每次移动的距离一致，我们让它向上移动固定的距离，比如 200 像素
+        seq.Append(obj.transform.DOLocalMoveY(200f, 1).SetRelative(true)); 
+        seq.Join(txt.DOFade(0, 0.5f).SetDelay(0.5f)); // 提前淡出
         seq.AppendCallback(() =>
         {
             GameObject.Destroy(obj);
@@ -52,14 +69,14 @@ public class TipManager : ManagerBase
   
     private class TipManagerHelper : MonoBehaviour
     {
-        private float timer = 0.5f;
+        private float timer = 0.2f;
 
         void Update()
         {
             timer += Time.unscaledDeltaTime;
-            if (timer >= 0.5f)
+            if (timer >= 0.2f)
             {
-                timer = 0f;
+                timer -= 0.2f;
                 TipManager.TryShowNext();
             }
         }

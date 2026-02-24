@@ -1,0 +1,210 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2076314477274378924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba079efee81c01f428b2629519b1031a, type: 3}
+  m_Name: "\u52B3\u52A8\u65F6\u95F4"
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -392, y: -472}
+  ports:
+    keys:
+    - input
+    - nextNode
+    - nextNode 0
+    - nextNode 1
+    values:
+    - _fieldName: input
+      _node: {fileID: -2076314477274378924}
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: nextNode
+      _node: {fileID: -2076314477274378924}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: nextNode 0
+      _node: {fileID: -2076314477274378924}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: input
+        node: {fileID: 4167961175027728999}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 1
+    - _fieldName: nextNode 1
+      _node: {fileID: -2076314477274378924}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: input
+        node: {fileID: 3347726687429110926}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 1
+  input: 
+  speakerid: 1200003
+  ani: Talking
+  rewards: []
+  cost: []
+  dialogText:
+  - "\u4F60\u597D\u5440\uFF0C\u6211\u662F\u9547\u5B50\u4E0A\u7267\u573A\u7684\u8001\u677F\uFF0C\u6211\u53EB\u674E\u5317\u9547"
+  - "\u6211\u5F88\u770B\u597D\u4F60\u7236\u4EB2\u7684\u9A6C\uFF0C\u53EA\u662F\u4ED6\u73B0\u5728\u6BD4\u8F83\u7626\u5F31"
+  - "\u671F\u5F85\u4ED6\u672A\u6765\u7684\u6210\u957F\uFF0C\u5982\u679C\u6709\u9700\u8981\u968F\u65F6\u6765\u8054\u7CFB\u6211\u54E6"
+  choices:
+  - choiceText: "\u597D\u7684\uFF0C\u6211\u4F1A\u7167\u987E\u597D\u4ED6"
+    conditions: []
+  - choiceText: "\u4F60\u77E5\u9053\u6211\u7236\u4EB2\uFF1F"
+    conditions: []
+  nextNode: {fileID: 0}
+  scene: 
+  prefab: 
+  endingDescription: 
+  eventid: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0adb7cbcff07d16499b27566a20258a9, type: 3}
+  m_Name: "\u7B2C3\u65E5\u8D77\u5E8A"
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: -2076314477274378924}
+  - {fileID: 4167961175027728999}
+  - {fileID: 3347726687429110926}
+--- !u!114 &3347726687429110926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba079efee81c01f428b2629519b1031a, type: 3}
+  m_Name: Dialog
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 56, y: 216}
+  ports:
+    keys:
+    - input
+    - nextNode
+    values:
+    - _fieldName: input
+      _node: {fileID: 3347726687429110926}
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: nextNode 1
+        node: {fileID: -2076314477274378924}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: nextNode
+      _node: {fileID: 3347726687429110926}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  input: 
+  speakerid: 1200003
+  ani: Talking
+  rewards: []
+  cost: []
+  dialogText:
+  - "\u4ED6\u53EF\u662F\u9547\u5B50\u4E0A\u51FA\u4E86\u540D\u7684\u9A6F\u9A6C\u5E08"
+  - "\u53EA\u662F\u4ED6\u88AB\u7275\u626F\u8FDB\u4E86\u90A3\u4EF6\u4E8B\u3002\u3002\u3002"
+  - "\u597D\u4E86\uFF0C\u5148\u4E0D\u8BF4\u4E86\uFF0C\u4EE5\u540E\u518D\u6765\u544A\u8BC9\u4F60\uFF0C\u518D\u89C1\u5566~"
+  choices: []
+  nextNode: {fileID: 0}
+  scene: 
+  prefab: 
+  endingDescription: 
+  eventid: 0
+--- !u!114 &4167961175027728999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba079efee81c01f428b2629519b1031a, type: 3}
+  m_Name: 1
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 56, y: -504}
+  ports:
+    keys:
+    - input
+    - nextNode
+    values:
+    - _fieldName: input
+      _node: {fileID: 4167961175027728999}
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: nextNode 0
+        node: {fileID: -2076314477274378924}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: nextNode
+      _node: {fileID: 4167961175027728999}
+      _typeQualifiedName: DialogNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  input: 
+  speakerid: 1200003
+  ani: Talking
+  rewards: []
+  cost: []
+  dialogText:
+  - "\u4F60\u7236\u4EB2\u4F1A\u66FF\u4F60\u611F\u5230\u9AD8\u5174\u7684"
+  - "\u5982\u679C\u4E0D\u662F\u90A3\u4EF6\u4E8B\u7684\u8BDD\u3002\u3002"
+  - "\u597D\u4E86\uFF0C\u4E0D\u8BF4\u4E86\uFF0C\u6211\u8FD8\u6709\u70B9\u4E8B\u60C5\uFF0C\u4E0B\u6B21\u804A\u5427~"
+  choices: []
+  nextNode: {fileID: 0}
+  scene: 
+  prefab: 
+  endingDescription: 
+  eventid: 0

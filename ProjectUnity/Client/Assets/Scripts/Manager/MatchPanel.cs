@@ -55,6 +55,10 @@ public class MatchPanel : PanelBase
     public RectTransform trackRect;
     public float trackLength = 2000f;
     public List<Image> horseImages = new List<Image>();
+    public GameObject pfb_ma_normal;    // 初始马预制体
+    public GameObject pfb_ma_small_dry; // 小枯枝马预制体
+    public GameObject pfb_ma_dry;       // 枯枝马预制体
+    private Dictionary<int, GameObject[]> inst_horses = new Dictionary<int, GameObject[]>(); // 实例池
     public Material PlayerMat;
     [SerializeField]
     public List<HorseInfo> horseInfoList = new List<HorseInfo>();
@@ -94,77 +98,166 @@ public class MatchPanel : PanelBase
     float finishLine = 100f;
     string winner = "";
 
-    void matchInit()
+    private void SetupUIObj(GameObject obj)
     {
-        levelManager = CBus.Instance.GetManager(ManagerName.LevelManager) as LevelManager;
-        foreach (var s in hoeSkills)
+        if (obj == null) return;
+        RectTransform rt = obj.GetComponent<RectTransform>();
+        if (rt != null)
         {
-            s.skillActive = false;
-            s.unlock = true;
-
-
+            // 彻底重置为全屏填充模式
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.localScale = Vector3.one;
+            rt.localPosition = Vector3.zero;
         }
-        foreach (var s in hoeSkills)
+        else
         {
-            if (s.level <= levelManager.Level)
-            {
-                s.skillActive = true;
-                s.unlock = false;
-            }
-
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localScale = Vector3.one;
         }
-
-        horses.Clear();
-
-
-        List<HorseInfo> allHorseInfos = new List<HorseInfo>();
-
-
-        allHorseInfos.Add(playerHorseInfo);
-
-
-        List<HorseInfo> aiHorseInfos = new List<HorseInfo>(horseInfoList);
-        for (int i = 0; i < aiHorseInfos.Count; i++)
-        {
-            int rnd = UnityEngine.Random.Range(i, aiHorseInfos.Count);
-            var tmp = aiHorseInfos[i];
-            aiHorseInfos[i] = aiHorseInfos[rnd];
-            aiHorseInfos[rnd] = tmp;
-        }
-        aiHorseInfos = aiHorseInfos.GetRange(0, Mathf.Min(4, aiHorseInfos.Count));
-        allHorseInfos.AddRange(aiHorseInfos);
-
-
-        for (int i = 0; i < allHorseInfos.Count; i++)
-        {
-            int rnd = UnityEngine.Random.Range(i, allHorseInfos.Count);
-            var tmp = allHorseInfos[i];
-            allHorseInfos[i] = allHorseInfos[rnd];
-            allHorseInfos[rnd] = tmp;
-        }
-
-
-        for (int i = 0; i < allHorseInfos.Count && i < horseImages.Count; i++)
-        {
-            bool isPlayer = allHorseInfos[i]._name == playerHorseInfo._name;
-            horses.Add(new Horse(allHorseInfos[i]._name, isPlayer));
-
-
-            if (isPlayer && PlayerMat != null)
-            {
-                horseImages[i].material = PlayerMat;
-            }
-
-        }
-
-        isRacing = false;
-        winner = "";
-        matchResultPanel.SetActive(false);
+        obj.SetActive(true);
     }
 
-    private void Start()
+    public void matchInit()
     {
+        try
+        {
+            levelManager = CBus.Instance.GetManager(ManagerName.LevelManager) as LevelManager;
+            
+            if (hoeSkills != null)
+            {
+                for (int i = hoeSkills.Count - 1; i >= 0; i--)
+                {
+                    if (hoeSkills[i] == null)
+                    {
+                        hoeSkills.RemoveAt(i);
+                        continue;
+                    }
+                    hoeSkills[i].skillActive = false;
+                    hoeSkills[i].unlock = true;
+                }
+            }
+            else
+            {
+                hoeSkills = new List<HoeSkill>();
+            }
 
+            if (hoeSkills != null)
+            {
+                foreach (var s in hoeSkills)
+                {
+                    if (s == null) continue;
+                    if (levelManager != null && s.level <= levelManager.Level)
+                    {
+                        s.skillActive = true;
+                        s.unlock = false;
+                    }
+                }
+            }
+
+            horses.Clear();
+
+            List<HorseInfo> allHorseInfos = new List<HorseInfo>();
+
+            if (playerHorseInfo == null)
+            {
+                playerHorseInfo = new HorseInfo();
+                playerHorseInfo._name = "我的爱马";
+            }
+            allHorseInfos.Add(playerHorseInfo);
+
+            if (horseInfoList == null)
+            {
+                horseInfoList = new List<HorseInfo>();
+            }
+            
+            // Ensure we have enough AI horses if list is empty or small
+            if (horseInfoList.Count < 3)
+            {
+                horseInfoList.Add(new HorseInfo { _name = "闪电" });
+                horseInfoList.Add(new HorseInfo { _name = "赤兔" });
+                horseInfoList.Add(new HorseInfo { _name = "绝影" });
+            }
+
+            List<HorseInfo> aiHorseInfos = new List<HorseInfo>(horseInfoList);
+            for (int i = 0; i < aiHorseInfos.Count; i++)
+            {
+                int rnd = UnityEngine.Random.Range(i, aiHorseInfos.Count);
+                var tmp = aiHorseInfos[i];
+                aiHorseInfos[i] = aiHorseInfos[rnd];
+                aiHorseInfos[rnd] = tmp;
+            }
+            aiHorseInfos = aiHorseInfos.GetRange(0, Mathf.Min(4, aiHorseInfos.Count));
+            allHorseInfos.AddRange(aiHorseInfos);
+
+            for (int i = 0; i < allHorseInfos.Count; i++)
+            {
+                int rnd = UnityEngine.Random.Range(i, allHorseInfos.Count);
+                var tmp = allHorseInfos[i];
+                allHorseInfos[i] = allHorseInfos[rnd];
+                allHorseInfos[rnd] = tmp;
+            }
+
+            for (int i = 0; i < allHorseInfos.Count && i < horseImages.Count; i++)
+            {
+                if (allHorseInfos[i] == null) continue;
+                
+                bool isPlayer = allHorseInfos[i]._name == playerHorseInfo._name;
+                horses.Add(new Horse(allHorseInfos[i]._name, isPlayer));
+
+                if (isPlayer && horseImages[i] != null)
+                {
+                    if (PlayerMat != null) horseImages[i].material = PlayerMat;
+                    
+                    // --- 玩家马匹预制体进化逻辑 (重构版) ---
+                    GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+                    if (gm != null)
+                    {
+                        // 强制父 Image 透明，消除白块
+                        horseImages[i].color = Color.clear;
+                        horseImages[i].enabled = true;
+
+                        GameObject targetPrefab = null;
+                        if (gm.day == 4) targetPrefab = pfb_ma_small_dry;
+                        else if (gm.day >= 5) targetPrefab = pfb_ma_dry;
+                        else targetPrefab = pfb_ma_normal;
+
+                        if (targetPrefab != null)
+                        {
+                            // 清除该槽位旧的马
+                            foreach (Transform child in horseImages[i].transform) Destroy(child.gameObject);
+                            
+                            // 实例化新马
+                            GameObject obj = Instantiate(targetPrefab, horseImages[i].transform);
+                            obj.name = targetPrefab.name + "(Clone)";
+                            SetupUIObj(obj);
+                        }
+                        else
+                        {
+                            // 兜底显示白色以提示资源缺失
+                            horseImages[i].color = Color.white;
+                        }
+                    }
+                }
+            }
+
+            isRacing = false;
+            winner = "";
+            if (matchResultPanel != null)
+                matchResultPanel.SetActive(false);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"MatchInit Error: {e.Message}\n{e.StackTrace}");
+        }
+    }
+
+    public override void Start()
+    {
+        base.Start();
 
         matchInit();
 
@@ -217,21 +310,47 @@ public class MatchPanel : PanelBase
         }
         if (playerWon)
         {
-            ShowVictoryDialog(() =>
+            // 第六天（或之后）赛马胜利：触发特殊结局逻辑（仅限第一次）
+            if (gm != null && gm.day >= 6 && !gm.isFinalStoryFinished)
             {
-                ShowStage2IntroIfNeeded(() =>
+                Debug.Log("[MatchPanel] 第六天首次赛马胜利，触发最终剧情序列。");
+                UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+                TransitionPanel tp = um.OpenFloat("TransitionPanel") as TransitionPanel;
+                
+                tp.StartTransition(() =>
                 {
-                    if (showStreakDialog && gm != null)
+                    // 黑屏期间逻辑：关闭赛马界面并开启最终对话
+                    CloseMatch();
+                    if (gm != null) gm.isFinalStoryPlaying = true; // 标记进入最终结局对话
+                    
+                    // 隐藏主界面的天数显示
+                    MainPanel main = um.GetPanel("MainPanel") as MainPanel;
+                    if (main != null) main.ToggleDayDisplay(false);
+
+                    // 延迟一帧发布事件，确保 CloseMatch 的清理工作完成
+                    // 使用 tp 来启动协程，防止 MatchPanel 随场景卸载而被销毁导致协程中断
+                    tp.StartCoroutine(DelayStartDialog(152));
+                }, "", null, true); // 移除标题，开启 stayBlack 模式
+            }
+            else
+            {
+                // 常规胜利逻辑（前五天，或者结局已播完后的第六天）
+                ShowVictoryDialog(() =>
+                {
+                    ShowStage2IntroIfNeeded(() =>
                     {
-                        gm.matchStreakDialogShown = true;
-                        ShowStreakDialog(ShowMatchResultPanel);
-                    }
-                    else
-                    {
-                        ShowMatchResultPanel();
-                    }
+                        if (showStreakDialog && gm != null)
+                        {
+                            gm.matchStreakDialogShown = true;
+                            ShowStreakDialog(ShowMatchResultPanel);
+                        }
+                        else
+                        {
+                            ShowMatchResultPanel();
+                        }
+                    });
                 });
-            });
+            }
         }
         else
         {
@@ -246,6 +365,23 @@ public class MatchPanel : PanelBase
         if (slm != null && slm.curScene.IsValid())
         {
             SceneManager.UnloadSceneAsync(slm.curScene);
+        }
+    }
+
+    private IEnumerator DelayStartDialog(int dialogId)
+    {
+        yield return null; // 等待一帧
+        ExcelReading.Framework.StoryEventManager.Instance.Publish(ExcelReading.Framework.GameEventNames.DIALOG_START, dialogId);
+        
+        // 尝试将对话框置于最顶层
+        UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+        if (um != null)
+        {
+            DialogPanel dp = um.GetPanel("DialogPanel") as DialogPanel;
+            if (dp != null)
+            {
+                dp.transform.SetAsLastSibling();
+            }
         }
     }
 

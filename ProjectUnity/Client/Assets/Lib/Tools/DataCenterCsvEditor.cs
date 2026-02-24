@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using DBUtility;
 using System.Data;
 using System.IO;
@@ -152,3 +153,4 @@ public class DataCenterCsvEditor : EditorWindow
         File.WriteAllText(csvPath, sb.ToString(), Encoding.UTF8);
     }
 }
+#endif

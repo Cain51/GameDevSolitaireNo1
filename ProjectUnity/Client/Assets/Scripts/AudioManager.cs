@@ -8,14 +8,52 @@ public class AudioManager : MonoBehaviour
 	public static AudioManager Inst;
 	public AudioSource[] audios;
 	public List<AudioSource> audioList;
+    private AudioSource bgmSource; // 专用的 BGM 音源
 	public List<Action> actionList = new List<Action>();
 	public int index;
 	private void Awake()
 	{
 		Inst = this;
 		audios = GetComponents<AudioSource>();
+        
+        // 初始化 BGM 音源
+        bgmSource = gameObject.AddComponent<AudioSource>();
+        bgmSource.loop = true;
+        bgmSource.playOnAwake = false;
+
 		GameObject.DontDestroyOnLoad(gameObject);
 	}
+
+    // 播放背景音乐
+    public void PlayBGM(string name, float volume = 0.2f)
+    {
+        AudioClip clip = Resources.Load<AudioClip>(name);
+        if (clip == null)
+        {
+            Debug.LogWarning($"[AudioManager] 找不到 BGM 资源: {name}");
+            return;
+        }
+
+        if (bgmSource.clip == clip && bgmSource.isPlaying) return;
+
+        bgmSource.clip = clip;
+        bgmSource.volume = volume;
+        bgmSource.Play();
+        Debug.Log($"[AudioManager] 正在播放 BGM: {name}");
+    }
+
+    // 停止背景音乐
+    public void StopBGM()
+    {
+        if (bgmSource != null) bgmSource.Stop();
+    }
+
+    // 设置 BGM 音量
+    public void SetBGMVolume(float volume)
+    {
+        if (bgmSource != null) bgmSource.volume = volume;
+    }
+
 	public void Play(AudioClip audioClip, Action a = null)
 	{
 		if (audioClip == null) { return; }
