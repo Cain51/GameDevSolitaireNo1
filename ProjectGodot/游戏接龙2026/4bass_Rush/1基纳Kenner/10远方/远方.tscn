@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://dbhn0hln67qwc"]
+
+[ext_resource type="Texture2D" uid="uid://b2r25bnly4t5a" path="res://1基纳Kenner/10远方/远方.png" id="1_jw8a4"]
+
+[node name="远方" type="Node2D" unique_id=878387468]
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=446646496]
+offset_left = 189.0
+offset_top = 35.0
+offset_right = 916.0
+offset_bottom = 419.0
+texture = ExtResource("1_jw8a4")
+expand_mode = 1
+
+[node name="Button" type="Button" parent="TextureRect" unique_id=2000068345]
+layout_mode = 0
+offset_left = -43.0
+offset_top = 328.0
+offset_right = 813.0
+offset_bottom = 578.0
+theme_override_font_sizes/font_size = 30
+text = "你失去了你的扁桃体，你很想念它
+它比你的前妻陪你的时间还长
+你现在只想它能回来
+为此你将踏上无尽的复仇之路，死亡，恐惧，绝望将伴随你前行
+即使你死掉了，也不会有人见证，但是为了扁桃体
+值得"
+autowrap_mode = 3

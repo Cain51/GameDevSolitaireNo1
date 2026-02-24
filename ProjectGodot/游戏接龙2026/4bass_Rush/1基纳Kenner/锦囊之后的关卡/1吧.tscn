@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://lrhku1r365io"]
+
+[ext_resource type="Script" uid="uid://tth8g141uqm2" path="res://1基纳Kenner/初始关卡/场景切换1.gd" id="1_1kdyl"]
+[ext_resource type="Script" uid="uid://diflqi81f773i" path="res://1基纳Kenner/锦囊之后的关卡/b2.gd" id="2_u1iwl"]
+[ext_resource type="Script" uid="uid://bkxlb78yrygtv" path="res://1基纳Kenner/锦囊之后的关卡/b3.gd" id="3_1kdyl"]
+
+[node name="1吧" type="Node2D" unique_id=1696351950]
+
+[node name="TextEdit" type="TextEdit" parent="." unique_id=1600981447]
+offset_left = 51.0
+offset_top = 27.0
+offset_right = 1070.0
+offset_bottom = 382.0
+theme_override_font_sizes/font_size = 37
+text = "你做出了些许选择
+但这些似乎和你之前做过的各种选择一样并没有改变任何事情
+但这并不重要
+做出了选择便是选择了自由
+当你继续想要试图改变点什么的时候你想到了
+"
+
+[node name="Button" type="Button" parent="." unique_id=1738109536]
+offset_left = 32.0
+offset_top = 405.0
+offset_right = 380.0
+offset_bottom = 546.0
+theme_override_font_sizes/font_size = 34
+text = "兜里好像还有一些腰果"
+script = ExtResource("1_1kdyl")
+
+[node name="Button2" type="Button" parent="." unique_id=728516918]
+offset_left = 387.0
+offset_top = 410.0
+offset_right = 749.0
+offset_bottom = 551.0
+theme_override_font_sizes/font_size = 34
+text = "前妻离婚前在你后背留下的纹身"
+autowrap_mode = 3
+script = ExtResource("2_u1iwl")
+
+[node name="Button3" type="Button" parent="." unique_id=1450155574]
+offset_left = 739.0
+offset_top = 415.0
+offset_right = 1082.0
+offset_bottom = 561.0
+theme_override_font_sizes/font_size = 34
+text = "昨天那个说自己是秘密特工的公园大爷送给你的信封"
+autowrap_mode = 3
+script = ExtResource("3_1kdyl")
+
+[connection signal="pressed" from="Button" to="Button" method="_on_pressed"]
+[connection signal="pressed" from="Button2" to="Button2" method="_on_pressed"]
+[connection signal="pressed" from="Button3" to="Button3" method="_on_pressed"]
