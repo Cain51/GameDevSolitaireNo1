@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://cvadq1bjqgn1a"]
+
+[ext_resource type="Script" uid="uid://b1t8fe3gnmx8u" path="res://2Gove/场景/plot/plot.gd" id="1_vjhpc"]
+[ext_resource type="Texture2D" uid="uid://bjf3vnha7p2qc" path="res://1基纳Kenner/初始关卡/1.png" id="2_ww4pg"]
+
+[node name="Plot" type="Control" unique_id=651422017]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_vjhpc")
+
+[node name="BGImage" type="TextureRect" parent="." unique_id=1804476704]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_ww4pg")
+expand_mode = 1
+
+[node name="PlotTitle" type="Label" parent="." unique_id=615078570]
+layout_mode = 1
+offset_right = 40.0
+offset_bottom = 23.0
+text = "未命名的Title"
+
+[node name="ChoiceList" type="VBoxContainer" parent="." unique_id=1222595898]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -424.0
+offset_top = -390.0
+offset_right = -29.0
+offset_bottom = -190.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 25
+
+[node name="Button" type="Button" parent="ChoiceList" unique_id=499179638]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "这是选项1"
+
+[node name="Button2" type="Button" parent="ChoiceList" unique_id=2124626809]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "这是选项2"
+
+[node name="Button3" type="Button" parent="ChoiceList" unique_id=1375820713]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "这是选项3"
+
+[node name="Panel" type="Panel" parent="." unique_id=211381115]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -141.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Label" type="Label" parent="Panel" unique_id=1054743881]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 19.0
+offset_right = -20.0
+offset_bottom = 216.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+text = "”你是一个 大 学 生，毕业了准备考研呢。
+折腾折腾就到过年了。
+过年嘛，从实习的公司回到家，想着说这个陪家人一起看春晚，增进一下这个 家庭情感。
+虽然照平时呢你总是看这个北京春晚，但今年呢你想看看河南的这个春晚。换换这个，啊，这个口味。虽然你本身也不对春晚不是很感兴趣，但是你觉得吧，陪家人一块聊聊天也是不错的。但是你发现这个学业和工作啊已经给你身体掏空，让你这个累的不行，没到12点就已经很困了。然后你妈就跟你说，哎呀得了，上床睡觉吧，这个反正有重播，大过年的别把自己整的太累。然后你就上床睡觉了，睡了一会呢，你被这个 12 点的鞭炮声音啊吵醒了。虽然说北京嘛，禁禁放烟花爆竹，但是呢总是会有人能够搞来那个一点这个烟花，对吧？这个也属于这个民不举官不究的这个这个事情。大家也不觉得有什么意外。你呢，被这个炮声惊醒之后呢，就看到床头啊，坐着一个人。隐约的你可以看出来这个人似乎是一个女性，而且这个还很曼妙的身材，似乎赤身裸体。但是呢，奇怪就奇怪在她的头是一个马的头。你说你心里想，是不是这个恶作剧呀？对吧，马年嘛，马头，就那头套，淘宝上好买。但是似乎你没看到这个是头套的这个接缝。“"
+autowrap_mode = 2

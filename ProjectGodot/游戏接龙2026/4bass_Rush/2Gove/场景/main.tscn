@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://dnx4s8fej6xec"]
+
+[ext_resource type="PackedScene" uid="uid://cvadq1bjqgn1a" path="res://2Gove/场景/plot/plot.tscn" id="1_be57l"]
+[ext_resource type="Script" uid="uid://b4tym2ou5dkqj" path="res://2Gove/场景/main.gd" id="1_ura3e"]
+
+[node name="Main" type="Node" unique_id=93689873]
+script = ExtResource("1_ura3e")
+
+[node name="UI" type="Control" parent="." unique_id=947180443]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Plot" parent="UI" unique_id=651422017 instance=ExtResource("1_be57l")]
+layout_mode = 1

@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://c045bgf7pj58n"]
+
+[ext_resource type="Texture2D" uid="uid://cwksef3mk5g8v" path="res://1基纳Kenner/5前妻森林下/前妻森林下.png" id="1_gh7m4"]
+[ext_resource type="Script" uid="uid://d3rafomwrgv78" path="res://1基纳Kenner/5前妻森林下/button.gd" id="2_yf0t4"]
+
+[node name="前妻森林下" type="Node2D" unique_id=1913112404]
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=132915505]
+offset_left = 57.0
+offset_top = 17.0
+offset_right = 1092.0
+offset_bottom = 505.0
+texture = ExtResource("1_gh7m4")
+expand_mode = 1
+
+[node name="TextEdit" type="TextEdit" parent="." unique_id=33943415]
+offset_left = 51.0
+offset_top = 438.0
+offset_right = 966.0
+offset_bottom = 620.0
+theme_override_font_sizes/font_size = 35
+text = "你要知道，如果一个人能在你拉屎的时候在边上化妆
+那么也就意味着，你做任何是都是徒劳
+你只能看他一步一步向你走来"
+
+[node name="Button" type="Button" parent="." unique_id=816653074]
+offset_left = 839.0
+offset_top = 310.0
+offset_right = 1159.0
+offset_bottom = 425.0
+theme_override_font_sizes/font_size = 52
+text = "（点击继续）"
+script = ExtResource("2_yf0t4")
+
+[connection signal="pressed" from="Button" to="Button" method="_on_pressed"]

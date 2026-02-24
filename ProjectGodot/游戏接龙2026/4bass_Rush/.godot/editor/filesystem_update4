@@ -1,0 +1,5 @@
+res://2Gove/场景/plot/plot.tscn
+res://2Gove/游戏/GameManager.gd
+res://2Gove/数据结构/Curtain.gd
+res://2Gove/场景/main.gd
+res://2Gove/配置/config.gd

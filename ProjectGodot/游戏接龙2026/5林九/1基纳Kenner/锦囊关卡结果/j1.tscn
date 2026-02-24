@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://cci5ja4m20wof"]
+
+[ext_resource type="Script" uid="uid://c7fdmfx1srewr" path="res://1基纳Kenner/锦囊关卡结果/button.gd" id="1_p1v8p"]
+
+[node name="J1" type="Node2D" unique_id=888406419]
+
+[node name="TextEdit" type="TextEdit" parent="." unique_id=1283117499]
+offset_left = 51.0
+offset_top = 27.0
+offset_right = 1070.0
+offset_bottom = 382.0
+theme_override_font_sizes/font_size = 37
+text = "你掏出腰果吃了几个
+中毒晕了过去
+然后被躲在角落的前妻把你拖走了"
+
+[node name="Button" type="Button" parent="." unique_id=36400536]
+offset_left = 373.0
+offset_top = 416.0
+offset_right = 769.0
+offset_bottom = 580.0
+theme_override_font_sizes/font_size = 56
+text = "点击继续"
+script = ExtResource("1_p1v8p")
+
+[connection signal="pressed" from="Button" to="Button" method="_on_pressed"]

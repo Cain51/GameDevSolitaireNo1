@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://crvp6txcqvy5"]
+
+[ext_resource type="Script" uid="uid://dsmw7jcmde4mw" path="res://5林九/Widgets/RadarChart.cs" id="1_k4fqo"]
+
+[node name="RadarChart" type="Control" unique_id=1987889634]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1.0
+offset_top = 20.0
+offset_right = 189.0
+offset_bottom = 189.73415
+scale = Vector2(1, 0.978)
+script = ExtResource("1_k4fqo")
+
+[node name="Labels" type="Control" parent="." unique_id=1119945599]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0

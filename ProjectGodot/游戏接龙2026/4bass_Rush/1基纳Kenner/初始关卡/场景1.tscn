@@ -1,0 +1,286 @@
+[gd_scene format=3 uid="uid://c6nhscyjcnu3e"]
+
+[ext_resource type="Script" uid="uid://dfmpjsqilqe5m" path="res://1基纳Kenner/初始关卡/过场1按钮.gd" id="1_g6jce"]
+[ext_resource type="Script" uid="uid://clo3sdhxgjl51" path="res://1基纳Kenner/初始关卡/button_1.gd" id="3_c6fse"]
+[ext_resource type="Script" uid="uid://v8u3buwq7mb0" path="res://1基纳Kenner/初始关卡/button_2.gd" id="4_036pn"]
+[ext_resource type="Texture2D" uid="uid://3fgrjddj21mu" path="res://1基纳Kenner/初始关卡/t1.png" id="5_qxynw"]
+[ext_resource type="Script" uid="uid://yxnj27j2jcf4" path="res://1基纳Kenner/初始关卡/button_3.gd" id="5_vyuaw"]
+[ext_resource type="Texture2D" uid="uid://biwnb1kdmp5pj" path="res://1基纳Kenner/初始关卡/t2.png" id="6_23eb0"]
+[ext_resource type="Script" uid="uid://ci6yk6vcmd5qw" path="res://1基纳Kenner/初始关卡/b_1.gd" id="6_cuky1"]
+[ext_resource type="Texture2D" uid="uid://bg60wl21uetil" path="res://1基纳Kenner/初始关卡/t3.png" id="7_cuky1"]
+[ext_resource type="Script" uid="uid://dg673afbfqh7c" path="res://1基纳Kenner/初始关卡/b_2.gd" id="8_47s13"]
+[ext_resource type="Script" uid="uid://j1abpuhehn88" path="res://1基纳Kenner/初始关卡/b_3.gd" id="10_7dk1y"]
+[ext_resource type="Texture2D" uid="uid://bhux48dkj84af" path="res://1基纳Kenner/初始关卡/锦囊关卡.png" id="11_kksv3"]
+[ext_resource type="Script" uid="uid://doq0kojqsmsth" path="res://1基纳Kenner/初始关卡/b__引导.gd" id="12_06fsy"]
+[ext_resource type="Script" uid="uid://bm7v28ywgjd7i" path="res://1基纳Kenner/初始关卡/b_j_1.gd" id="12_bapms"]
+[ext_resource type="Script" uid="uid://kwp78g1amc4e" path="res://1基纳Kenner/初始关卡/b_j_2.gd" id="13_kd3sb"]
+[ext_resource type="Script" uid="uid://bpm2js1igg0xy" path="res://1基纳Kenner/初始关卡/b_j_3.gd" id="14_13elk"]
+[ext_resource type="Texture2D" uid="uid://bqbu45vxhm16b" path="res://1基纳Kenner/初始关卡/桑塔纳2000.jpg" id="14_kd3sb"]
+[ext_resource type="Texture2D" uid="uid://bgsiabkijnyha" path="res://1基纳Kenner/初始关卡/FFV-013.jpeg" id="17_7eyeu"]
+[ext_resource type="Script" uid="uid://tth8g141uqm2" path="res://1基纳Kenner/初始关卡/场景切换1.gd" id="17_hkal1"]
+[ext_resource type="Texture2D" uid="uid://kwcek3ylqv52" path="res://1基纳Kenner/初始关卡/回忆.jpg" id="18_7eyeu"]
+[ext_resource type="Script" uid="uid://byt8mib34j7r2" path="res://1基纳Kenner/初始关卡/切换场景2.gd" id="18_jisd2"]
+[ext_resource type="Script" uid="uid://dc5xi2lwwucum" path="res://1基纳Kenner/初始关卡/切换场景3.gd" id="19_20swm"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_036pn"]
+load_path = "res://.godot/imported/1.png-b2898cba4711e8baf439944927ff49d5.ctex"
+
+[node name="场景1" type="Node2D" unique_id=164705228]
+
+[node name="Button过场1" type="Button" parent="." unique_id=1418763512]
+offset_left = 22.0
+offset_top = 30.0
+offset_right = 1129.0
+offset_bottom = 631.0
+theme_override_font_sizes/font_size = 27
+text = "你是一个 大 学 生，毕业了准备考研呢。
+折腾折腾就到过年了。
+过年嘛，从实习的公司回到家，想着说这个陪家人一起看春晚，增进一下这个 家庭情感。
+虽然照平时呢你总是看这个北京春晚，但今年呢你想看看河南的这个春晚。换换这个，啊，这个口味。虽然你本身也不对春晚不是很感兴趣，但是你觉得吧，陪家人一块聊聊天也是不错的。但是你发现这个学业和工作啊已经给你身体掏空，让你这个累的不行，没到12点就已经很困了。然后你妈就跟你说，哎呀得了，上床睡觉吧，这个反正有重播，大过年的别把自己整的太累。然后你就上床睡觉了，睡了一会呢，你被这个 12 点的鞭炮声音啊吵醒了。虽然说北京嘛，禁禁放烟花爆竹，但是呢总是会有人能够搞来那个一点这个烟花，对吧？这个也属于这个民不举官不究的这个这个事情。大家也不觉得有什么意外。你呢，被这个炮声惊醒之后呢，就看到床头啊，坐着一个人。隐约的你可以看出来这个人似乎是一个女性，而且这个还很曼妙的身材，似乎赤身裸体。但是呢，奇怪就奇怪在她的头是一个马的头。你说你心里想，是不是这个恶作剧呀？对吧，马年嘛，马头，就那头套，淘宝上好买。但是似乎你没看到这个是头套的这个接缝。
+（点击继续）"
+alignment = 0
+autowrap_mode = 3
+script = ExtResource("1_g6jce")
+
+[node name="1" type="Node" parent="." unique_id=631728494]
+
+[node name="TextureRect" type="TextureRect" parent="1" unique_id=239892412]
+visible = false
+offset_left = 88.0
+offset_top = 8.0
+offset_right = 1054.0
+offset_bottom = 515.0
+texture = SubResource("CompressedTexture2D_036pn")
+expand_mode = 1
+
+[node name="Button1" type="Button" parent="1" unique_id=65124668]
+visible = false
+offset_left = 41.0
+offset_top = 524.0
+offset_right = 391.0
+offset_bottom = 632.0
+theme_override_font_sizes/font_size = 20
+text = "选项1：继续睡觉，装作无事发生。"
+script = ExtResource("3_c6fse")
+
+[node name="Button2" type="Button" parent="1" unique_id=1576698668]
+visible = false
+offset_left = 407.0
+offset_top = 527.0
+offset_right = 788.0
+offset_bottom = 637.0
+theme_override_font_sizes/font_size = 20
+text = "选项2：跳起来大喊“马年吉祥,马年吉祥”"
+script = ExtResource("4_036pn")
+
+[node name="Button3" type="Button" parent="1" unique_id=2063875099]
+visible = false
+offset_left = 806.0
+offset_top = 525.0
+offset_right = 1132.0
+offset_bottom = 635.0
+theme_override_font_sizes/font_size = 20
+text = "选项3：我他妈直接猝死。"
+script = ExtResource("5_vyuaw")
+
+[node name="bt1" type="Node" parent="." unique_id=285031144]
+
+[node name="t1" type="TextureRect" parent="bt1" unique_id=1109056023]
+visible = false
+offset_left = 45.0
+offset_top = 33.0
+offset_right = 1117.0
+offset_bottom = 550.0
+texture = ExtResource("5_qxynw")
+expand_mode = 1
+
+[node name="b1" type="Button" parent="bt1" unique_id=371918097]
+visible = false
+offset_left = 25.0
+offset_top = 499.0
+offset_right = 1133.0
+offset_bottom = 631.0
+theme_override_font_sizes/font_size = 34
+text = "你翻身蒙头继续睡，第二天醒来，发现今年你看到的所有人的头都是马头。
+（点击继续）"
+script = ExtResource("6_cuky1")
+
+[node name="bt2" type="Node" parent="." unique_id=439618291]
+
+[node name="t2" type="TextureRect" parent="bt2" unique_id=1356344858]
+visible = false
+offset_left = 62.0
+offset_top = 2.0
+offset_right = 1092.0
+offset_bottom = 461.0
+texture = ExtResource("6_23eb0")
+expand_mode = 1
+
+[node name="b2" type="Button" parent="bt2" unique_id=1844657809]
+visible = false
+offset_left = 25.0
+offset_top = 446.0
+offset_right = 1133.0
+offset_bottom = 647.0
+theme_override_font_sizes/font_size = 32
+text = "你跳起来大喊马年吉祥，才发现自己裸睡。那个人是你妹妹，她恶作剧吓你的，而且她其实穿着衣服，只不过你没看清，因为家里地暖很足她穿得比较轻薄。但无论如何，你今后在妹妹面前算是废了。
+（点击继续）"
+alignment = 0
+autowrap_mode = 3
+script = ExtResource("8_47s13")
+
+[node name="bt3" type="Node" parent="." unique_id=1718980583]
+
+[node name="t3" type="TextureRect" parent="bt3" unique_id=909435318]
+visible = false
+offset_left = 80.0
+offset_top = 33.0
+offset_right = 1059.0
+offset_bottom = 492.0
+texture = ExtResource("7_cuky1")
+expand_mode = 1
+
+[node name="b3" type="Button" parent="bt3" unique_id=969535877]
+visible = false
+offset_left = 25.0
+offset_top = 499.0
+offset_right = 1133.0
+offset_bottom = 631.0
+theme_override_font_sizes/font_size = 33
+text = "你穿越到了异世界。这里有两个女人，都说是你的女朋友。
+的（点击继续）"
+script = ExtResource("10_7dk1y")
+
+[node name="锦囊关卡" type="Node" parent="." unique_id=184788314]
+
+[node name="TextureRect" type="TextureRect" parent="锦囊关卡" unique_id=1740477713]
+visible = false
+offset_right = 1155.0
+offset_bottom = 643.0
+texture = ExtResource("11_kksv3")
+expand_mode = 1
+
+[node name="B_J_1" type="Button" parent="锦囊关卡" unique_id=1295956537]
+visible = false
+offset_left = 220.0
+offset_top = 476.0
+offset_right = 452.0
+offset_bottom = 631.0
+theme_override_font_sizes/font_size = 35
+text = "湿漉漉的袋子"
+script = ExtResource("12_bapms")
+
+[node name="B_J_2" type="Button" parent="锦囊关卡" unique_id=1545590192]
+visible = false
+offset_left = 497.0
+offset_top = 476.0
+offset_right = 729.0
+offset_bottom = 631.0
+theme_override_font_sizes/font_size = 35
+text = "破旧的袋子"
+script = ExtResource("13_kd3sb")
+
+[node name="B_J_3" type="Button" parent="锦囊关卡" unique_id=1002484872]
+visible = false
+offset_left = 757.0
+offset_top = 476.0
+offset_right = 989.0
+offset_bottom = 631.0
+theme_override_font_sizes/font_size = 35
+text = "闪发亮的袋子"
+script = ExtResource("14_13elk")
+
+[node name="B_ 引导" type="Button" parent="锦囊关卡" unique_id=557425914]
+visible = false
+offset_left = 100.0
+offset_top = 74.0
+offset_right = 1024.0
+offset_bottom = 473.0
+theme_override_font_sizes/font_size = 35
+text = "你突然想起，你爹和你说过，咱们这家族的血脉诅咒就是，一旦准备考研究生，生活就会不幸，但是没关系，祖宗们早就想到了，他们给后代留了3个锦囊
+（点击继续）"
+autowrap_mode = 3
+script = ExtResource("12_06fsy")
+
+[node name="jt1" type="Node" parent="." unique_id=1186368088]
+
+[node name="TextureRect" type="TextureRect" parent="jt1" unique_id=1792485001]
+visible = false
+offset_left = 18.0
+offset_top = 22.0
+offset_right = 1124.0
+offset_bottom = 488.0
+texture = ExtResource("14_kd3sb")
+
+[node name="Button" type="Button" parent="jt1" unique_id=577739304]
+visible = false
+offset_left = 314.0
+offset_top = 392.0
+offset_right = 850.0
+offset_bottom = 646.0
+theme_override_font_sizes/font_size = 30
+text = "袋子里是一辆桑塔纳2000，是的
+这是一辆货真价实的桑塔纳2000
+经典中的经典，真正懂车的人的选择
+万车之王中王中王
+但是你没有驾照所以没什么卵用
+（点击继续）"
+script = ExtResource("17_hkal1")
+
+[node name="jt2" type="Node" parent="." unique_id=119699163]
+
+[node name="TextureRect" type="TextureRect" parent="jt2" unique_id=830316259]
+visible = false
+offset_left = 18.0
+offset_top = 22.0
+offset_right = 1124.0
+offset_bottom = 488.0
+texture = ExtResource("17_7eyeu")
+
+[node name="Button" type="Button" parent="jt2" unique_id=270072698]
+visible = false
+offset_left = 180.0
+offset_top = 481.0
+offset_right = 965.0
+offset_bottom = 624.0
+theme_override_font_sizes/font_size = 43
+text = "太好了！是FFV-013反器材定向破片地雷
+我们有救了"
+autowrap_mode = 3
+script = ExtResource("18_jisd2")
+
+[node name="jt3" type="Node" parent="." unique_id=1478800271]
+
+[node name="TextureRect" type="TextureRect" parent="jt3" unique_id=1859179593]
+visible = false
+offset_left = -47.0
+offset_top = -59.0
+offset_right = 1237.0
+offset_bottom = 690.0
+texture = ExtResource("18_7eyeu")
+
+[node name="Button" type="Button" parent="jt3" unique_id=1591378706]
+visible = false
+offset_left = 192.0
+offset_top = 405.0
+offset_right = 1016.0
+offset_bottom = 641.0
+theme_override_font_sizes/font_size = 34
+text = "袋子里是一段关于童年的回忆，关于洗过的衣服穿在身上的摩擦，关于早饭的那一碗热奶上i面的干掉的奶皮，关于操场后面的落叶堆里的5块钱，关于枕头堆成的堡垒，关于装作思考的藏在袖子里的耳机，关于那些想见但不得见的人们，但它很快的消散在无风夜中"
+autowrap_mode = 3
+script = ExtResource("19_20swm")
+
+[connection signal="pressed" from="Button过场1" to="Button过场1" method="_on_pressed"]
+[connection signal="pressed" from="1/Button1" to="1/Button1" method="_on_pressed"]
+[connection signal="pressed" from="1/Button2" to="1/Button2" method="_on_pressed"]
+[connection signal="pressed" from="1/Button3" to="1/Button3" method="_on_pressed"]
+[connection signal="pressed" from="bt1/b1" to="bt1/b1" method="_on_pressed"]
+[connection signal="pressed" from="bt2/b2" to="bt2/b2" method="_on_pressed"]
+[connection signal="pressed" from="bt3/b3" to="bt3/b3" method="_on_pressed"]
+[connection signal="pressed" from="锦囊关卡/B_J_1" to="锦囊关卡/B_J_1" method="_on_pressed"]
+[connection signal="pressed" from="锦囊关卡/B_J_2" to="锦囊关卡/B_J_2" method="_on_pressed"]
+[connection signal="pressed" from="锦囊关卡/B_J_3" to="锦囊关卡/B_J_3" method="_on_pressed"]
+[connection signal="pressed" from="锦囊关卡/B_ 引导" to="锦囊关卡/B_ 引导" method="_on_pressed"]
+[connection signal="pressed" from="jt1/Button" to="jt1/Button" method="_on_pressed"]
+[connection signal="pressed" from="jt2/Button" to="jt2/Button" method="_on_pressed"]
+[connection signal="pressed" from="jt3/Button" to="jt3/Button" method="_on_pressed"]

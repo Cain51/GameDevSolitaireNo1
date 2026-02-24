@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://bq8vx8g3vsq5f"]
+
+[ext_resource type="Script" uid="uid://bp5h5ngn80jqn" path="res://1基纳Kenner/7麻痹唾液/button.gd" id="1_m04w0"]
+
+[node name="麻痹唾液" type="Node2D" unique_id=1108265303]
+
+[node name="TextEdit" type="TextEdit" parent="." unique_id=2052544449]
+offset_left = 30.0
+offset_top = 35.0
+offset_right = 1117.0
+offset_bottom = 369.0
+theme_override_font_sizes/font_size = 32
+text = "你的妻子又骗了你，正如同你们那次失败的婚姻
+她也不是什么宇宙保卫队的特工，而是一个宇宙大盗
+她那经过生化改造后的唾液腺中含有超强的麻醉物质
+她把你带到这里其实不是因为你的超级阑尾
+而是想偷窃你的超级扁桃体
+给你整晕了方便手术"
+
+[node name="Button" type="Button" parent="." unique_id=1045566343]
+offset_left = 409.0
+offset_top = 436.0
+offset_right = 680.0
+offset_bottom = 557.0
+theme_override_font_sizes/font_size = 37
+text = "太坏了这个臭女人
+（点击继续）"
+script = ExtResource("1_m04w0")
+
+[connection signal="pressed" from="Button" to="Button" method="_on_pressed"]

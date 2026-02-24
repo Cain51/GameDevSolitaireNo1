@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://cemvdqxak7evg"]
+
+[ext_resource type="Texture2D" uid="uid://d23dok0wikl7f" path="res://1基纳Kenner/6前妻对话/前妻对话.png" id="1_wee1y"]
+[ext_resource type="Script" uid="uid://jgay3wxyxp30" path="res://1基纳Kenner/6前妻对话/button.gd" id="2_ujmmu"]
+
+[node name="前妻对话" type="Node2D" unique_id=1607047121]
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=929551193]
+offset_left = 114.0
+offset_top = 6.0
+offset_right = 1008.0
+offset_bottom = 488.0
+texture = ExtResource("1_wee1y")
+expand_mode = 1
+
+[node name="TextEdit" type="TextEdit" parent="." unique_id=807003088]
+offset_top = 387.0
+offset_right = 683.0
+offset_bottom = 626.0
+theme_override_font_sizes/font_size = 36
+text = "其实我宇宙保卫队的间谍
+和你结婚是因为你的超级阑尾
+我们发现你的超级阑尾能产生无尽的能源
+可以用来保护地球的和平"
+
+[node name="Button" type="Button" parent="." unique_id=1003182701]
+offset_left = 733.0
+offset_top = 391.0
+offset_right = 1108.0
+offset_bottom = 602.0
+theme_override_font_sizes/font_size = 60
+text = "和前妻接吻"
+script = ExtResource("2_ujmmu")
+
+[connection signal="pressed" from="Button" to="Button" method="_on_pressed"]

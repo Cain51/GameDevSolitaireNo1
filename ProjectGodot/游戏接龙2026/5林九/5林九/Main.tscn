@@ -1,0 +1,171 @@
+[gd_scene format=3 uid="uid://vvo53d4hb4qs"]
+
+[ext_resource type="Script" uid="uid://bbckh7l08yae6" path="res://5林九/Scripts/Game.cs" id="1_qta8k"]
+[ext_resource type="PackedScene" uid="uid://cvadq1bjqgn1a" path="res://2Gove/场景/plot/plot.tscn" id="1_u4xfj"]
+[ext_resource type="Script" uid="uid://c20fp5ei3yml3" path="res://5林九/Scripts/CreateActor.cs" id="2_7cec8"]
+[ext_resource type="PackedScene" uid="uid://crvp6txcqvy5" path="res://5林九/Widgets/RadarChart.tscn" id="2_f6aq1"]
+[ext_resource type="Script" uid="uid://d0m4arilly51g" path="res://5林九/EventCheckMessage.cs" id="5_8bgcv"]
+
+[node name="Main" type="Node2D" unique_id=2055596410]
+script = ExtResource("1_qta8k")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=2077552502]
+offset = Vector2(576, 324)
+
+[node name="UI" type="Control" parent="." unique_id=510063612]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1152.0
+offset_bottom = 648.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Plot" parent="UI" unique_id=651422017 instance=ExtResource("1_u4xfj")]
+visible = false
+layout_mode = 1
+
+[node name="CreateActor" type="ColorRect" parent="UI" unique_id=1303973981]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -20.0
+offset_right = -1.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.24319999, 0.76, 0.6652533, 1)
+script = ExtResource("2_7cec8")
+
+[node name="RadarChart" parent="UI/CreateActor" unique_id=1987889634 instance=ExtResource("2_f6aq1")]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -137.0
+offset_top = 79.37
+offset_right = 137.00037
+offset_bottom = 364.64612
+grow_horizontal = 2
+scale = Vector2(1, 1)
+DataColor = Color(1, 1, 1, 0.6)
+BorderColor = Color(0.16689, 0.33448175, 0.25745952, 0.5411765)
+
+[node name="Label" type="Label" parent="UI/CreateActor" unique_id=351436257]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -103.0
+offset_top = 63.825012
+offset_right = 103.00049
+offset_bottom = 126.82501
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 56
+text = "你是谁？"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NameLabel" type="Label" parent="UI/CreateActor" unique_id=212608476]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -111.0
+offset_top = 118.0
+offset_right = 113.0
+offset_bottom = 196.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 28
+text = "大四学生"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Confirm" type="Button" parent="UI/CreateActor" unique_id=1455988748]
+layout_mode = 0
+offset_left = 395.0
+offset_top = 527.0
+offset_right = 539.0
+offset_bottom = 567.0
+text = "这是我"
+
+[node name="Random" type="Button" parent="UI/CreateActor" unique_id=1247649369]
+layout_mode = 0
+offset_left = 613.0
+offset_top = 526.0
+offset_right = 757.0
+offset_bottom = 566.0
+text = "换一个"
+
+[node name="EventCheck" type="Control" parent="UI" unique_id=635847949]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_8bgcv")
+
+[node name="ColorRect" type="ColorRect" parent="UI/EventCheck" unique_id=1222719615]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.59607846)
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/EventCheck" unique_id=112857098]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -139.0
+offset_top = -201.0
+offset_right = 156.0
+offset_bottom = 187.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="ColorRect" parent="UI/EventCheck/MarginContainer" unique_id=587216547]
+layout_mode = 2
+color = Color(9.024516e-09, 0.12628278, 0.1133047, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/EventCheck/MarginContainer/Panel" unique_id=797292483]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 6.0
+offset_right = -5.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Message" type="RichTextLabel" parent="UI/EventCheck/MarginContainer/Panel/VBoxContainer" unique_id=216630159]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+bbcode_enabled = true
+text = "sdfasdf 12312
+sdfs
+sdf
+sdf
+sdf
+sdf"
+fit_content = true
+vertical_alignment = 2
