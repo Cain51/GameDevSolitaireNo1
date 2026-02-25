@@ -14,6 +14,7 @@ let gameState = {
   recentEvents: [], // 最近4次触发的事件ID（防重复）
   restCountSinceOvernight: 0, // 当前昼夜间隔内已触发的休息类事件次数
   mileage: 0, // 行驶里程（km），每个事件+5km
+  totalEventsHandled: 0, // 玩家做出事件选择的总次数
   lastOvernightMileage: 0, // 上次昼夜休息时的里程
   passengerFavor: {}, // 乘客好感度 { "鹿": 65, "猎人": 40, ... }
   passengerGetOffMileage: {}, // 乘客到达目的地下车里程 { "旅行者": 65 } 表示里程>=65时下车
@@ -32,8 +33,16 @@ let gameState = {
   minFuelDuringRun: 100, // 本轮最低燃油
   minDurabilityDuringRun: 100, // 本轮最低耐久
   minComfortDuringRun: 100, // 本轮最低舒适
+  hasOpenedRedPacket: false, // 是否打开过红包（用于成就检查）
   achievedEndings: [], // 已达成的结局ID列表（跨档保留）
   triggeredConditionalStories: [], // 已触发的条件剧情ID（防重复）
+  hardModeTags: [], // 困难模式已选修饰符ID列表
+  hardModeBonuses: [], // 困难模式已选加成ID列表
+  activeDebuffs: [], // 衰变 debuff 列表: [{id: string, stacks: number}]
+  easyMode: false, // 简单模式（关闭衰变 debuff）
+  adminPermitPeakCount: 0, // 背包中「一次性管理员权限」曾同时存在的历史最大数量
+  journeyLog: [], // 事件历程记录 [{type, mileage, ts, icon, main, sub, ...}]
+  _lastJourneyMilestone: 0, // 上次记录里程碑时的里程（防重复）
 };
 
 // 获取乘客当前好感度（0–100）
@@ -58,6 +67,7 @@ let truckState = {
 let inventoryState = {
   gold: GAME_CONFIG.initialGold, // 金币
   maxWeight: 50, // 最大载重
+  trunkLevel: 1, // 后备箱等级
   items: [], // 物品列表: [{id: string, quantity: number}]
 };
 

@@ -2,6 +2,26 @@
 // 定义所有可用物品的属性
 
 const ITEMS_CONFIG = {
+  // === 节日特殊物品 ===
+  马年红包: {
+    name: "马年红包",
+    color: "#dc2626",
+    description: "喜气洋洋的马年红包，打开后可随机获得1-6金币！",
+    weight: 1,
+    category: "consumable",
+    randomGold: [1, 6],
+    stackable: true,
+  },
+  小丑盲盒: {
+    name: "小丑盲盒",
+    color: "#ff00ff",
+    description: "小丑之夜留下的神秘盒子，打开后随机获得一件物品。98%概率获得普通物品，2%概率获得珍品！",
+    weight: 2,
+    category: "consumable",
+    clownBox: true,
+    stackable: true,
+  },
+
   // === 消耗品 ===
   油桶: {
     name: "油桶",
@@ -104,18 +124,32 @@ const ITEMS_CONFIG = {
   幸运符: {
     name: "幸运符",
     color: "#34d399",
-    description: "据说能带来好运的护身符。",
+    description:
+      "据说能带来好运的护身符，散发着淡淡的绿色光芒。每次做出抉择后，有2%概率获得随机基础物资×1；在神秘词条事件中，该概率提升至10%。",
     weight: 1,
-    category: "special",
+    category: "treasure",
+    triggerTags: ["神秘"],
+    passive: { type: "lucky_charm" },
+    stackable: false,
+  },
+  时间存折: {
+    name: "时间存折",
+    color: "#00e5ff",
+    description:
+      '一本泛着蓝色荧光的存折，印着"时间银行"字样。可以从时间银行取出你跨档存储的金币。',
+    weight: 0,
+    category: "treasure",
+    usable: true,
+    useAction: "time_bank_withdraw",
     stackable: false,
   },
   八音盒: {
     name: "八音盒",
     color: "#f472b6",
-    description: "会播放悠扬旋律的八音盒，大幅提升舒适度。",
+    description: "散发着悠扬旋律的神秘八音盒。每次做出抉择时，有20%概率恢复1%舒适；若当前事件拥有「神秘」标签，则100%触发。",
     weight: 2,
-    category: "consumable",
-    useEffect: { comfort: 35 },
+    category: "treasure",
+    passive: { type: "music_box" },
     stackable: false,
   },
   精炼剂: {
@@ -188,17 +222,21 @@ const ITEMS_CONFIG = {
   应急信号弹: {
     name: "应急信号弹",
     color: "#ef4444",
-    description: "紧急求救装置，可以在危难时刻吸引援救。",
+    description: "紧急求救装置，可在危难时刻发射信号吸引援救。使用后根据当前最紧缺的两项属性（燃油/耐久/舒适）定向投送高级补给——最短板获得最强补给，次短板也有对应物资。",
     weight: 2,
     category: "special",
+    usable: true,
+    useAction: "emergency_flare",
     stackable: true,
   },
   鹰眼地图: {
     name: "鹰眼地图",
     color: "#7c3aed",
-    description: "标注了所有隐藏地点的古老地图。",
+    description: "标注了所有隐藏地点的古老地图。展开地图后，你总能从某处被遗忘的角落找到意想不到的珍宝——使用后随机获得一件珍品，地图随之化为碎片。",
     weight: 1,
     category: "special",
+    usable: true,
+    useAction: "eagle_map",
     stackable: false,
   },
 
@@ -246,41 +284,230 @@ const ITEMS_CONFIG = {
     name: "鹿角护符",
     color: "#d4a574",
     description:
-      "鹿用鹿角亲手制成的护符。蕴含着自然的力量，同时恢复燃油、舒适与耐久。",
+      "鹿用鹿角亲手制成的护符。蕴含自然的力量，每次做出选择后有20%概率恢复5%舒适。",
     weight: 1,
-    category: "special",
-    useEffect: { fuel: 30, comfort: 30, durability: 25 },
+    category: "treasure",
+    passive: { triggerChance: 0.2, comfort: 5 },
+    stackable: false,
+  },
+  萤火虫之愿: {
+    name: "萤火虫之愿",
+    color: "#fbbf24",
+    description:
+      "一只萤火虫选择留在了你身边，化作永不熄灭的微光。每次遇到夜晚相关事件时，25%概率恢复2~5点耐久和1~2金币。",
+    weight: 1,
+    category: "treasure",
+    triggerTags: ["夜晚"],
+    stackable: false,
+  },
+  雨水护符: {
+    name: "雨水护符",
+    color: "#60a5fa",
+    description:
+      "一枚在暴雨中凝结的水滴，晶莹剔透，散发着宁静的光芒。持有时，雨相关事件中免疫所有负面效果。",
+    weight: 1,
+    category: "treasure",
+    triggerTags: ["雨天"],
+    stackable: false,
+  },
+  雾中人的照片: {
+    name: "雾中人的照片",
+    color: "#94a3b8",
+    description:
+      "一张泛黄的照片，画面中一个模糊的人影站在浓雾之中。持有时，雾气、沙尘暴等视线受阻的事件中免疫所有负面效果。",
+    weight: 1,
+    category: "treasure",
+    triggerTags: ["视线模糊"],
+    stackable: false,
+  },
+  天马星座的流星: {
+    name: "天马星座的流星",
+    color: "#c084fc",
+    description:
+      "一颗从天马座方向坠落的流星碎片，表面温热，散发着淡紫色的微光。每次遇到夜晚或神秘相关事件时，获得1金币。",
+    weight: 4,
+    category: "treasure",
+    triggerTags: ["夜晚", "神秘"],
     stackable: false,
   },
   猎人徽章: {
     name: "猎人徽章",
     color: "#8b7355",
     description:
-      "猎人传下的勋章，象征野外生存的极限智慧。用于紧急维修时效果惊人。",
+      "猎人传下的勋章，象征野外生存的极限智慧。使用后完全恢复车辆耐久，但勋章会因为释放全部力量而黯淡。",
     weight: 2,
-    category: "special",
-    useEffect: { durability: 70 },
+    category: "treasure",
+    usable: true,
+    onUse: {
+      useEffect: { durability: 100 },
+      transformTo: "黯淡的猎人徽章",
+      useMessage: "猎人徽章散发出苍茫的光芒，车身的每一处裂痕都在迅速愈合——耐久完全恢复！但勋章上的光泽随之黯淡下去。",
+    },
+    stackable: false,
+  },
+  黯淡的猎人徽章: {
+    name: "黯淡的猎人徽章",
+    color: "#5c4a3a",
+    description:
+      "曾经蕴含野外生存极限智慧的勋章，在释放全部力量后变得黯淡无光。它的表面布满细小裂纹，但摸上去仍然温热。",
+    weight: 0,
+    category: "treasure",
     stackable: false,
   },
   骚福瑞手办: {
     name: "骚福瑞手办",
     color: "#ff69b4",
     description:
-      "派对现场粉丝亲手制作的骚福瑞限定手办。看着它，车内所有人都会莫名陷入极度愉悦。",
+      "派对现场粉丝亲手制作的骚福瑞限定手办。它散发着不可思议的粉色光芒，仿佛随时都在跳舞。持有时，每次事件选择后有25%概率恢复8%燃油。",
     weight: 1,
-    category: "special",
-    useEffect: { comfort: 80 },
+    category: "treasure",
+    passive: { triggerChance: 0.25, fuel: 8 },
     stackable: false,
   },
   和平徽章: {
     name: "和平徽章",
     color: "#10b981",
     description:
-      "鹿与猎人共同认可的徽章，象征对立者的和解。佩戴时能带来内心的平静与和谐。",
+      "鹿与猎人共同认可的徽章，象征对立者的和解。持有时，每次抉择都会为车辆恢复1%耐久和1%舒适度。",
     weight: 1,
-    category: "special",
-    useEffect: { comfort: 20, durability: 15 },
+    category: "treasure",
+    passive: { triggerChance: 1.0, durability: 1, comfort: 1 },
     stackable: false,
+  },
+  金马雕像: {
+    name: "金马雕像",
+    color: "#ffd700",
+    description:
+      "一尊沉甸甸的纯金马雕像，马鬃飞扬、四蹄腾空。据说它曾属于某位疯狂的收藏家。持有时，每次事件选择后有25%概率掉落1~2金币。",
+    weight: 5,
+    category: "treasure",
+    passive: { triggerChance: 0.25, goldMin: 1, goldMax: 2 },
+    stackable: false,
+  },
+  海市蜃楼雕塑: {
+    name: "海市蜃楼雕塑",
+    color: "#e0a050",
+    description:
+      "从沙尘暴中带出的奇异雕塑，表面浮动着沙金色的光芒，仿佛随时会消失。当燃油耗尽边缘时，它会化为最后的希望——燃油恢复25%，但雕塑也会碎裂。",
+    weight: 5,
+    category: "treasure",
+    passive: {
+      type: "condition",
+      condition: "fuel_low",
+      threshold: 10,
+      fuel: 25,
+      transformTo: "破损的雕塑",
+    },
+    stackable: false,
+  },
+  破损的雕塑: {
+    name: "破损的雕塑",
+    color: "#8b7355",
+    description:
+      "曾经是一尊璀璨的海市蜃楼雕塑，如今已碎裂黯淡。沙金色的光芒消失了，只留下粗糙的石质残骸，似乎在诉说着沙漠中那场惊险的旅途。",
+    weight: 0,
+    category: "treasure",
+    stackable: false,
+  },
+  呓语之书: {
+    name: "呓语之书",
+    color: "#9f7aea",
+    description:
+      "从神秘石碑中浮现的古书，封面上的文字不断变幻。使用后，下一次事件选择的所有属性效果将被倒转——损失变为收获，收获变为损失。触发一次后化为空白。",
+    weight: 2,
+    category: "treasure",
+    usable: true,
+    onUse: {
+      setFlag: { _effectReversed: true },
+      transformTo: "空白书",
+      useMessage: "翻开呓语之书，书页上的文字疯狂跳动后化为虚无……下一次事件的命运将被逆转！",
+    },
+    stackable: false,
+  },
+  空白书: {
+    name: "空白书",
+    color: "#a0aec0",
+    description:
+      "曾经是一本能扭转命运的呓语之书，如今书页上空无一物。翻开只有淡淡的墨香和一片空白，像是一段被抹去的记忆。",
+    weight: 0,
+    category: "treasure",
+    stackable: false,
+  },
+  马头皮卡核心: {
+    name: "马头皮卡核心",
+    color: "#00ff88",
+    description:
+      "一群马头外星人改造了你的皮卡，在引擎中植入了这颗散发荧绿光芒的核心。它似乎与车辆融为一体，反而让车身变得更轻了。你总觉得发动机在低沉地嘶鸣。",
+    weight: -10,
+    category: "treasure",
+    stackable: false,
+  },
+  钻石稿: {
+    name: "钻石稿",
+    color: "#b9f2ff",
+    description:
+      "一把散发着幽蓝光芒的钻石镐头，镐尖至今锋利无比。这是废弃矿场深处发现的珍宝，虽然已经无矿可挖，但它的价值远超普通矿石——任何商人都会为它出高价。",
+    weight: 5,
+    category: "treasure",
+    stackable: false,
+  },
+  繁荣时代的金属碎片: {
+    name: "繁荣时代的金属碎片",
+    color: "#fbbf24",
+    description:
+      "一块刻有精密纹路的金属碎片，表面泛着温暖的金色光泽。它来自一个物资丰沛的繁荣年代，似乎蕴含着某种让商品变得廉价的神秘力量。持有时，商人购买价格降低25%。",
+    weight: 8,
+    category: "treasure",
+    stackable: false,
+  },
+  沥青滴落装置: {
+    name: "沥青滴落装置",
+    color: "#4a4a4a",
+    description:
+      "一个从废弃加油站深处挖出的奇特装置，外壳漆黑如沥青，内部管路中不断渗出黏稠的液滴。只要挂在车上，它就会缓慢地将空气中的碳氢化合物凝结成原油。持有时，每次做出选择后有2%概率获得原油×1；若当前事件带有「废墟」标签，概率提升至10%。",
+    weight: 5,
+    category: "treasure",
+    passive: {
+      triggerChance: 0.02,
+      ruinsTriggerChance: 0.10,
+      addItems: [{ id: "原油", quantity: 1 }],
+    },
+    stackable: false,
+  },
+  随缘而遇的尘埃: {
+    name: "随缘而遇的尘埃",
+    color: "#d4b896",
+    description:
+      "一小撮漂浮在公路上的细碎尘埃，某一刻恰好落进了你的车窗。它毫无重量，却能感知废墟的气息。持有时，在带有「废墟」标签的事件中，每次做出选择后有10%概率获得随机基础物资×1。",
+    weight: 0,
+    category: "treasure",
+    passive: {
+      type: "dust_of_fate",
+      ruinsTriggerChance: 0.10,
+    },
+    stackable: false,
+  },
+  密钥: {
+    name: "密钥",
+    color: "#c084fc",
+    description:
+      "从古老神庙的谜题中解读出的神秘密钥，表面刻满了与石碑上相同的符号。它似乎能打开某种隐藏的通道……具体用途尚未明确。",
+    weight: 4,
+    category: "treasure",
+    stackable: false,
+  },
+
+  一次性管理员权限: {
+    name: "一次性管理员权限",
+    color: "#22d3ee",
+    description:
+      "从虚数空间的隐藏文件夹中取出的访问令牌，表面不断闪烁着蓝色代码。激活后开启 Debug 控制台，允许使用一次 Debug 功能；使用后令牌自我销毁，控制台随之关闭。",
+    weight: 0,
+    category: "treasure",
+    stackable: false,
+    usable: true,
+    onUse: { adminPermitActivate: true },
+    passive: { type: "admin_permit" },
   },
 };
 

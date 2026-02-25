@@ -2,9 +2,18 @@
 <html lang="zh-CN">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+		<meta name="theme-color" content="#c41e3a">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+		<meta name="apple-mobile-web-app-title" content="红色皮卡">
 		<link rel="icon" type="image/png" href="favicon.png">
+		<link rel="apple-touch-icon" href="favicon.png">
+		<link rel="manifest" href="manifest.json">
 		<title>无人红色皮卡的安保之旅</title>
+		<!-- 设备检测：尽早注入，避免闪烁 -->
+		<script src="js/device-adapt.js"></script>
 		<!-- 引入tailwindcss -->
 		<script src="https://cdn.tailwindcss.com"></script>
 		<!-- 文字效果 -->
@@ -44,6 +53,11 @@
 		<style>
 			body {
 				background: #171717;
+				animation: pageFadeIn 0.6s ease-out;
+			}
+			@keyframes pageFadeIn {
+				from { opacity: 0; }
+				to { opacity: 1; }
 			}
 			/* 事件文本框滚动条：与画面风格一致（深底 + 红色滑块） */
 			.text-area-scroll {
@@ -151,6 +165,10 @@
 				padding: 2%;
 				align-items: flex-start;
 				justify-content: center;
+				animation: eventModalFadeIn 0.25s ease-out both;
+			}
+			#event-modal.modal-fade-out {
+				animation: eventModalFadeOut 0.2s ease-in both;
 			}
 			#event-modal .event-modal-inner {
 				width: 96%;
@@ -161,6 +179,7 @@
 				padding: clamp(6px, 2.5cqw, 32px);
 				border-radius: clamp(6px, 1.5cqw, 16px);
 				box-sizing: border-box;
+				animation: eventInnerSlideIn 0.3s cubic-bezier(0.22,1,0.36,1) both;
 			}
 			#event-modal .event-modal-emoji {
 				font-size: clamp(1.25rem, 10cqw, 3.5rem);
@@ -187,9 +206,17 @@
 				font-size: clamp(0.7rem, 2.2cqw, 0.875rem);
 			}
 			/* 二级选择弹窗：随游戏窗口缩放 */
+			/* 扫雷弹窗：淡出动画 */
+			#minesweeper-modal.modal-fade-out {
+				animation: eventModalFadeOut 0.2s ease-in both;
+			}
 			#sub-choice-modal {
 				overflow: auto;
 				padding: 2%;
+				animation: eventModalFadeIn 0.25s ease-out both;
+			}
+			#sub-choice-modal.modal-fade-out {
+				animation: eventModalFadeOut 0.2s ease-in both;
 			}
 			#sub-choice-modal .sub-choice-inner {
 				max-width: 96%;
@@ -198,6 +225,7 @@
 				overflow-y: auto;
 				border-radius: clamp(6px, 1.5cqw, 12px);
 				box-sizing: border-box;
+				animation: eventInnerSlideIn 0.3s cubic-bezier(0.22,1,0.36,1) both;
 			}
 			#sub-choice-modal .sub-choice-prompt {
 				font-size: clamp(0.75rem, 2.2cqw, 0.875rem);
@@ -207,6 +235,20 @@
 				padding: clamp(6px, 1.5cqh, 12px) clamp(10px, 2.5cqw, 16px);
 				margin-bottom: clamp(4px, 1cqh, 8px);
 				font-size: clamp(0.75rem, 2.2cqw, 0.875rem);
+			}
+			/* 事件弹窗淡入淡出动画 */
+			@keyframes eventModalFadeIn {
+				from { opacity: 0; }
+				to   { opacity: 1; }
+			}
+			@keyframes eventModalFadeOut {
+				from { opacity: 1; }
+				to   { opacity: 0; }
+			}
+			/* 事件弹窗内容滑入 */
+			@keyframes eventInnerSlideIn {
+				from { opacity: 0; transform: translateY(18px) scale(0.97); }
+				to   { opacity: 1; transform: translateY(0) scale(1); }
 			}
 			/* 成就解锁提示框动画 */
 			@keyframes achievementSlideIn {
@@ -229,13 +271,1170 @@
 					transform: translateX(100%);
 				}
 			}
+			/* 事件主题 emoji 粒子飘落动画 */
+			@keyframes emojiFloat {
+				0% {
+					opacity: 0;
+					transform: translateY(0) rotate(0deg) scale(0.6);
+				}
+				10% {
+					opacity: 0.9;
+				}
+				50% {
+					transform: translateY(45vh) rotate(180deg) scale(1);
+					opacity: 0.7;
+				}
+				100% {
+					opacity: 0;
+					transform: translateY(95vh) rotate(360deg) scale(0.4);
+				}
+			}
+			/* 雨滴快速下落动画 */
+			@keyframes emojiRainDrop {
+				0% {
+					opacity: 0;
+					transform: translateY(-5vh) scaleY(1.3);
+				}
+				8% {
+					opacity: 0.85;
+				}
+				100% {
+					opacity: 0;
+					transform: translateY(105vh) scaleY(1.3);
+				}
+			}
+			/* 雾气水平漂移动画 */
+			@keyframes emojiFogDrift {
+				0% {
+					opacity: 0;
+					transform: translateX(-10vw) translateY(0) scale(1.5);
+				}
+				15% {
+					opacity: 0.6;
+				}
+				50% {
+					opacity: 0.45;
+					transform: translateX(15vw) translateY(5vh) scale(2);
+				}
+				85% {
+					opacity: 0.3;
+				}
+				100% {
+					opacity: 0;
+					transform: translateX(40vw) translateY(-3vh) scale(1.8);
+				}
+			}
+			/* 沙尘暴横扫动画 */
+			@keyframes emojiSandstorm {
+				0% {
+					opacity: 0;
+					transform: translateX(0) translateY(0) scale(2);
+				}
+				8% {
+					opacity: 0.85;
+				}
+				50% {
+					opacity: 0.7;
+					transform: translateX(-55vw) translateY(8vh) scale(2.5);
+				}
+				85% {
+					opacity: 0.4;
+				}
+				100% {
+					opacity: 0;
+					transform: translateX(-120vw) translateY(3vh) scale(2);
+				}
+			}
+			/* 珍品获得 - 全屏特效淡入 */
+			@keyframes treasureOverlayFadeIn {
+				0% { opacity: 0; }
+				100% { opacity: 1; }
+			}
+			/* 珍品获得 - 全屏特效淡出 */
+			@keyframes treasureOverlayFadeOut {
+				0% { opacity: 1; }
+				100% { opacity: 0; }
+			}
+			/* 珍品获得 - 文字上浮出现 */
+			@keyframes treasureTextFloat {
+				0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+				100% { opacity: 1; transform: translateY(0) scale(1); }
+			}
+			/* 珍品小红点呼吸 */
+			@keyframes treasureDotPulse {
+				0%, 100% { opacity: 1; transform: scale(1); }
+				50% { opacity: 0.5; transform: scale(1.4); }
+			}
+			/* 雾中人的照片 - 鬼魂漂浮 */
+			@keyframes fogGhostFloat {
+				0% { opacity: 0; transform: translateY(0) scale(0.6); }
+				15% { opacity: 0.5; }
+				50% { opacity: 0.35; transform: translateY(-180px) scale(1); }
+				85% { opacity: 0.15; }
+				100% { opacity: 0; transform: translateY(-350px) scale(0.7); }
+			}
+			/* 罕见事件 - 动态彩虹流光边框 */
+			@keyframes rareEventBorderFlow {
+				0%   { border-color: #ff0040; box-shadow: 0 0 20px #ff004060, inset 0 0 20px #ff004020; }
+				16%  { border-color: #ff8800; box-shadow: 0 0 20px #ff880060, inset 0 0 20px #ff880020; }
+				33%  { border-color: #ffdd00; box-shadow: 0 0 20px #ffdd0060, inset 0 0 20px #ffdd0020; }
+				50%  { border-color: #00ff88; box-shadow: 0 0 20px #00ff8860, inset 0 0 20px #00ff8820; }
+				66%  { border-color: #0088ff; box-shadow: 0 0 20px #0088ff60, inset 0 0 20px #0088ff20; }
+				83%  { border-color: #dd00ff; box-shadow: 0 0 20px #dd00ff60, inset 0 0 20px #dd00ff20; }
+				100% { border-color: #ff0040; box-shadow: 0 0 20px #ff004060, inset 0 0 20px #ff004020; }
+			}
+			.rare-event-border {
+				animation: rareEventBorderFlow 3s linear infinite !important;
+				border-width: 3px !important;
+				border-style: solid !important;
+			}
+			/* 罕见事件 - 小丑主题边框（更疯狂） */
+			@keyframes clownBorderChaos {
+				0%   { border-color: #ff0040; box-shadow: 0 0 30px #ff004080, inset 0 0 15px #ff004030; transform: rotate(0deg); }
+				10%  { border-color: #ffdd00; box-shadow: 0 0 25px #ffdd0080; transform: rotate(0.3deg); }
+				20%  { border-color: #00ff88; box-shadow: 0 0 35px #00ff8880; transform: rotate(-0.5deg); }
+				30%  { border-color: #ff00ff; box-shadow: 0 0 30px #ff00ff80; transform: rotate(0.4deg); }
+				40%  { border-color: #00ddff; box-shadow: 0 0 25px #00ddff80; transform: rotate(-0.2deg); }
+				50%  { border-color: #ff8800; box-shadow: 0 0 40px #ff880090, inset 0 0 20px #ff880040; transform: rotate(0.6deg); }
+				60%  { border-color: #88ff00; box-shadow: 0 0 30px #88ff0080; transform: rotate(-0.3deg); }
+				70%  { border-color: #ff0088; box-shadow: 0 0 25px #ff008880; transform: rotate(0.2deg); }
+				80%  { border-color: #8800ff; box-shadow: 0 0 35px #8800ff80; transform: rotate(-0.4deg); }
+				90%  { border-color: #ff4400; box-shadow: 0 0 30px #ff440080; transform: rotate(0.3deg); }
+				100% { border-color: #ff0040; box-shadow: 0 0 30px #ff004080, inset 0 0 15px #ff004030; transform: rotate(0deg); }
+			}
+			.clown-event-border {
+				animation: clownBorderChaos 2s linear infinite !important;
+				border-width: 3px !important;
+				border-style: solid !important;
+			}
+			/* 时间银行故障特效 */
+			@keyframes timeBankGlitch {
+				0%, 100% { filter: none; transform: translate(0,0) skew(0deg); opacity: 1; }
+				5%  { filter: hue-rotate(180deg) saturate(3) contrast(2); transform: translate(-8px, 0) skew(-2deg); }
+				6%  { filter: hue-rotate(90deg) invert(0.3); transform: translate(5px, -3px) skew(1deg); }
+				7%  { filter: none; transform: translate(0,0) skew(0deg); }
+				20% { filter: hue-rotate(270deg) contrast(1.5); transform: translate(4px, 2px); }
+				21% { filter: none; transform: translate(-2px, 0); }
+				22% { filter: none; transform: translate(0,0); }
+				50% { filter: hue-rotate(180deg) saturate(2); transform: translate(-5px, 3px) skew(0.5deg); }
+				51% { filter: invert(0.2) hue-rotate(90deg); transform: translate(3px, -2px); }
+				52% { filter: none; transform: translate(0,0); }
+				80% { filter: hue-rotate(360deg) contrast(2); transform: translate(6px, -4px) skew(-1.5deg); }
+				81% { filter: none; transform: translate(0,0); }
+			}
+			@keyframes timeBankGlitchFull {
+				0%, 100% { filter: none; transform: translate(0,0); background-color: transparent; }
+				3%  { filter: hue-rotate(180deg) saturate(5) contrast(3) invert(0.1); transform: translate(-12px, 0) skew(-3deg); background-color: rgba(0,229,255,0.05); }
+				4%  { filter: hue-rotate(90deg) invert(0.5) contrast(2); transform: translate(8px, -5px); background-color: rgba(255,0,128,0.08); }
+				5%  { filter: none; transform: translate(0,0); background-color: transparent; }
+				15% { filter: hue-rotate(270deg) saturate(3); transform: translate(6px, 3px); }
+				16% { filter: invert(0.3) hue-rotate(45deg); transform: translate(-4px, 2px) skew(1deg); }
+				17% { filter: none; transform: translate(0,0); }
+				45% { filter: hue-rotate(180deg) contrast(4) saturate(2); transform: translate(-15px, 5px) skew(-2deg); background-color: rgba(0,229,255,0.1); }
+				46% { filter: invert(0.4) contrast(3); transform: translate(10px, -3px); background-color: rgba(255,0,255,0.1); }
+				47% { filter: none; transform: translate(0,0); background-color: transparent; }
+				70% { filter: hue-rotate(90deg) saturate(4) contrast(2); transform: translate(-8px, 4px) skew(1.5deg); }
+				71% { filter: none; transform: translate(0,0); }
+				90% { filter: hue-rotate(315deg) invert(0.2) contrast(2.5); transform: translate(10px, -6px); }
+				91% { filter: none; transform: translate(0,0); }
+			}
+			/* 时间银行模态框边框动画 */
+			@keyframes timeBankBorderFlow {
+				0%   { border-color: #00e5ff; box-shadow: 0 0 20px #00e5ff60, inset 0 0 15px #00e5ff20; }
+				25%  { border-color: #7b2fff; box-shadow: 0 0 25px #7b2fff60, inset 0 0 15px #7b2fff20; }
+				50%  { border-color: #00fff7; box-shadow: 0 0 20px #00fff760, inset 0 0 15px #00fff720; }
+				75%  { border-color: #ff00aa; box-shadow: 0 0 25px #ff00aa60, inset 0 0 15px #ff00aa20; }
+				100% { border-color: #00e5ff; box-shadow: 0 0 20px #00e5ff60, inset 0 0 15px #00e5ff20; }
+			}
+			.time-bank-event-border {
+				animation: timeBankBorderFlow 2s linear infinite !important;
+				border-width: 3px !important;
+				border-style: solid !important;
+			}
+			/* ============================================================
+			   命运轮盘 - 金色流光边框 + 转盘 UI
+			   ============================================================ */
+			@keyframes fateRouletteBorder {
+				0%   { border-color: #ffd700; box-shadow: 0 0 25px #ffd70070, inset 0 0 15px #ffd70025; }
+				25%  { border-color: #ff8c00; box-shadow: 0 0 30px #ff8c0070, inset 0 0 15px #ff8c0025; }
+				50%  { border-color: #fffacd; box-shadow: 0 0 25px #fffacd70, inset 0 0 15px #fffacd25; }
+				75%  { border-color: #ff8c00; box-shadow: 0 0 30px #ff8c0070, inset 0 0 15px #ff8c0025; }
+				100% { border-color: #ffd700; box-shadow: 0 0 25px #ffd70070, inset 0 0 15px #ffd70025; }
+			}
+			/* 转盘内卡片入场：从小放大 + 淡入 */
+			@keyframes fateRouletteCardIn {
+				0%   { opacity: 0; transform: scale(0.55); }
+				60%  { opacity: 1; transform: scale(1.03); }
+				100% { opacity: 1; transform: scale(1); }
+			}
+			/* 转盘内卡片退场：缩小淡出 */
+			@keyframes fateRouletteCardOut {
+				0%   { opacity: 1; transform: scale(1); }
+				100% { opacity: 0; transform: scale(0.6); }
+			}
+			/* 事件选择框及其他 UI 在转盘开启时淡出 */
+			@keyframes fateOverlayFadeOut {
+				0%   { opacity: 1; pointer-events: auto; }
+				100% { opacity: 0; pointer-events: none; }
+			}
+			@keyframes fateOverlayFadeIn {
+				0%   { opacity: 0; }
+				100% { opacity: 1; }
+			}
+			/* 转盘遮罩层本身淡入 */
+			@keyframes fateModalBgIn {
+				0%   { opacity: 0; }
+				100% { opacity: 1; }
+			}
+			@keyframes fateModalBgOut {
+				0%   { opacity: 1; }
+				100% { opacity: 0; }
+			}
+			/* 为被淡出的外层 UI 元素加的过渡类 */
+			.fate-roulette-dim-out {
+				animation: fateOverlayFadeOut 0.55s ease forwards !important;
+				pointer-events: none !important;
+			}
+			.fate-roulette-dim-in {
+				animation: fateOverlayFadeIn 0.45s ease forwards !important;
+			}
+			.fate-roulette-border {
+				animation: fateRouletteBorder 1.8s linear infinite !important;
+				border-width: 3px !important;
+				border-style: solid !important;
+			}
+			/* 转盘全屏遮罩（覆盖整个视口，不只是 canvas） */
+			#fate-roulette-modal {
+				position: fixed;
+				inset: 0;
+				background: rgba(2, 1, 0, 0.0);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 9999;
+			}
+			#fate-roulette-inner {
+				background: #100d00;
+				border: 3px solid #ffd700;
+				border-radius: 20px;
+				padding: 28px 28px 24px;
+				width: min(96vw, 520px);
+				max-height: 96vh;
+				overflow-y: auto;
+				box-shadow: 0 0 80px rgba(255,215,0,0.45), 0 0 160px rgba(255,140,0,0.2);
+				text-align: center;
+				position: relative;
+			}
+			/* 转盘画布 */
+			#fate-wheel-canvas {
+				display: block;
+				margin: 0 auto 14px;
+				border-radius: 50%;
+				box-shadow: 0 0 40px rgba(255,215,0,0.6), 0 0 80px rgba(255,140,0,0.35);
+			}
+			/* 指针 */
+			#fate-wheel-pointer {
+				position: absolute;
+				top: 24px;
+				left: 50%;
+				transform: translateX(-50%);
+				font-size: 2rem;
+				filter: drop-shadow(0 0 8px #ffd700);
+				pointer-events: none;
+				z-index: 2;
+				line-height: 1;
+			}
+			@keyframes wheelSpinResult {
+				0%   { transform: translateX(-50%) rotate(0deg); }
+				50%  { transform: translateX(-50%) rotate(8deg); }
+				100% { transform: translateX(-50%) rotate(-5deg); }
+			}
+			#fate-roulette-btn {
+				margin-top: 14px;
+				padding: 12px 40px;
+				background: linear-gradient(135deg, #ffd700, #ff8c00);
+				color: #1a0d00;
+				font-weight: 900;
+				font-size: 1.1rem;
+				border: none;
+				border-radius: 9999px;
+				cursor: pointer;
+				transition: filter 0.2s, transform 0.1s;
+				box-shadow: 0 0 24px rgba(255,215,0,0.55);
+			}
+			#fate-roulette-btn:hover:not(:disabled) { filter: brightness(1.15); }
+			#fate-roulette-btn:active:not(:disabled) { transform: scale(0.96); }
+			#fate-roulette-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+			/* ============================================================
+			   小丑之夜 - 全页彩虹 + game-canvas 抖动
+			   抖动幅度/速度均为原版 50%
+			   ============================================================ */
+			@keyframes clownCanvasShake {
+				0%,100% { transform: translate(0,0) rotate(0deg); }
+				5%  { transform: translate(-1.5px, 1px) rotate(-0.2deg); }
+				10% { transform: translate(2px,-1px) rotate(0.175deg); }
+				15% { transform: translate(-1px, 1.5px) rotate(-0.125deg); }
+				20% { transform: translate(1.5px,-0.5px) rotate(0.25deg); }
+				25% { transform: translate(-2px, 0.5px) rotate(-0.15deg); }
+				30% { transform: translate(1px, 1.5px) rotate(0.125deg); }
+				35% { transform: translate(-1.5px,-1px) rotate(-0.275deg); }
+				40% { transform: translate(1.5px, 0.5px) rotate(0.175deg); }
+				45% { transform: translate(-0.5px,-1.5px) rotate(-0.1deg); }
+				50% { transform: translate(1px, 1px) rotate(0.3deg); }
+				55% { transform: translate(-1.5px,-0.5px) rotate(-0.2deg); }
+				60% { transform: translate(0.5px, 1.5px) rotate(0.075deg); }
+				65% { transform: translate(-1px,-1px) rotate(-0.175deg); }
+				70% { transform: translate(1.5px, 1px) rotate(0.25deg); }
+				75% { transform: translate(-1px,-1px) rotate(-0.15deg); }
+				80% { transform: translate(2px,-0.25px) rotate(0.2deg); }
+				85% { transform: translate(-1px, 0.5px) rotate(-0.25deg); }
+				90% { transform: translate(1px,-1px) rotate(0.125deg); }
+				95% { transform: translate(-1.5px, 0.75px) rotate(-0.075deg); }
+			}
+			@keyframes clownRainbowFilter {
+				0%   { filter: hue-rotate(0deg)   saturate(1.8) brightness(1.1); }
+				16%  { filter: hue-rotate(60deg)  saturate(2.2) brightness(1.05); }
+				33%  { filter: hue-rotate(120deg) saturate(1.9) brightness(1.15); }
+				50%  { filter: hue-rotate(180deg) saturate(2.5) brightness(1.08); }
+				66%  { filter: hue-rotate(240deg) saturate(2.0) brightness(1.12); }
+				83%  { filter: hue-rotate(300deg) saturate(2.3) brightness(1.06); }
+				100% { filter: hue-rotate(360deg) saturate(1.8) brightness(1.1); }
+			}
+			/* body 只做全页彩虹滤镜，不做 transform（避免事件弹窗跟抖） */
+			body.clown-active {
+				animation: clownRainbowFilter 0.7s linear infinite !important;
+			}
+			/* game-canvas 承担抖动（周期 0.525s = 原 0.35s × 1.5，即慢50%） */
+			#game-canvas.clown-canvas-shake {
+				animation: clownCanvasShake 0.525s ease-in-out infinite;
+				transform-origin: center center;
+			}
+			/* event-modal 是 game-canvas 的子元素，JS RAF 实时反向补偿保持静止 */
+			#game-canvas.clown-canvas-shake #event-modal {
+				will-change: transform;
+			}
+
+			/* ============================================================
+			   时间银行 - 时钟虚影层 & 背景脉冲
+			   ============================================================ */
+			#time-bank-clock-ghost {
+				position: fixed;
+				inset: 0;
+				pointer-events: none;
+				z-index: 9998;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				overflow: hidden;
+				gap: 0.5rem;
+			}
+			.time-ghost-digit {
+				font-family: 'Courier New', monospace;
+				font-size: clamp(3rem, 12vw, 9rem);
+				font-weight: 900;
+				letter-spacing: 0.15em;
+				color: transparent;
+				-webkit-text-stroke: 1px rgba(0, 229, 255, 0.18);
+				text-shadow:
+					0 0 30px rgba(0,229,255,0.12),
+					0 0 60px rgba(0,229,255,0.07),
+					2px 2px 0 rgba(255,0,200,0.06),
+					-2px -2px 0 rgba(0,255,180,0.06);
+				user-select: none;
+				line-height: 1;
+				mix-blend-mode: screen;
+			}
+			.time-ghost-date {
+				font-family: 'Courier New', monospace;
+				font-size: clamp(1rem, 3vw, 2.2rem);
+				font-weight: 700;
+				letter-spacing: 0.3em;
+				color: rgba(0, 229, 255, 0.10);
+				text-shadow: 0 0 20px rgba(0,229,255,0.10);
+				user-select: none;
+				mix-blend-mode: screen;
+			}
+			@keyframes ghostPulse {
+				0%, 100% { opacity: 1; transform: scale(1); }
+				50%       { opacity: 0.5; transform: scale(0.997); }
+			}
+			@keyframes ghostGlitchBurst {
+				0%   { -webkit-text-stroke-color: rgba(0,229,255,0.18); transform: translate(0,0); }
+				10%  { -webkit-text-stroke-color: rgba(255,0,200,0.35); transform: translate(-4px,2px) skewX(-3deg); }
+				11%  { -webkit-text-stroke-color: rgba(0,255,180,0.35); transform: translate(3px,-1px) skewX(2deg); }
+				12%  { -webkit-text-stroke-color: rgba(0,229,255,0.18); transform: translate(0,0); }
+				40%  { -webkit-text-stroke-color: rgba(0,229,255,0.22); transform: translate(2px,1px); }
+				41%  { -webkit-text-stroke-color: rgba(255,0,128,0.30); transform: translate(-3px,2px) skewX(1.5deg); }
+				42%  { -webkit-text-stroke-color: rgba(0,229,255,0.18); transform: translate(0,0); }
+				100% { -webkit-text-stroke-color: rgba(0,229,255,0.18); transform: translate(0,0); }
+			}
+			.time-ghost-digit.glitching {
+				animation: ghostGlitchBurst 0.6s steps(1) forwards;
+			}
+
+			/* ============================================================
+			   虚数现象 - 格式化特效
+			   ============================================================ */
+			/* 全屏反色脉冲（format_world 选项触发） */
+			@keyframes imaginaryInvert {
+				0%   { opacity: 0; filter: invert(0) hue-rotate(0deg); }
+				8%   { opacity: 1; filter: invert(1) hue-rotate(0deg); }
+				14%  { opacity: 1; filter: invert(1) hue-rotate(90deg) saturate(3); }
+				20%  { opacity: 1; filter: invert(0) hue-rotate(180deg) contrast(2); }
+				26%  { opacity: 1; filter: invert(1) hue-rotate(270deg); }
+				32%  { opacity: 1; filter: invert(0) hue-rotate(360deg) saturate(2); }
+				38%  { opacity: 1; filter: invert(1) contrast(3) brightness(1.5); }
+				44%  { opacity: 1; filter: invert(0) hue-rotate(90deg); }
+				50%  { opacity: 1; filter: invert(1) hue-rotate(180deg) saturate(4) contrast(2); }
+				60%  { opacity: 1; filter: invert(0) hue-rotate(270deg) contrast(1.5); }
+				70%  { opacity: 1; filter: invert(1) hue-rotate(0deg) saturate(2); }
+				80%  { opacity: 0.6; filter: invert(0.5) hue-rotate(45deg) contrast(1.2); }
+				90%  { opacity: 0.3; filter: invert(0.2) hue-rotate(0deg); }
+				100% { opacity: 0; filter: invert(0); }
+			}
+			#imaginary-format-overlay {
+				position: fixed;
+				inset: 0;
+				z-index: 99998;
+				pointer-events: none;
+				mix-blend-mode: difference;
+				background: white;
+				animation: imaginaryInvert 2.4s cubic-bezier(0.4,0,0.2,1) forwards;
+			}
+			/* 像素碎裂扫描线 */
+			@keyframes imaginaryScanline {
+				0%   { transform: translateY(-100%); opacity: 0.8; }
+				100% { transform: translateY(110vh); opacity: 0; }
+			}
+			.imaginary-scanline {
+				position: fixed;
+				left: 0; right: 0;
+				pointer-events: none;
+				z-index: 99999;
+				mix-blend-mode: screen;
+				animation: imaginaryScanline linear forwards;
+			}
+			/* 格式化完成时的青绿色闪光 */
+			@keyframes imaginaryFlash {
+				0%   { opacity: 0; }
+				15%  { opacity: 0.7; }
+				40%  { opacity: 0.4; }
+				70%  { opacity: 0.2; }
+				100% { opacity: 0; }
+			}
+			#imaginary-flash {
+				position: fixed;
+				inset: 0;
+				z-index: 99997;
+				pointer-events: none;
+				background: radial-gradient(ellipse at center,
+					rgba(34,211,238,0.5) 0%,
+					rgba(34,211,238,0.1) 50%,
+					transparent 70%);
+				animation: imaginaryFlash 1.0s ease-out forwards;
+			}
+			/* 虚数选择效果：仅对 game-canvas 施加反色 */
+			@keyframes imaginaryCanvasGlitch {
+				0%,100% { filter: none; }
+				10% { filter: invert(1) hue-rotate(90deg) saturate(3); }
+				11% { filter: none; }
+				25% { filter: invert(1) hue-rotate(180deg) contrast(2); }
+				26% { filter: none; }
+				40% { filter: invert(1) saturate(4) brightness(1.3); }
+				41% { filter: none; }
+				55% { filter: invert(0.8) hue-rotate(270deg); }
+				56% { filter: none; }
+				70% { filter: invert(1) contrast(1.5); }
+				71% { filter: none; }
+				85% { filter: invert(0.4) hue-rotate(45deg); }
+				86% { filter: none; }
+			}
+			#game-canvas.imaginary-glitch {
+				animation: imaginaryCanvasGlitch 2.4s cubic-bezier(0.4,0,0.2,1) forwards;
+			}
+			/* 时间银行背景扫描线叠层 */
+			#time-bank-scanlines {
+				position: fixed;
+				inset: 0;
+				pointer-events: none;
+				z-index: 9997;
+				background: repeating-linear-gradient(
+					to bottom,
+					transparent 0px,
+					transparent 3px,
+					rgba(0, 229, 255, 0.025) 3px,
+					rgba(0, 229, 255, 0.025) 4px
+				);
+				mix-blend-mode: screen;
+			}
+			@keyframes timeBankScanPulse {
+				0%,100% { opacity: 0.6; }
+				50%     { opacity: 1; }
+			}
+			#time-bank-scanlines.active {
+				animation: timeBankScanPulse 2s ease-in-out infinite;
+			}
+
+			/* 设置面板滑块样式 */
+			.settings-slider {
+				-webkit-appearance: none;
+				appearance: none;
+				height: 6px;
+				background: #333;
+				border-radius: 3px;
+				outline: none;
+				cursor: pointer;
+			}
+			.settings-slider::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				appearance: none;
+				width: 16px;
+				height: 16px;
+				border-radius: 50%;
+				background: #c41e3a;
+				border: 2px solid #e74c6f;
+				cursor: pointer;
+				box-shadow: 0 0 6px rgba(196,30,58,0.5);
+			}
+			.settings-slider::-moz-range-thumb {
+				width: 16px;
+				height: 16px;
+				border-radius: 50%;
+				background: #c41e3a;
+				border: 2px solid #e74c6f;
+				cursor: pointer;
+				box-shadow: 0 0 6px rgba(196,30,58,0.5);
+			}
+
+			/* ================================================================
+			   程序故障全屏特效
+			   ================================================================ */
+			/* 主花屏层：快速色偏 + 位移 + 饱和度爆炸 */
+			@keyframes programErrorGlitch {
+				0%   { filter: none; transform: translate(0,0) skew(0deg); clip-path: none; }
+				2%   { filter: hue-rotate(90deg) saturate(8) contrast(3) invert(0.15); transform: translate(-18px, 3px) skew(-3deg); }
+				3%   { filter: hue-rotate(200deg) saturate(5) contrast(2); transform: translate(12px, -6px) skew(2deg); clip-path: inset(20% 0 30% 0); }
+				4%   { filter: none; transform: translate(0,0); clip-path: none; }
+				8%   { filter: hue-rotate(270deg) invert(0.4) saturate(10); transform: translate(-8px, 5px); }
+				9%   { filter: hue-rotate(0deg) invert(0.5) contrast(4); transform: translate(6px, -4px) skew(1.5deg); clip-path: inset(60% 0 5% 0); }
+				10%  { filter: none; transform: translate(0,0); clip-path: none; }
+				18%  { filter: saturate(0) contrast(3) brightness(2); transform: translate(0,0); }
+				19%  { filter: hue-rotate(180deg) saturate(20) contrast(5); transform: translate(-22px, 0) skew(-4deg); clip-path: inset(10% 0 50% 0); }
+				20%  { filter: hue-rotate(90deg) invert(0.3); transform: translate(14px, 8px); clip-path: inset(50% 0 10% 0); }
+				21%  { filter: none; transform: translate(0,0); clip-path: none; }
+				35%  { filter: hue-rotate(300deg) saturate(6) contrast(2.5); transform: translate(-5px, 2px); }
+				36%  { filter: none; transform: translate(0,0); }
+				50%  { filter: invert(0.6) hue-rotate(180deg) saturate(15) contrast(4); transform: translate(25px, -10px) skew(-5deg, 1deg); clip-path: inset(0 0 40% 0); }
+				51%  { filter: invert(0.2) hue-rotate(90deg); transform: translate(-15px, 8px); clip-path: inset(40% 0 0 0); }
+				52%  { filter: none; transform: translate(0,0); clip-path: none; }
+				70%  { filter: hue-rotate(45deg) saturate(8) brightness(1.5); transform: translate(-10px, 4px); }
+				71%  { filter: none; transform: translate(0,0); }
+				85%  { filter: hue-rotate(270deg) saturate(12) contrast(3) invert(0.25); transform: translate(20px, -8px) skew(3deg); clip-path: inset(30% 0 20% 0); }
+				86%  { filter: none; transform: translate(0,0); clip-path: none; }
+				100% { filter: none; transform: translate(0,0); clip-path: none; }
+			}
+			/* 扫描线扫过动画 */
+			@keyframes programErrorScanline {
+				0%   { top: -8px; opacity: 0.7; }
+				100% { top: 110%; opacity: 0; }
+			}
+			/* 乱码文字浮现 */
+			@keyframes programErrorGarble {
+				0%   { opacity: 0; transform: translate(var(--gx), var(--gy)) scale(0.8); }
+				10%  { opacity: 1; }
+				80%  { opacity: 0.8; }
+				100% { opacity: 0; transform: translate(var(--gx), var(--gy)) scale(1.1); }
+			}
+			/* RGB 色差分离层 */
+			@keyframes programErrorRgbR {
+				0%,100% { transform: translate(0,0); opacity: 0; }
+				25% { transform: translate(-6px, 2px); opacity: 0.35; }
+				75% { transform: translate(4px, -3px); opacity: 0.25; }
+			}
+			@keyframes programErrorRgbB {
+				0%,100% { transform: translate(0,0); opacity: 0; }
+				25% { transform: translate(6px, -2px); opacity: 0.35; }
+				75% { transform: translate(-4px, 3px); opacity: 0.25; }
+			}
+			/* 整页白色/青色闪烁 */
+			@keyframes programErrorFlash {
+				0%   { opacity: 0; }
+				5%   { opacity: 0.6; }
+				8%   { opacity: 0; }
+				30%  { opacity: 0; }
+				32%  { opacity: 0.4; }
+				34%  { opacity: 0; }
+				60%  { opacity: 0; }
+				62%  { opacity: 0.7; }
+				65%  { opacity: 0; }
+				100% { opacity: 0; }
+			}
+			/* 全屏花屏遮罩容器（fixed，覆盖所有 UI） */
+			#program-error-overlay {
+				position: fixed;
+				inset: 0;
+				z-index: 99999;
+				pointer-events: none;
+				overflow: hidden;
+			}
+			/* 主体花屏层 */
+			#program-error-overlay .pe-glitch-layer {
+				position: absolute;
+				inset: 0;
+				animation: programErrorGlitch 0.8s steps(1) infinite;
+				background: transparent;
+			}
+			/* RGB 红色偏移层 */
+			#program-error-overlay .pe-rgb-r {
+				position: absolute;
+				inset: 0;
+				mix-blend-mode: screen;
+				background: rgba(255,0,60,0.18);
+				animation: programErrorRgbR 0.5s steps(1) infinite;
+			}
+			/* RGB 蓝色偏移层 */
+			#program-error-overlay .pe-rgb-b {
+				position: absolute;
+				inset: 0;
+				mix-blend-mode: screen;
+				background: rgba(0,200,255,0.18);
+				animation: programErrorRgbB 0.5s steps(1) infinite;
+			}
+			/* 全屏闪白层 */
+			#program-error-overlay .pe-flash {
+				position: absolute;
+				inset: 0;
+				background: #00eeff;
+				animation: programErrorFlash 1.2s steps(1) infinite;
+				opacity: 0;
+			}
+			/* 扫描线 */
+			#program-error-overlay .pe-scanline {
+				position: absolute;
+				left: 0; right: 0;
+				height: 6px;
+				background: linear-gradient(to bottom, transparent, #00eeff88 50%, transparent);
+				animation: programErrorScanline 0.6s linear infinite;
+			}
+			/* 乱码文字 */
+			#program-error-overlay .pe-garble {
+				position: absolute;
+				font-family: monospace;
+				font-size: 0.8rem;
+				color: #22d3ee;
+				white-space: nowrap;
+				pointer-events: none;
+				animation: programErrorGarble var(--gd) steps(1) infinite var(--gdelay);
+				text-shadow: 0 0 6px #22d3ee, 2px 0 #ff004080, -2px 0 #00eeff80;
+			}
+			/* 事件历程弹窗动画 */
+			@keyframes jlFadeIn {
+				from { opacity: 0; transform: scale(0.97); }
+				to   { opacity: 1; transform: scale(1); }
+			}
+			@keyframes jlFadeOut {
+				from { opacity: 1; transform: scale(1); }
+				to   { opacity: 0; transform: scale(0.97); }
+			}
+
+			/* ================================================================
+			   旅途终点结局 ASCII CG
+			   ================================================================ */
+			@keyframes asciiGlowPulse {
+				0%, 100% { text-shadow: 0 0 6px #a78bfa55, 0 0 14px #a78bfa30; }
+				50%       { text-shadow: 0 0 12px #a78bfaaa, 0 0 28px #a78bfa55, 0 0 42px #a78bfa22; }
+			}
+			@keyframes asciiSlideIn {
+				from { opacity: 0; transform: translateY(12px) scale(0.97); }
+				to   { opacity: 1; transform: translateY(0) scale(1); }
+			}
+			.journey-end-ascii-wrap {
+				overflow: hidden;
+				border-radius: 8px;
+				background: rgba(13, 6, 30, 0.85);
+				border: 1px solid #a78bfa30;
+				box-shadow: 0 0 24px #a78bfa18, inset 0 0 20px #a78bfa0a;
+				padding: 6px 0 2px;
+				animation: asciiSlideIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+			}
+			.journey-end-ascii {
+				display: block;
+				font-family: 'Courier New', Consolas, monospace;
+				font-size: clamp(0.42rem, 1.2vw, 0.62rem);
+				line-height: 1.55;
+				letter-spacing: 0.04em;
+				color: #c4b5fd;
+				text-align: center;
+				white-space: pre;
+				margin: 0;
+				padding: 4px 8px;
+				animation: asciiGlowPulse 2.8s ease-in-out infinite;
+				overflow-x: auto;
+				scrollbar-width: thin;
+				scrollbar-color: #a78bfa40 transparent;
+			}
+
+			/* ================================================================
+			   结局弹窗视觉增强
+			   ================================================================ */
+			@keyframes endingModalIn {
+				from { opacity: 0; transform: scale(0.94) translateY(20px); }
+				to   { opacity: 1; transform: scale(1) translateY(0); }
+			}
+			.ending-modal-inner {
+				animation: endingModalIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both !important;
+				/* 确保卡片始终在粒子 canvas 上方 */
+				position: relative;
+				z-index: 1;
+			}
+			/* 终点事件：三叉路光束动画 */
+			@keyframes jendBeam {
+				from { opacity: 0.4; transform: translateX(-50%) rotate(var(--r, 0deg)) scaleY(0.85); }
+				to   { opacity: 1.0; transform: translateX(-50%) rotate(var(--r, 0deg)) scaleY(1.0); }
+			}
+			/* 鸣谢弹窗入场动画 */
+			@keyframes creditsModalIn {
+				from { opacity: 0; transform: scale(0.93) translateY(16px); }
+				to   { opacity: 1; transform: scale(1) translateY(0); }
+			}
+
+			/* ================================================================
+			   整体 UI 视觉优化
+			   ================================================================ */
+			/* 属性状态栏悬停高亮 */
+			#truck-status-bar > div {
+				transition: border-color 0.25s ease, box-shadow 0.25s ease;
+			}
+			#truck-status-bar > div:hover {
+				border-color: #4b5563;
+				box-shadow: 0 0 10px rgba(255,255,255,0.04);
+			}
+			/* 燃油/耐久/舒适进度条发光 */
+			#fuel-bar        { box-shadow: 0 0 8px rgba(234,179,8,0.5); }
+			#durability-bar  { box-shadow: 0 0 8px rgba(74,222,128,0.5); }
+			#comfort-bar     { box-shadow: 0 0 8px rgba(96,165,250,0.5); }
+			/* 里程记录表内部行悬停 */
+			.mileage-row {
+				transition: background 0.2s;
+				border-radius: 6px;
+				padding: 2px 4px;
+			}
+			.mileage-row:hover { background: rgba(255,255,255,0.04); }
+			/* 右侧面板金币行按钮统一 transition */
+			button { transition: all 0.2s ease; }
+			/* 📜 旅途历程按钮增强 */
+			#journey-log-btn {
+				position: relative;
+				overflow: hidden;
+			}
+			#journey-log-btn::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: radial-gradient(circle at center, rgba(196,30,58,0.15) 0%, transparent 70%);
+				opacity: 0;
+				transition: opacity 0.2s;
+			}
+			#journey-log-btn:hover::after { opacity: 1; }
+			/* 文本对话区增强 */
+			#textArea {
+				border-color: #2d2d3d;
+				box-shadow: inset 0 2px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03);
+				transition: border-color 0.3s;
+			}
+			#textArea:hover { border-color: #3d3d55; }
+			/* 车上成员区域增强 */
+			#passenger-list > div:not(.text-gray-600) {
+				transition: transform 0.15s ease, box-shadow 0.15s ease;
+			}
+			/* game-canvas 阴影增强（不影响已有 border 动画） */
+			#game-canvas {
+				box-shadow: 0 0 40px rgba(196,30,58,0.35), 0 4px 24px rgba(0,0,0,0.6) !important;
+			}
+			/* 后备箱物品列表区域增强 */
+			#inventory-list {
+				padding-right: 2px;
+			}
+			/* 设置面板滑块轨道增强 */
+			.settings-slider {
+				background: linear-gradient(to right, #c41e3a 0%, #333 0%);
+				transition: background 0.1s;
+			}
+			/* 成就徽标悬停放大 */
+			.achievement-badge {
+				transition: transform 0.2s ease, box-shadow 0.2s ease;
+			}
+			.achievement-badge:hover {
+				transform: scale(1.06);
+				box-shadow: 0 0 14px rgba(196,30,58,0.4);
+			}
+
+			/* ================================================================
+			   移动端全局适配
+			   依赖 device-adapt.js 注入的 CSS 变量（--da-*）和 body[data-layout]
+			   ================================================================ */
+
+			/* ---------- 移动端全局基础 ---------- */
+			.device-mobile {
+				/* 防止系统字体缩放影响布局 */
+				-webkit-text-size-adjust: 100%;
+				text-size-adjust: 100%;
+			}
+			.device-mobile body {
+				overflow: hidden !important;
+				position: fixed;
+				inset: 0;
+				padding: 0 !important;
+				font-size: var(--da-font-base, 13px);
+				/* 安全区内边距 */
+				padding-top: env(safe-area-inset-top, 0px) !important;
+				padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+				padding-left: env(safe-area-inset-left, 0px) !important;
+				padding-right: env(safe-area-inset-right, 0px) !important;
+			}
+
+			/* 滚动条变细 */
+			.device-mobile .text-area-scroll::-webkit-scrollbar { width: 3px; }
+			.device-mobile .text-area-scroll::-webkit-scrollbar-thumb { border-radius: 3px; }
+
+			/* 所有按钮最小触摸高度 */
+			.device-mobile button { min-height: 28px; }
+
+			/* ── 移动端弹窗全局约束 ──
+			   所有 fixed 弹窗内层容器不得超出屏幕 */
+			.device-mobile .fixed > div:not(.absolute.inset-0) {
+				max-width: 94vw !important;
+				max-height: 88vh !important;
+				box-sizing: border-box;
+			}
+			/* JS 动态创建的弹窗（inline style）也受约束 */
+			.device-mobile #trunk-upgrade-modal > div:last-child,
+			.device-mobile #journey-log-modal > div,
+			.device-mobile #journey-log-inner,
+			.device-mobile #event-modal .event-modal-inner,
+			.device-mobile #crafting-modal > div:not(.absolute.inset-0),
+			.device-mobile #overweight-modal > div:not(.absolute.inset-0),
+			.device-mobile #credits-modal > div,
+			.device-mobile #save-load-modal > div:not(.absolute.inset-0),
+			.device-mobile #achievement-modal > div:not(.absolute.inset-0) {
+				max-width: 94vw !important;
+				max-height: 88vh !important;
+				overflow-y: auto !important;
+				box-sizing: border-box !important;
+			}
+			/* 设置弹窗（静态 HTML） */
+			.device-mobile #settings-modal > div:last-child {
+				max-width: 94vw !important;
+				max-height: 88vh !important;
+				overflow-y: auto;
+				padding: 16px !important;
+				width: auto !important;
+			}
+
+			/* 制作台 / 超载 / 结局 弹窗内层宽度保底 */
+			.device-mobile #crafting-modal .relative,
+			.device-mobile #overweight-modal .relative,
+			.device-mobile .ending-modal-inner {
+				max-width: 94vw !important;
+				box-sizing: border-box !important;
+			}
+			/* 结局弹窗填充过大的 padding 修正 */
+			.device-mobile .ending-modal-inner {
+				padding: 20px 16px !important;
+				max-height: 92vh !important;
+			}
+
+			/* ---------- 移动端：#game-root 基础 ---------- */
+			.device-mobile #game-root {
+				max-width: 100% !important;
+				padding: var(--da-pad, 6px) !important;
+				gap: var(--da-gap, 6px) !important;
+				box-sizing: border-box;
+			}
+
+			/* ---------- 状态栏（通用） ---------- */
+			.device-mobile #truck-status-bar {
+				gap: var(--da-gap, 4px);
+				margin-bottom: calc(var(--da-gap, 4px) * 0.6);
+			}
+			.device-mobile #truck-status-bar > div {
+				padding: calc(var(--da-pad, 6px) * 0.4) calc(var(--da-pad, 6px) * 0.7);
+				font-size: calc(var(--da-font-base, 13px) * 0.88);
+				border-radius: var(--da-radius, 8px);
+			}
+			.device-mobile #truck-status-bar .rounded-full.h-3,
+			.device-mobile #truck-status-bar [class*="h-3"] {
+				height: var(--da-bar-h, 5px) !important;
+			}
+			.device-mobile #truck-status-bar span[id$="-text"] {
+				font-size: calc(var(--da-font-base, 13px) * 0.78);
+				width: auto;
+				min-width: 2.5em;
+				text-align: right;
+			}
+
+			/* ---------- 困难/衰变栏（通用） ---------- */
+			.device-mobile #hard-mode-bar,
+			.device-mobile #debuff-bar {
+				margin-bottom: calc(var(--da-gap, 4px) * 0.5);
+			}
+			.device-mobile #hard-mode-bar > div,
+			.device-mobile #debuff-bar > div {
+				padding: calc(var(--da-pad, 6px) * 0.35) calc(var(--da-pad, 6px) * 0.7);
+				font-size: calc(var(--da-font-base, 13px) * 0.82);
+				border-radius: var(--da-radius, 8px);
+			}
+
+			/* ---------- 游戏画布（通用） ---------- */
+			.device-mobile #game-canvas {
+				border-radius: var(--da-radius, 8px) !important;
+				border-width: 2px !important;
+				flex-shrink: 0;
+			}
+
+			/* ---------- 文本框（通用） ---------- */
+			.device-mobile #textArea {
+				font-size: calc(var(--da-font-base, 13px) * 0.92);
+				padding: calc(var(--da-pad, 6px) * 0.85) var(--da-pad, 8px);
+				margin-top: var(--da-gap, 4px);
+				border-radius: var(--da-radius, 8px) !important;
+			}
+
+			/* ---------- 乘客区（通用） ---------- */
+			.device-mobile #passenger-section {
+				margin-top: var(--da-gap, 4px);
+				padding: calc(var(--da-pad, 6px) * 0.75) var(--da-pad, 8px);
+				border-radius: var(--da-radius, 8px) !important;
+			}
+			.device-mobile #passenger-section h2 {
+				font-size: calc(var(--da-font-base, 13px) * 0.88);
+				margin-bottom: calc(var(--da-gap, 4px) * 0.6);
+			}
+			.device-mobile #passenger-list {
+				min-height: 30px;
+				gap: calc(var(--da-gap, 4px) * 0.6);
+				font-size: calc(var(--da-font-base, 13px) * 0.85);
+			}
+
+			/* ---------- 右侧面板（通用） ---------- */
+			.device-mobile #game-right { gap: var(--da-gap, 4px); }
+			.device-mobile #game-right .rounded-xl {
+				padding: calc(var(--da-pad, 6px) * 0.85) var(--da-pad, 8px);
+				border-radius: var(--da-radius, 8px) !important;
+			}
+			.device-mobile #game-right h2 {
+				font-size: calc(var(--da-font-base, 13px) * 1.0) !important;
+				margin-bottom: calc(var(--da-gap, 4px) * 0.7) !important;
+			}
+			.device-mobile #game-right .text-sm,
+			.device-mobile #game-right .text-base {
+				font-size: calc(var(--da-font-base, 13px) * 0.88) !important;
+			}
+			.device-mobile #game-right .text-lg { font-size: calc(var(--da-font-base, 13px) * 1.1) !important; }
+			.device-mobile #inventory-list { font-size: calc(var(--da-font-base, 13px) * 0.85); }
+			.device-mobile #game-right [class*="h-2"],
+			.device-mobile #game-right [class*="h-3"] { height: var(--da-bar-h, 5px) !important; }
+
+			/* 金币行 */
+			.device-mobile #gold-row { gap: var(--da-gap, 4px); }
+			.device-mobile #gold-row > div,
+			.device-mobile #gold-row > button {
+				padding: calc(var(--da-pad, 6px) * 0.4) calc(var(--da-pad, 6px) * 0.8);
+				font-size: calc(var(--da-font-base, 13px) * 0.85);
+				border-radius: var(--da-radius, 8px) !important;
+			}
+			.device-mobile #gold-text { font-size: calc(var(--da-font-base, 13px) * 1.15) !important; }
+
+			/* 返回按钮 */
+			.device-mobile #game-canvas > button {
+				font-size: calc(var(--da-font-base, 13px) * 0.88);
+				padding: calc(var(--da-pad, 6px) * 0.6) calc(var(--da-pad, 6px) * 1.4);
+				top: 5px !important; left: 5px !important;
+			}
+
+			/* 弹窗内字号 */
+			.device-mobile #event-modal .event-modal-inner {
+				max-height: 94vh;
+				width: 98%;
+			}
+
+			/* ================================================================
+			   横屏模式  body[data-layout="landscape"]
+			   左侧：游戏区（flex:6）  右侧：库存（flex:4）
+			   ================================================================ */
+			.device-mobile body[data-layout="landscape"] {
+				display: block;          /* body 本身不再是 flex，由 #game-root 掌控 */
+			}
+			body[data-layout="landscape"] #game-root {
+				display: flex !important;
+				flex-direction: row !important;
+				align-items: flex-start;
+				width: 100%;
+				height: 100vh;
+				height: 100dvh;
+				overflow: hidden;
+				padding-top: max(var(--da-pad, 6px), env(safe-area-inset-top, 0px)) !important;
+				padding-bottom: max(0px, env(safe-area-inset-bottom, 0px)) !important;
+			}
+
+			body[data-layout="landscape"] #game-left {
+				flex: 6;
+				min-width: 0;
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+				overflow: hidden;
+			}
+
+			body[data-layout="landscape"] #game-right {
+				flex: 4;
+				min-width: 0;
+				height: 100%;
+				overflow-y: auto;
+				overflow-x: hidden;
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* 横屏：画布撑满左列剩余高度 */
+			body[data-layout="landscape"] #game-canvas {
+				height: var(--da-canvas-h, 200px) !important;
+				aspect-ratio: unset !important;
+				flex-shrink: 0;
+				width: 100%;
+			}
+
+			/* 横屏：文本框更矮 */
+			body[data-layout="landscape"] #textArea {
+				min-height: 50px !important;
+				max-height: 16vh !important;
+			}
+
+			/* 横屏：乘客区更紧凑 */
+			body[data-layout="landscape"] #passenger-section {
+				flex-shrink: 0;
+			}
+			body[data-layout="landscape"] #passenger-list {
+				min-height: 24px;
+			}
+
+			/* 横屏：后备箱填充剩余空间 */
+			body[data-layout="landscape"] #game-right > div:last-child {
+				flex: 1;
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* ================================================================
+			   竖屏模式  body[data-layout="portrait"]
+			   上方：游戏区（画布 + 文字）
+			   下方：标签式面板（乘客 / 里程 / 后备箱 切换）
+			   ================================================================ */
+			body[data-layout="portrait"] #game-root {
+				display: flex !important;
+				flex-direction: column !important;
+				width: 100%;
+				height: 100vh;
+				height: 100dvh;
+				overflow: hidden;
+				padding-top: max(var(--da-pad, 6px), env(safe-area-inset-top, 0px)) !important;
+				padding-bottom: max(var(--da-pad, 6px), env(safe-area-inset-bottom, 0px)) !important;
+			}
+
+			/* 竖屏：game-left 是上半部分 */
+			body[data-layout="portrait"] #game-left {
+				flex-shrink: 0;
+				display: flex;
+				flex-direction: column;
+				overflow: hidden;
+			}
+
+			/* 竖屏：画布固定高度（由 --da-canvas-h 控制） */
+			body[data-layout="portrait"] #game-canvas {
+				height: var(--da-canvas-h, 180px) !important;
+				aspect-ratio: unset !important;
+				flex-shrink: 0;
+				width: 100%;
+			}
+
+			/* 竖屏：文本框 */
+			body[data-layout="portrait"] #textArea {
+				min-height: 55px !important;
+				max-height: 14vh !important;
+			}
+
+			/* 竖屏：乘客区隐藏（整合进面板标签） */
+			body[data-layout="portrait"] #passenger-section {
+				display: none !important;
+			}
+
+			/* 竖屏：右侧库存面板变为底部折叠标签 */
+			body[data-layout="portrait"] #game-right {
+				flex: 1;
+				min-height: 0;
+				display: flex;
+				flex-direction: column;
+				overflow: hidden;
+				border-top: 1px solid #2d2d3d;
+				margin-top: var(--da-gap, 4px);
+			}
+
+			/* 竖屏：底部标签栏 */
+			body[data-layout="portrait"] #portrait-tabs {
+				display: flex !important;
+				flex-shrink: 0;
+				background: #0d0d0d;
+				border-bottom: 1px solid #2d2d3d;
+			}
+
+			body[data-layout="portrait"] #portrait-tabs button {
+				flex: 1;
+				padding: calc(var(--da-pad, 6px) * 0.6) 0;
+				font-size: calc(var(--da-font-base, 13px) * 0.82);
+				color: #6b7280;
+				background: transparent;
+				border: none;
+				border-bottom: 2px solid transparent;
+				cursor: pointer;
+				transition: all 0.2s;
+				min-height: 36px;
+			}
+			body[data-layout="portrait"] #portrait-tabs button.tab-active {
+				color: #c41e3a;
+				border-bottom-color: #c41e3a;
+			}
+
+			/* 竖屏：标签内容区滚动 */
+			body[data-layout="portrait"] .portrait-panel {
+				display: none;
+				flex: 1;
+				overflow-y: auto;
+				overflow-x: hidden;
+				padding: var(--da-pad, 6px);
+			}
+			body[data-layout="portrait"] .portrait-panel.panel-active {
+				display: flex;
+				flex-direction: column;
+				gap: var(--da-gap, 4px);
+			}
+
+			/* 竖屏：金币行放进面板顶部（由 JS 控制） */
+			body[data-layout="portrait"] #gold-row {
+				flex-shrink: 0;
+			}
+
+			/* 非竖屏时隐藏竖屏专用 UI */
+			#portrait-tabs { display: none; }
+
 		</style>
 	</head>
 	<body class="min-h-screen flex flex-col items-center p-5 text-gray-200 font-chinese">
 		<!-- 主布局：左侧游戏区 + 右侧库存面板 -->
-		<div class="w-full max-w-[1200px] flex gap-4">
+		<div id="game-root" class="w-full max-w-[1200px] flex gap-4">
 			<!-- 左侧游戏区域 -->
-			<div class="flex-[7] flex flex-col">
+			<div id="game-left" class="flex-[7] flex flex-col">
 				<!-- 皮卡状态栏 -->
 				<div id="truck-status-bar" class="w-full mb-2 flex gap-2 text-sm">
 					<div class="flex-1 bg-[#0d0d0d] border border-gray-700 rounded-lg px-3 py-1.5 flex items-center gap-2">
@@ -261,13 +1460,34 @@
 					</div>
 				</div>
 
+				<!-- 困难模式标签栏 -->
+				<div id="hard-mode-bar" class="w-full mb-2 hidden">
+					<div class="flex items-center gap-2 flex-wrap bg-[#0d0d0d] border border-red-900/50 rounded-lg px-3 py-1.5">
+						<span class="text-red-500 text-xs font-bold flex-shrink-0">☠ 困难</span>
+						<div id="hard-mode-tags" class="flex gap-1 flex-wrap"></div>
+						<span id="hard-mode-points" class="text-xs font-mono text-amber-400 ml-auto flex-shrink-0"></span>
+					</div>
+				</div>
+
+				<!-- 衰变 debuff 显示栏 -->
+				<div id="debuff-bar" class="w-full mb-2 hidden">
+					<div class="flex items-center gap-2 flex-wrap bg-[#0d0d0d] border border-orange-900/50 rounded-lg px-3 py-1.5">
+						<span class="text-orange-400 text-xs font-bold flex-shrink-0">⚠ 衰变</span>
+						<div id="debuff-tags" class="flex gap-1 flex-wrap"></div>
+					</div>
+				</div>
+
 				<!-- 游戏画面（耐久变动时施加 screen-shake） -->
 				<div id="game-canvas"
 					class="w-full h-[500px] bg-[#0d0d0d] border-[3px] border-[#c41e3a] rounded-xl relative overflow-hidden shadow-[0_0_30px_rgba(196,30,58,0.3)]">
 
 					<div class="w-full h-full relative text-xl leading-none">
+						<!-- 背景景观层 - ASCII/汉字远景 -->
+						<div id="scenery" class="absolute inset-0 pointer-events-none z-[1] opacity-80"
+							style="mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 75%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 75%, transparent 100%);"></div>
+
 						<!-- 公路 - 横向单行，从右向左移动 -->
-						<div id="road" class="absolute w-full h-full flex -bottom-[78%]"></div>
+						<div id="road" class="absolute w-full h-full flex -bottom-[78%] z-[5]"></div>
 
 						<!-- 红色皮卡 - 动态生成 -->
 						<div id="truck"
@@ -290,7 +1510,7 @@
 				</div>
 
 				<!-- 车上成员（游戏画面下方，横向排列） -->
-				<div class="w-full mt-3 bg-[#0d0d0d] border border-gray-700 rounded-xl p-3">
+				<div id="passenger-section" class="w-full mt-3 bg-[#0d0d0d] border border-gray-700 rounded-xl p-3">
 					<h2 class="text-sm font-bold text-[#c41e3a] mb-2 flex items-center gap-2">
 						车上成员
 					</h2>
@@ -301,43 +1521,99 @@
 			</div>
 
 			<!-- 右侧库存面板 -->
-			<div class="flex-[3] flex flex-col gap-2">
-				<!-- 金币显示 -->
-				<div class="bg-[#0d0d0d] border border-gray-700 rounded-lg px-3 py-1.5 flex items-center justify-between">
-					<span class="text-gray-400 text-sm flex items-center gap-1">金币</span>
-					<span id="gold-text" class="text-yellow-400 font-bold text-lg">0</span>
+			<div id="game-right" class="flex-[3] flex flex-col gap-2">
+
+				<!-- 竖屏专用标签栏（横屏/PC 下隐藏） -->
+				<div id="portrait-tabs">
+					<button onclick="switchPortraitTab('stats')" id="ptab-stats" class="tab-active">📊 里程</button>
+					<button onclick="switchPortraitTab('inventory')" id="ptab-inventory">📦 后备箱</button>
+					<button onclick="switchPortraitTab('passenger')" id="ptab-passenger">👥 成员</button>
 				</div>
 
+				<!-- 横屏/PC 用金币行（竖屏时会被 JS 移入对应 panel） -->
+				<div id="gold-row" class="flex gap-2">
+					<div class="flex-1 bg-[#0d0d0d] border border-gray-700 rounded-lg px-3 py-1.5 flex items-center justify-between">
+						<span class="text-gray-400 text-sm flex items-center gap-1">金币</span>
+						<span id="gold-text" class="text-yellow-400 font-bold text-lg">0</span>
+					</div>
+					<!-- 时间银行余额徽标（默认隐藏，悬停时间存折时淡入） -->
+					<div id="time-bank-balance-badge"
+						style="display:none;align-items:center;gap:6px;background:#000a1a;border:1px solid #00e5ff60;border-radius:8px;padding:4px 10px;font-size:0.78rem;white-space:nowrap;transition:opacity 0.2s;box-shadow:0 0 10px #00e5ff30;">
+						<span style="color:#00e5ff80;">⏳银行</span>
+						<span id="time-bank-balance-text" style="color:#00e5ff;font-weight:700;">0</span>
+						<span style="color:#00e5ff80;">🪙</span>
+					</div>
+					<button onclick="openSettingsModal()" class="bg-[#0d0d0d] border border-gray-700 rounded-lg px-3 py-1.5 text-gray-400 hover:text-white hover:border-gray-500 transition-all" title="设置">
+						⚙️
+					</button>
+					<button onclick="openJourneyLog()" id="journey-log-btn" class="bg-[#0d0d0d] border border-gray-700 rounded-lg px-3 py-1.5 text-gray-400 hover:text-white hover:border-[#c41e3a] hover:text-[#c41e3a] transition-all" title="旅途历程">
+						📜
+					</button>
+				</div>
+
+				<!-- 行驶里程记录表 + 竖屏面板：stats -->
+				<div id="portrait-panel-stats" class="portrait-panel panel-active">
 				<!-- 行驶里程记录表 -->
 				<div class="bg-[#0d0d0d] border-[2px] border-[#c41e3a]/60 rounded-xl p-4 shadow-[0_0_15px_rgba(196,30,58,0.15)]">
 					<h2 class="text-base font-bold text-[#c41e3a] mb-3 flex items-center gap-2">
 						里程记录
 					</h2>
 					<div class="space-y-2 text-sm">
-						<div class="flex justify-between items-center text-gray-300">
+						<div class="mileage-row flex justify-between items-center text-gray-300">
 							<span class="text-gray-400">本次里程</span>
 							<span id="mileage-current" class="font-bold text-[#c41e3a]">0</span>
 							<span class="text-gray-500">km</span>
 						</div>
-						<div class="flex justify-between items-center text-gray-300">
+						<div class="mileage-row flex justify-between items-center text-gray-300">
 							<span class="text-gray-400">历史最高</span>
 							<span id="mileage-best" class="font-bold text-amber-400">0</span>
 							<span class="text-gray-500">km</span>
 						</div>
+						<div class="mileage-row flex justify-between items-center text-gray-300">
+							<span class="text-gray-400">经历事件</span>
+							<span id="events-count" class="font-bold text-sky-400">0</span>
+							<span class="text-gray-500">次</span>
+						</div>
 					</div>
 				</div>
+				</div><!-- /portrait-panel-stats -->
 
+				<!-- 后备箱 + 竖屏面板：inventory -->
+				<div id="portrait-panel-inventory" class="portrait-panel flex-1 flex flex-col">
 				<!-- 后备箱 -->
 				<div class="bg-[#0d0d0d] border-[3px] border-[#c41e3a] rounded-xl p-4 shadow-[0_0_20px_rgba(196,30,58,0.2)] flex-1 flex flex-col">
-					<h2 class="text-lg font-bold text-[#c41e3a] mb-2 flex items-center gap-2">
-						后备箱
-					</h2>
+					<div class="flex items-center justify-between mb-2">
+						<h2 class="text-lg font-bold text-[#c41e3a] flex items-center gap-2">
+							后备箱
+							<span id="trunk-level-badge" class="text-xs font-normal text-yellow-400 bg-yellow-900/40 px-1.5 py-0.5 rounded border border-yellow-700/50">Lv.1</span>
+						</h2>
+						<div class="flex bg-gray-800/80 rounded-lg p-0.5 border border-gray-700">
+							<button id="inv-tab-normal" onclick="switchInventoryTab('normal')"
+								class="px-3 py-1 text-xs font-medium rounded-md transition-all duration-200 bg-[#c41e3a] text-white shadow">
+								📦 物品
+							</button>
+							<button id="inv-tab-treasure" onclick="switchInventoryTab('treasure')"
+								class="px-3 py-1 text-xs font-medium rounded-md transition-all duration-200 text-gray-400 hover:text-gray-200">
+								💎 珍品
+							</button>
+						</div>
+					</div>
 					<div class="flex items-center gap-2 text-sm text-gray-400 mb-3">
 						<span>载重：</span>
 						<div class="flex-1 bg-gray-800 rounded-full h-2.5 overflow-hidden">
 							<div id="weight-bar" class="h-full bg-[#c41e3a] rounded-full transition-all duration-500" style="width: 0%"></div>
 						</div>
 						<span id="weight-text" class="text-xs text-gray-500">0/50</span>
+						<button id="trunk-upgrade-btn" onclick="showTrunkUpgradeModal()"
+							class="px-2 py-0.5 text-xs bg-blue-900/60 text-blue-300 rounded border border-blue-700/50 hover:bg-blue-800 transition-all flex-shrink-0"
+							data-tooltip-html="⬆ 升级后备箱" onmouseenter="showInventoryTooltip(this)" onmouseleave="hideInventoryTooltip()">
+							⬆ 升级
+						</button>
+						<button onclick="openStandaloneCrafting()"
+							class="px-2 py-0.5 text-xs bg-yellow-900/60 text-yellow-300 rounded border border-yellow-700/50 hover:bg-yellow-800 transition-all flex-shrink-0"
+							title="打开制作台">
+							🔨 制作
+						</button>
 					</div>
 
 					<!-- 物品列表（容器也参与拖放，便于在占位条/空白处松手仍可放下） -->
@@ -345,8 +1621,136 @@
 						<div class="text-center text-gray-600 text-sm py-8">后备箱空空如也...</div>
 					</div>
 				</div>
+				</div><!-- /portrait-panel-inventory -->
+
+				<!-- 竖屏面板：passenger（乘客列表从 game-left 复制过来） -->
+				<div id="portrait-panel-passenger" class="portrait-panel">
+					<div class="bg-[#0d0d0d] border border-gray-700 rounded-xl p-3">
+						<h2 class="text-sm font-bold text-[#c41e3a] mb-2">车上成员</h2>
+						<div id="passenger-list-portrait" class="min-h-[40px] flex flex-row flex-wrap gap-2 items-center text-sm">
+							<div class="text-gray-600 text-sm">暂无乘客</div>
+						</div>
+					</div>
+				</div><!-- /portrait-panel-passenger -->
+
+			</div><!-- /game-right -->
+		</div><!-- /game-root -->
+		<!-- 设置面板 -->
+		<div id="settings-modal" class="fixed inset-0 z-[9998] hidden">
+			<div class="absolute inset-0 bg-black/70" onclick="closeSettingsModal()"></div>
+			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#111] border-2 border-[#c41e3a] rounded-xl p-6 w-[340px] shadow-[0_0_40px_rgba(196,30,58,0.3)]">
+				<div class="flex items-center justify-between mb-5">
+					<h2 class="text-lg font-bold text-[#c41e3a] flex items-center gap-2">⚙️ 设置</h2>
+					<button onclick="closeSettingsModal()" class="text-gray-500 hover:text-white text-xl leading-none">&times;</button>
+				</div>
+				<!-- 主音量 -->
+				<div class="mb-4">
+					<div class="flex items-center justify-between mb-1.5">
+						<span class="text-sm text-gray-300">🔊 主音量</span>
+						<span id="master-vol-label" class="text-xs font-mono text-amber-400">100%</span>
+					</div>
+					<input id="master-vol-slider" type="range" min="0" max="100" value="100"
+						class="settings-slider w-full" oninput="onMasterVolumeChange(this.value)">
+				</div>
+				<!-- 环境音 -->
+				<div class="mb-4">
+					<div class="flex items-center justify-between mb-1.5">
+						<span class="text-sm text-gray-300">🌧️ 环境音</span>
+						<span id="ambient-vol-label" class="text-xs font-mono text-amber-400">100%</span>
+					</div>
+					<input id="ambient-vol-slider" type="range" min="0" max="100" value="100"
+						class="settings-slider w-full" oninput="onAmbientVolumeChange(this.value)">
+				</div>
+				<!-- 音效 -->
+				<div class="mb-4">
+					<div class="flex items-center justify-between mb-1.5">
+						<span class="text-sm text-gray-300">🔔 音效</span>
+						<span id="sfx-vol-label" class="text-xs font-mono text-amber-400">100%</span>
+					</div>
+					<input id="sfx-vol-slider" type="range" min="0" max="100" value="100"
+						class="settings-slider w-full" oninput="onSfxVolumeChange(this.value)">
+				</div>
+				<div class="text-center text-gray-600 text-xs mt-2">音量设置会自动保存</div>
+				<!-- Debug 模式（仅简单模式下可见） -->
+				<div id="debug-mode-section" class="border-t border-gray-700 mt-5 pt-4 mb-4 hidden">
+					<div class="flex items-center justify-between">
+						<span class="text-sm text-gray-300">🐛 Debug 模式</span>
+						<label class="relative inline-flex items-center cursor-pointer">
+							<input id="debug-toggle" type="checkbox" class="sr-only peer" onchange="onDebugToggleChange(this)">
+							<div class="w-9 h-5 bg-gray-700 rounded-full peer peer-checked:bg-purple-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
+						</label>
+					</div>
+					<div id="debug-toggle-hint" class="text-gray-600 text-xs mt-1">开启后可在左下角手动触发任意事件</div>
+				</div>
+				<!-- 重新开始 -->
+				<div class="border-t border-gray-700 pt-4">
+					<button id="settings-restart-btn" onclick="confirmRestart()" class="w-full px-4 py-2.5 bg-transparent border-2 border-red-900/60 text-red-400 text-sm rounded-lg hover:bg-red-900/30 hover:border-red-700 transition-all">
+						🔄 重新开始
+					</button>
+				</div>
 			</div>
 		</div>
+
+		<!-- Debug 调试面板（左下角浮动） -->
+		<div id="debug-panel" class="fixed bottom-4 left-4 z-[9997] hidden" style="width:320px;">
+			<div class="bg-[#111] border border-purple-800/60 rounded-lg shadow-[0_0_20px_rgba(128,0,255,0.2)] overflow-hidden">
+				<!-- 标题栏（可折叠） -->
+				<div class="flex items-center justify-between px-3 py-2 bg-purple-900/30 cursor-pointer select-none" onclick="toggleDebugCollapse()">
+					<span class="text-xs font-bold text-purple-300 flex items-center gap-1">🐛 Debug 控制台</span>
+					<span id="debug-collapse-icon" class="text-purple-400 text-xs transition-transform">▼</span>
+				</div>
+				<!-- 可折叠内容 -->
+				<div id="debug-body" class="p-3 space-y-3">
+
+					<!-- ── 事件触发区 ── -->
+					<div class="text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-1">▸ 触发事件</div>
+					<div class="space-y-2">
+						<div>
+							<input id="debug-event-search" type="text" placeholder="搜索事件ID或名称…"
+								class="w-full bg-[#1a1a2e] border border-gray-700 rounded text-xs text-gray-300 px-2.5 py-1.5 outline-none focus:border-purple-500 transition-colors"
+								oninput="onDebugSearchInput(this.value)" onfocus="onDebugSearchInput(this.value)">
+							<div id="debug-event-list"
+								class="max-h-[240px] overflow-y-auto bg-[#111] border border-gray-700 rounded hidden"
+								style="position:fixed;z-index:10000;scrollbar-width:thin;scrollbar-color:#4c1d95 #111;"></div>
+						</div>
+						<button id="debug-trigger-btn" onclick="debugTriggerEvent()"
+							class="w-full px-3 py-1.5 bg-purple-800/50 border border-purple-700/60 text-purple-300 text-xs rounded hover:bg-purple-700/60 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+							disabled>
+							▶ 触发选中事件
+						</button>
+						<div id="debug-selected-info" class="text-gray-600 text-xs truncate">未选中事件</div>
+					</div>
+
+					<!-- ── 物品添加区 ── -->
+					<div class="border-t border-gray-800 pt-2">
+						<div class="text-[10px] font-bold text-green-400 uppercase tracking-wider mb-1.5">▸ 添加物品</div>
+						<div class="space-y-2">
+							<div>
+								<input id="debug-item-search" type="text" placeholder="搜索物品名称…"
+									class="w-full bg-[#0a1a0a] border border-gray-700 rounded text-xs text-gray-300 px-2.5 py-1.5 outline-none focus:border-green-600 transition-colors"
+									oninput="onDebugItemSearchInput(this.value)" onfocus="onDebugItemSearchInput(this.value)">
+								<div id="debug-item-list"
+									class="max-h-[200px] overflow-y-auto bg-[#111] border border-gray-700 rounded hidden"
+									style="position:fixed;z-index:10000;scrollbar-width:thin;scrollbar-color:#14532d #111;"></div>
+							</div>
+							<div class="flex gap-2 items-center">
+								<input id="debug-item-qty" type="number" min="1" max="99" value="1"
+									class="w-16 bg-[#0a1a0a] border border-gray-700 rounded text-xs text-gray-300 px-2 py-1.5 outline-none focus:border-green-600 text-center"
+									placeholder="数量">
+								<button id="debug-add-item-btn" onclick="debugAddItem()"
+									class="flex-1 px-3 py-1.5 bg-green-900/50 border border-green-700/60 text-green-300 text-xs rounded hover:bg-green-700/60 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+									disabled>
+									＋ 添加到后备箱
+								</button>
+							</div>
+							<div id="debug-item-info" class="text-gray-600 text-xs truncate">未选中物品</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
 		<!-- 游戏配置文件 -->
 		<script src="js/game_config/game-config.js"></script>
 		<script src="js/game_config/passenger-config.js"></script>
@@ -364,6 +1768,7 @@
 		<script src="js/game_config/events/events-stop.js"></script>
 		<script src="js/game_config/events/events-merchant.js"></script>
 		<script src="js/game_config/events/events-special.js"></script>
+		<script src="js/game_config/events/events-rare.js"></script>
 		<script src="js/game_config/events/events-index.js"></script>
 		<script src="js/game_config/events/inventory-events.js"></script>
 		<!-- 游戏系统模块 -->
@@ -376,13 +1781,66 @@
 		<script src="js/game_show/truck-display.js"></script>
 		<script src="js/game_show/event-animation.js"></script>
 		<script src="js/game_show/inventory-display.js"></script>
+		<script src="js/game_show/journey-log.js"></script>
 		<script src="js/game_show/audio.js"></script>
 		<script src="js/game_show/road.js"></script>
+		<script src="js/game_show/scenery.js"></script>
 		<!-- 游戏玩法模块 -->
+		<script src="js/gameplay/minesweeper.js"></script>
 		<script src="js/gameplay/event-handler.js"></script>
 		<script src="js/gameplay/game-over.js"></script>
 		<script src="js/gameplay/text-generation.js"></script>
 		<!-- 主控制脚本 -->
 		<script src="js/text.js"></script>
+		<!-- html2canvas：用于历程 PNG 导出 -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<!-- 竖屏 Tab 切换 -->
+		<script>
+			function switchPortraitTab(tab) {
+				['stats', 'inventory', 'passenger'].forEach(function(t) {
+					var btn = document.getElementById('ptab-' + t);
+					var panel = document.getElementById('portrait-panel-' + t);
+					if (btn)   btn.classList.toggle('tab-active', t === tab);
+					if (panel) panel.classList.toggle('panel-active', t === tab);
+				});
+			}
+
+			// 竖屏乘客列表同步：在更新乘客显示时同时更新竖屏面板
+			(function() {
+				var _orig = null;
+				document.addEventListener('DOMContentLoaded', function() {
+					// 监听 daUpdate，如果布局切换到竖屏则同步乘客列表
+					window.addEventListener('daUpdate', function(e) {
+						var layout = e.detail && e.detail.layout;
+						if (layout === 'portrait') {
+							var src = document.getElementById('passenger-list');
+							var dst = document.getElementById('passenger-list-portrait');
+							if (src && dst) dst.innerHTML = src.innerHTML;
+						}
+					});
+					// MutationObserver：检测 passenger-list 内容变化，同步到竖屏面板
+					var passengerList = document.getElementById('passenger-list');
+					var passengerPortrait = document.getElementById('passenger-list-portrait');
+					if (passengerList && passengerPortrait) {
+						var obs = new MutationObserver(function() {
+							if (document.body.dataset.layout === 'portrait') {
+								passengerPortrait.innerHTML = passengerList.innerHTML;
+							}
+						});
+						obs.observe(passengerList, { childList: true, subtree: true, characterData: true });
+					}
+				});
+			})();
+		</script>
+		<!-- PWA Service Worker 注册 -->
+		<script>
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					navigator.serviceWorker.register('./sw.js')
+						.then(reg => console.log('[PWA] Service Worker 已注册:', reg.scope))
+						.catch(err => console.warn('[PWA] Service Worker 注册失败:', err));
+				});
+			}
+		</script>
 	</body>
 </html>

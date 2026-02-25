@@ -2,9 +2,18 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#c41e3a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="红色皮卡">
     <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="manifest" href="manifest.json">
     <title>无人红色皮卡的安保之旅</title>
+    <!-- 设备检测：尽早注入，避免闪烁 -->
+    <script src="js/device-adapt.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -14,17 +23,33 @@
                         'chinese': ['Microsoft YaHei', 'SimHei', 'sans-serif'],
                     },
                     animation: {
-                        'fade-in': 'fadeIn 1s ease-in',
+                        'fade-in': 'fadeIn 1.2s cubic-bezier(0.16,1,0.3,1)',
                         'fade-out': 'fadeOut 0.5s ease-out forwards',
+                        'title-glow': 'titleGlow 3s ease-in-out infinite alternate',
+                        'float': 'float 6s ease-in-out infinite',
+                        'truck-idle': 'truckIdle 2s ease-in-out infinite',
                     },
                     keyframes: {
                         fadeIn: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
                         },
                         fadeOut: {
                             '0%': { opacity: '1', transform: 'translateY(0)' },
                             '100%': { opacity: '0', transform: 'translateY(-30px)' },
+                        },
+                        titleGlow: {
+                            '0%': { textShadow: '0 0 20px rgba(196,30,58,0.4), 0 0 60px rgba(196,30,58,0.1)' },
+                            '100%': { textShadow: '0 0 30px rgba(196,30,58,0.7), 0 0 80px rgba(196,30,58,0.2), 0 0 120px rgba(196,30,58,0.1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        truckIdle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '25%': { transform: 'translateY(-2px)' },
+                            '75%': { transform: 'translateY(1px)' },
                         },
                     },
                 },
@@ -33,8 +58,157 @@
     </script>
     <style>
         body {
-            background: #171717;
+            background: #0a0a0f;
+            overflow: hidden;
+            animation: pageFadeIn 0.6s ease-out;
         }
+        @keyframes pageFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* 粒子画布 */
+        #particle-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 公路线条背景 */
+        .road-lines {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 120px;
+            background: linear-gradient(to top, rgba(20,20,25,0.9), transparent);
+            z-index: 1;
+            overflow: hidden;
+        }
+        .road-lines::before {
+            content: '';
+            position: absolute;
+            bottom: 30px; left: 0; right: 0;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, #c41e3a33 0, #c41e3a33 40px, transparent 40px, transparent 80px);
+            animation: roadDash 2s linear infinite;
+        }
+        @keyframes roadDash {
+            from { transform: translateX(0); }
+            to { transform: translateX(-80px); }
+        }
+
+        /* 顶部渐变晕光 */
+        .top-glow {
+            position: fixed;
+            top: -200px; left: 50%;
+            transform: translateX(-50%);
+            width: 800px; height: 500px;
+            background: radial-gradient(ellipse, rgba(196,30,58,0.08) 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ASCII 皮卡 */
+        .ascii-truck {
+            font-family: 'Courier New', monospace;
+            color: #c41e3a;
+            font-size: 11px;
+            line-height: 1.15;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(196,30,58,0.5), 0 0 40px rgba(196,30,58,0.15);
+            white-space: pre;
+            user-select: none;
+            opacity: 0.75;
+        }
+
+        /* 标题 */
+        .game-title {
+            background: linear-gradient(135deg, #f5f5f5 0%, #c41e3a 50%, #8b0000 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShimmer 6s ease-in-out infinite;
+        }
+        @keyframes titleShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 副标题打字机效果 */
+        .subtitle-typing {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #c41e3a;
+            animation: typing 2.5s steps(18) 0.8s forwards, blink 0.8s step-end infinite;
+            width: 0;
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 18ch; }
+        }
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        /* START 按钮 */
+        .btn-start {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #c41e3a, #8b0000);
+            transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+        }
+        .btn-start::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.6s;
+        }
+        .btn-start:hover::before {
+            left: 100%;
+        }
+        .btn-start:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 15px 50px rgba(196,30,58,0.5), 0 0 80px rgba(196,30,58,0.2);
+        }
+        .btn-start:active {
+            transform: translateY(-1px) scale(1.01);
+        }
+
+        /* 次要按钮 */
+        .btn-secondary {
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+        }
+        .btn-secondary::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 50%;
+            width: 0; height: 1px;
+            background: #c41e3a;
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+        .btn-secondary:hover::after {
+            width: 60%;
+        }
+        .btn-secondary:hover {
+            color: #e63950;
+            border-color: #c41e3a88;
+            transform: translateY(-1px);
+        }
+
+        /* 版本徽章 */
+        .version-badge {
+            background: linear-gradient(135deg, rgba(196,30,58,0.15), rgba(139,0,0,0.1));
+            border: 1px solid rgba(196,30,58,0.25);
+            backdrop-filter: blur(8px);
+        }
+
+        /* 滚动条 */
         .text-area-scroll {
             scrollbar-width: thin;
             scrollbar-color: #c41e3a #1f2937;
@@ -43,55 +217,622 @@
         .text-area-scroll::-webkit-scrollbar-track { background: #1f2937; border-radius: 0 10px 10px 0; }
         .text-area-scroll::-webkit-scrollbar-thumb { background: #c41e3a; border-radius: 10px; }
         .text-area-scroll::-webkit-scrollbar-thumb:hover { background: #e63950; }
+
+        /* 分割线装饰 */
+        .divider-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #c41e3a44, transparent);
+        }
+
+        /* 模态框动画 */
+        .modal-backdrop-in {
+            animation: modalBgIn 0.3s ease-out forwards;
+        }
+        .modal-backdrop-out {
+            animation: modalBgOut 0.25s ease-in forwards;
+        }
+        .modal-content-in {
+            animation: modalIn 0.35s cubic-bezier(0.16,1,0.3,1) forwards;
+        }
+        .modal-content-out {
+            animation: modalOut 0.25s ease-in forwards;
+        }
+        @keyframes modalBgIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes modalBgOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes modalOut {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(-20px) scale(0.97); }
+        }
+
+        /* ================================================================
+           移动端 / 安卓适配
+           .device-mobile  — 所有移动设备
+           .device-android — 仅安卓
+           .orient-landscape / .orient-portrait — 方向
+           ================================================================ */
+
+        /* 移动端：关闭溢出滚动，确保全屏 */
+        .device-mobile body {
+            overflow: hidden !important;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 移动端横屏：主容器整体缩小，左右双栏布局 */
+        .device-mobile.orient-landscape #container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 5vw;
+            padding: 2vh 4vw;
+            width: 100%;
+            max-width: 100%;
+            text-align: left;
+        }
+
+        /* 移动端横屏：左侧皮卡 + 标题纵向排列 */
+        .device-mobile.orient-landscape #container .ascii-truck {
+            font-size: 8px;
+            line-height: 1.1;
+            margin-bottom: 0;
+        }
+
+        /* 移动端横屏：标题字号缩小 */
+        .device-mobile.orient-landscape #container h1 {
+            font-size: clamp(1.1rem, 3.5vw, 2rem) !important;
+            letter-spacing: 0.2rem !important;
+            margin-bottom: 0.5rem;
+        }
+
+        /* 移动端横屏：副标题 */
+        .device-mobile.orient-landscape .subtitle-typing {
+            font-size: 0.65rem;
+        }
+
+        /* 移动端横屏：分隔线紧凑 */
+        .device-mobile.orient-landscape .divider-line {
+            margin: 0.75rem auto;
+        }
+
+        /* 移动端横屏：START 按钮放大触摸区域，保持视觉 */
+        .device-mobile .btn-start {
+            min-height: 52px;
+            font-size: clamp(1rem, 4vw, 1.5rem) !important;
+            padding: 0.8em 2.5em !important;
+            letter-spacing: 0.3rem !important;
+        }
+
+        /* 移动端：次要按钮加大触摸区域 */
+        .device-mobile .btn-secondary {
+            min-height: 44px;
+            font-size: 0.75rem !important;
+            padding: 0.6em 1.2em !important;
+        }
+
+        /* 移动端竖屏（意外旋转时）：保持原布局但缩放字号 */
+        .device-mobile.orient-portrait #container h1 {
+            font-size: clamp(1.2rem, 5vw, 2.5rem) !important;
+            letter-spacing: 0.25rem !important;
+        }
+
+        /* 移动端：版本徽章位置调整（避开安全区） */
+        .device-mobile .version-badge {
+            bottom: max(12px, env(safe-area-inset-bottom, 12px));
+            left: max(12px, env(safe-area-inset-left, 12px));
+            font-size: 9px;
+        }
+
+        /* 移动端：底部引导语 */
+        .device-mobile.orient-landscape #container > p:last-child {
+            font-size: 0.6rem;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body class="min-h-screen flex justify-center items-center overflow-hidden font-chinese">
-    <div class="decoration absolute top-[10%] left-[10%] opacity-10 text-[10rem] text-white pointer-events-none">小</div>
-    <div class="decoration absolute top-[50%] left-[5%] opacity-10 text-[10rem] text-white pointer-events-none">心</div>
-    <div class="decoration absolute top-[20%] right-[15%] opacity-10 text-[10rem] text-white pointer-events-none">福</div>
-    <div class="decoration absolute bottom-[10%] right-[10%] opacity-10 text-[10rem] text-white pointer-events-none">瑞</div>
-    
-    <div class="text-center animate-fade-in" id="container">
-        <h1 class="text-6xl text-gray-200 mb-4 tracking-[0.5rem] drop-shadow-[0_0_20px_rgba(196,30,58,0.5)]">
+    <!-- 粒子背景 -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- 顶部晕光 -->
+    <div class="top-glow"></div>
+
+    <!-- 公路线条 -->
+    <div class="road-lines"></div>
+
+    <!-- 左下角版本徽章 -->
+    <div class="fixed bottom-4 left-4 z-10 version-badge px-3 py-1.5 rounded-full">
+        <span class="text-[10px] text-gray-400 tracking-wider font-mono">PK-0724 · v4.0</span>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="text-center animate-fade-in relative z-10" id="container">
+
+        <!-- ASCII 皮卡 -->
+        <div class="ascii-truck animate-truck-idle mb-6 flex justify-center">
+<pre class="inline-block text-left">
+    ┌──────────┐
+    │ 皮  卡  │╲
+────┤          ├──╲──────┐
+    │   PK     │  │  安保 │
+────┤  0724    ├──┤      │
+    └──┬──┬──┘  └─┬──┬─┘
+      (●)(●)     (●)(●)
+═══════════════════════════
+</pre>
+        </div>
+
+        <!-- 标题 -->
+        <h1 class="text-5xl md:text-6xl font-black game-title mb-3 tracking-[0.4rem] animate-title-glow leading-tight">
             无人红色皮卡的安保之旅
         </h1>
-        <div class="flex flex-col items-center gap-4 mt-16">
+
+        <!-- 副标题 -->
+        <div class="flex justify-center mb-2">
+            <p class="subtitle-typing text-gray-500 text-sm tracking-[0.3rem] font-mono">三号联邦公路 · 2147</p>
+        </div>
+
+        <!-- 分隔线 -->
+        <div class="divider-line w-48 mx-auto my-6"></div>
+
+        <!-- 按钮组 -->
+        <div class="flex flex-col items-center gap-3 mt-4">
             <button 
                 onclick="startGame()"
-                class="px-16 py-5 text-2xl font-bold text-white uppercase tracking-[0.3rem] rounded-full cursor-pointer transition-all duration-300 ease-in-out shadow-[0_10px_30px_rgba(196,30,58,0.4)] bg-gradient-to-br from-[#c41e3a] to-[#8b0000] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(196,30,58,0.6)] hover:bg-gradient-to-br hover:from-[#e63950] hover:to-[#c41e3a] active:-translate-y-0.5"
+                class="btn-start px-20 py-5 text-2xl font-black text-white uppercase tracking-[0.4rem] rounded-full cursor-pointer shadow-[0_10px_40px_rgba(196,30,58,0.35)]"
             >
                 START
             </button>
-            <button 
-                onclick="resetGame()"
-                class="px-8 py-3 text-sm font-bold text-gray-400 uppercase tracking-[0.2rem] rounded-full cursor-pointer transition-all duration-300 border-2 border-gray-600 hover:border-[#c41e3a] hover:text-[#c41e3a]"
-            >
-                重置游戏
-            </button>
-            <button 
-                onclick="showAchievements()"
-                class="px-8 py-3 text-sm font-bold text-gray-400 uppercase tracking-[0.2rem] rounded-full cursor-pointer transition-all duration-300 border-2 border-gray-600 hover:border-[#c41e3a] hover:text-[#c41e3a]"
-            >
-                成就
-            </button>
-            <button 
-                onclick="showJourneyHistory()"
-                class="px-8 py-3 text-sm font-bold text-gray-400 uppercase tracking-[0.2rem] rounded-full cursor-pointer transition-all duration-300 border-2 border-gray-600 hover:border-[#c41e3a] hover:text-[#c41e3a]"
-            >
-                历史历程
-            </button>
+            
+            <div class="flex gap-3 mt-3">
+                <button 
+                    onclick="resetGame()"
+                    class="btn-secondary px-6 py-2.5 text-xs font-bold text-gray-500 tracking-[0.15rem] rounded-full cursor-pointer border border-gray-700/60"
+                >
+                    重置游戏
+                </button>
+                <button 
+                    onclick="showAchievements()"
+                    class="btn-secondary px-6 py-2.5 text-xs font-bold text-gray-500 tracking-[0.15rem] rounded-full cursor-pointer border border-gray-700/60"
+                >
+                    🏆 成就
+                </button>
+                <button 
+                    onclick="showJourneyHistory()"
+                    class="btn-secondary px-6 py-2.5 text-xs font-bold text-gray-500 tracking-[0.15rem] rounded-full cursor-pointer border border-gray-700/60"
+                >
+                    📜 历程
+                </button>
+            </div>
         </div>
-        <p class="mt-5 text-gray-600 text-base tracking-[0.2rem]">点击开始公路之旅</p>
+
+        <!-- 底部引导语 -->
+        <p class="mt-8 text-gray-600 text-xs tracking-[0.25rem] italic animate-float">"这条路现在是你的了"</p>
     </div>
 
+    <!-- 粒子系统 -->
+    <script>
+    (function() {
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let w, h;
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * w;
+                this.y = Math.random() * h;
+                this.size = Math.random() * 1.5 + 0.3;
+                this.speedX = (Math.random() - 0.6) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.15;
+                this.opacity = Math.random() * 0.4 + 0.05;
+                this.pulse = Math.random() * Math.PI * 2;
+                this.pulseSpeed = Math.random() * 0.02 + 0.005;
+                // 大部分白色，少量红色
+                this.isRed = Math.random() < 0.12;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.pulse += this.pulseSpeed;
+                if (this.x < -10 || this.x > w + 10 || this.y < -10 || this.y > h + 10) this.reset();
+            }
+            draw() {
+                const alpha = this.opacity * (0.6 + Math.sin(this.pulse) * 0.4);
+                if (this.isRed) {
+                    ctx.fillStyle = `rgba(196,30,58,${alpha})`;
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = 'rgba(196,30,58,0.3)';
+                } else {
+                    ctx.fillStyle = `rgba(200,200,210,${alpha})`;
+                    ctx.shadowBlur = 0;
+                }
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    })();
+    </script>
+
+    <script src="js/game_config/game-config.js"></script>
     <script src="js/game_config/achievements-config.js"></script>
     <script>
+        function isHardModeUnlocked() {
+            return true; // TODO: 测试用，正式版恢复结局解锁条件
+            // try {
+            //     const endings = localStorage.getItem("chinese_truck_adventure_endings");
+            //     if (endings) {
+            //         const arr = JSON.parse(endings);
+            //         return Array.isArray(arr) && arr.length > 0;
+            //     }
+            // } catch (e) {}
+            // return false;
+        }
+
         function startGame() {
-            document.getElementById('container').classList.remove('animate-fade-in');
-            document.getElementById('container').classList.add('animate-fade-out');
+            // 如果有存档，直接进入游戏（不弹困难模式选择）
+            const hasSave = document.cookie.indexOf('chinese_truck_adventure_save=') !== -1;
+            if (hasSave) {
+                doStartGame();
+                return;
+            }
+            // 检查是否解锁困难模式
+            if (isHardModeUnlocked() && typeof HARD_MODE_MODIFIERS !== "undefined" && HARD_MODE_MODIFIERS.length > 0) {
+                showHardModeModal();
+            } else {
+                doStartGame();
+            }
+        }
+
+        function doStartGame(selectedTags, selectedBonuses) {
+            // 将选中的困难模式标签存入 sessionStorage（供 game.html 读取）
+            if (selectedTags && selectedTags.length > 0) {
+                sessionStorage.setItem("hard_mode_tags", JSON.stringify(selectedTags));
+                localStorage.setItem("hard_mode_last_tags", JSON.stringify(selectedTags));
+            } else {
+                sessionStorage.removeItem("hard_mode_tags");
+                localStorage.removeItem("hard_mode_last_tags");
+            }
+            if (selectedBonuses && selectedBonuses.length > 0) {
+                sessionStorage.setItem("hard_mode_bonuses", JSON.stringify(selectedBonuses));
+                localStorage.setItem("hard_mode_last_bonuses", JSON.stringify(selectedBonuses));
+            } else {
+                sessionStorage.removeItem("hard_mode_bonuses");
+                localStorage.removeItem("hard_mode_last_bonuses");
+            }
+            // 简单模式标志
+            const isEasy = typeof isEasyModeEnabled === "function" ? isEasyModeEnabled() : false;
+            sessionStorage.setItem("easy_mode", isEasy ? "true" : "false");
+            localStorage.setItem("easy_mode_last", isEasy ? "true" : "false");
+            // 整个页面淡出
+            document.body.style.transition = 'opacity 0.5s ease-out';
+            document.body.style.opacity = '0';
             setTimeout(() => {
                 window.location.href = 'game.html';
             }, 500);
+        }
+
+        function showHardModeModal() {
+            const selected = new Set();
+            const selectedBonuses = new Set();
+            let totalPoints = 0;
+            let totalBonusCost = 0;
+            let easyModeEnabled = false;
+
+            // ─── 从 localStorage 读取上次选择 ───
+            try {
+                const savedEasy = localStorage.getItem("easy_mode_last");
+                if (savedEasy === "true") easyModeEnabled = true;
+            } catch (e) {}
+            try {
+                const savedTags = localStorage.getItem("hard_mode_last_tags");
+                if (savedTags) {
+                    const arr = JSON.parse(savedTags);
+                    if (Array.isArray(arr)) {
+                        arr.forEach(id => {
+                            const mod = HARD_MODE_MODIFIERS.find(m => m.id === id);
+                            if (mod) { selected.add(id); totalPoints += mod.points; }
+                        });
+                    }
+                }
+                const savedBonuses = localStorage.getItem("hard_mode_last_bonuses");
+                if (savedBonuses) {
+                    const arr = JSON.parse(savedBonuses);
+                    if (Array.isArray(arr)) {
+                        arr.forEach(id => {
+                            const bonus = (typeof HARD_MODE_BONUSES !== "undefined" ? HARD_MODE_BONUSES : []).find(b => b.id === id);
+                            if (bonus && totalBonusCost + bonus.cost <= totalPoints) {
+                                selectedBonuses.add(id);
+                                totalBonusCost += bonus.cost;
+                            }
+                        });
+                    }
+                }
+            } catch (e) {}
+
+            function render() {
+                const availableBonusPoints = totalPoints - totalBonusCost;
+
+                // 保存滚动位置
+                let savedScroll = 0;
+                const existingModal = document.getElementById('hard-mode-modal');
+                if (existingModal) {
+                    const scrollBox = existingModal.querySelector('.text-area-scroll');
+                    if (scrollBox) savedScroll = scrollBox.scrollTop;
+                }
+
+                let html = '<div class="fixed inset-0 bg-black/90 flex items-center justify-center z-50 overflow-y-auto p-4 modal-backdrop-in" id="hard-mode-modal">';
+                html += '<div class="bg-[#1a1a2e] border-2 border-[#c41e3a] rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-area-scroll modal-content-in" id="hard-mode-content">';
+                html += '<h2 class="text-2xl font-bold text-[#c41e3a] mb-2 text-center">⚙️ 困难模式</h2>';
+                html += '<p class="text-gray-400 text-sm mb-1 text-center">达成结局后解锁，选择追加难度挑战自我</p>';
+
+                // ─── 简单模式开关（关闭衰变 debuff）───
+                const easyBorder = easyModeEnabled ? '#10b981' : '#374151';
+                const easyBg = easyModeEnabled ? 'rgba(16,185,129,0.15)' : 'rgba(55,65,81,0.3)';
+                const easyCheck = easyModeEnabled ? '☑' : '☐';
+                const easyCheckColor = easyModeEnabled ? '#10b981' : '#6b7280';
+                const easyTextColor = easyModeEnabled ? 'text-emerald-300' : 'text-gray-400';
+                html += '<div onclick="toggleEasyMode()" class="flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-all hover:brightness-110 mb-3" style="border:1px solid ' + easyBorder + '; background:' + easyBg + ';">';
+                html += '<span class="text-lg flex-shrink-0" style="color:' + easyCheckColor + '">' + easyCheck + '</span>';
+                html += '<div class="flex-1"><span class="text-sm font-bold ' + easyTextColor + '">🛡️ 简单模式</span>';
+                html += '<span class="text-xs text-gray-500 ml-2">关闭旅途衰变 debuff；里程不计入最高记录</span></div></div>';
+
+                html += '<p class="text-center mb-4"><span class="text-lg font-bold" style="color:' + (totalPoints > 0 ? '#f59e0b' : '#6b7280') + '">难度分：' + totalPoints + '</span>';
+                if (totalBonusCost > 0) {
+                    html += ' <span class="text-sm text-emerald-400 ml-2">已用加成：' + totalBonusCost + '/' + totalPoints + '</span>';
+                }
+                html += '</p>';
+
+                // ─── 难度标签区 ───
+                const allModsSelected = selected.size === HARD_MODE_MODIFIERS.length;
+                html += '<div class="flex items-center justify-between mb-2">';
+                html += '<span class="text-xs text-gray-500">难度标签</span>';
+                html += '<button onclick="toggleAllHardMods()" class="text-xs px-2 py-0.5 rounded border transition-all ' + (allModsSelected ? 'border-gray-600 text-gray-400 hover:border-gray-400' : 'border-[#c41e3a]/60 text-[#c41e3a] hover:border-[#c41e3a]') + '">' + (allModsSelected ? '清空全部' : '全选全部') + '</button>';
+                html += '</div>';
+                html += '<div class="space-y-2 mb-4">';
+                HARD_MODE_MODIFIERS.forEach(mod => {
+                    const isSelected = selected.has(mod.id);
+                    const borderColor = isSelected ? '#c41e3a' : '#374151';
+                    const bgColor = isSelected ? 'rgba(196,30,58,0.15)' : 'rgba(55,65,81,0.3)';
+                    const checkIcon = isSelected ? '☑' : '☐';
+                    const checkColor = isSelected ? '#c41e3a' : '#6b7280';
+                    html += '<div onclick="toggleHardMod(\'' + mod.id + '\')" class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all hover:brightness-110" style="border:2px solid ' + borderColor + '; background:' + bgColor + ';">';
+                    html += '<span class="text-xl flex-shrink-0" style="color:' + checkColor + '">' + checkIcon + '</span>';
+                    html += '<div class="flex-1">';
+                    html += '<div class="flex items-center gap-2">';
+                    html += '<span class="font-bold text-sm ' + (isSelected ? 'text-white' : 'text-gray-300') + '">' + mod.name + '</span>';
+                    html += '<span class="text-xs px-1.5 py-0.5 rounded font-mono" style="background:#78350f;color:#fbbf24;">' + mod.points + '分</span>';
+                    html += '</div>';
+                    html += '<div class="text-xs text-gray-500 mt-0.5">' + mod.description + '</div>';
+                    html += '</div></div>';
+                });
+                html += '</div>';
+
+                // ─── 加成区（仅当有难度分时显示）───
+                if (totalPoints > 0 && typeof HARD_MODE_BONUSES !== "undefined" && HARD_MODE_BONUSES.length > 0) {
+                    const allBonusesSelected = HARD_MODE_BONUSES.every(b => selectedBonuses.has(b.id));
+                    const anyBonusSelected = selectedBonuses.size > 0;
+                    html += '<div class="border-t border-gray-700 pt-4 mb-4">';
+                    html += '<div class="flex items-center justify-between mb-1">';
+                    html += '<h3 class="text-base font-bold text-emerald-400 flex items-center gap-2">🎁 特殊加成</h3>';
+                    html += '<button onclick="toggleAllHardBonuses()" class="text-xs px-2 py-0.5 rounded border transition-all ' + (anyBonusSelected ? 'border-gray-600 text-gray-400 hover:border-gray-400' : 'border-emerald-600/60 text-emerald-400 hover:border-emerald-400') + '">' + (anyBonusSelected ? '清空加成' : '全选加成') + '</button>';
+                    html += '</div>';
+                    html += '<p class="text-xs text-gray-500 mb-3">用难度分兑换加成，加成总花费不超过难度分（剩余可用：<span class="text-emerald-400 font-bold">' + availableBonusPoints + '</span>）</p>';
+                    html += '<div class="space-y-2">';
+                    HARD_MODE_BONUSES.forEach(bonus => {
+                        const isSelected = selectedBonuses.has(bonus.id);
+                        const canAfford = availableBonusPoints >= bonus.cost;
+                        const enabled = isSelected || canAfford;
+                        const borderColor = isSelected ? '#10b981' : (enabled ? '#374151' : '#1f2937');
+                        const bgColor = isSelected ? 'rgba(16,185,129,0.15)' : (enabled ? 'rgba(55,65,81,0.3)' : 'rgba(31,41,55,0.2)');
+                        const checkIcon = isSelected ? '☑' : '☐';
+                        const checkColor = isSelected ? '#10b981' : (enabled ? '#6b7280' : '#374151');
+                        const textColor = enabled ? (isSelected ? 'text-white' : 'text-gray-300') : 'text-gray-600';
+                        const descColor = enabled ? 'text-gray-500' : 'text-gray-700';
+                        const cursor = enabled ? 'cursor-pointer hover:brightness-110' : 'cursor-not-allowed opacity-60';
+                        html += '<div onclick="' + (enabled ? 'toggleHardBonus(\'' + bonus.id + '\')' : '') + '" class="flex items-center gap-3 p-3 rounded-lg transition-all ' + cursor + '" style="border:2px solid ' + borderColor + '; background:' + bgColor + ';">';
+                        html += '<span class="text-xl flex-shrink-0" style="color:' + checkColor + '">' + checkIcon + '</span>';
+                        html += '<div class="flex-1">';
+                        html += '<div class="flex items-center gap-2">';
+                        html += '<span class="font-bold text-sm ' + textColor + '">' + bonus.name + '</span>';
+                        html += '<span class="text-xs px-1.5 py-0.5 rounded font-mono" style="background:#064e3b;color:#6ee7b7;">' + bonus.cost + '分</span>';
+                        html += '</div>';
+                        html += '<div class="text-xs ' + descColor + ' mt-0.5">' + bonus.description + '</div>';
+                        html += '</div></div>';
+                    });
+                    html += '</div></div>';
+                }
+
+                html += '<div class="flex gap-3">';
+                let btnLabel = '开始旅程';
+                if (totalPoints > 0 && easyModeEnabled) {
+                    btnLabel = '🛡️ 简单挑战（' + totalPoints + '分）';
+                } else if (totalPoints > 0) {
+                    btnLabel = '🔥 挑战开始（' + totalPoints + '分）';
+                } else if (easyModeEnabled) {
+                    btnLabel = '🛡️ 简单旅程';
+                }
+                html += '<button onclick="closeHardModeAndStart()" class="flex-1 px-6 py-3 bg-gradient-to-br from-[#c41e3a] to-[#8b0000] text-white font-bold rounded-full hover:from-[#e63950] hover:to-[#c41e3a] transition-all">' + btnLabel + '</button>';
+                html += '<button onclick="closeHardModeModal()" class="px-6 py-3 border-2 border-gray-600 text-gray-400 rounded-full hover:border-[#c41e3a] hover:text-[#c41e3a] transition-all">取消</button>';
+                html += '</div>';
+                html += '</div></div>';
+
+                const isRerender = !!document.getElementById('hard-mode-modal');
+                const existing = document.getElementById('hard-mode-modal');
+                if (existing) existing.remove();
+                const el = document.createElement('div');
+                el.innerHTML = html;
+                const modal = el.firstElementChild;
+                // 重渲染时去掉入场动画，避免每次切换选项都闪
+                if (isRerender) {
+                    modal.classList.remove('modal-backdrop-in');
+                    const content = modal.querySelector('#hard-mode-content');
+                    if (content) content.classList.remove('modal-content-in');
+                }
+                document.body.appendChild(modal);
+
+                // 恢复滚动位置
+                if (savedScroll > 0) {
+                    const scrollBox = document.querySelector('#hard-mode-modal .text-area-scroll');
+                    if (scrollBox) scrollBox.scrollTop = savedScroll;
+                }
+            }
+
+            // ─── 淡出关闭模态框（取消）───
+            window.closeHardModeModal = function() {
+                const modal = document.getElementById('hard-mode-modal');
+                if (!modal) return;
+                const content = modal.querySelector('#hard-mode-content');
+                modal.classList.remove('modal-backdrop-in');
+                modal.classList.add('modal-backdrop-out');
+                if (content) {
+                    content.classList.remove('modal-content-in');
+                    content.classList.add('modal-content-out');
+                }
+                setTimeout(() => modal.remove(), 260);
+            };
+
+            // ─── 淡出关闭模态框（开始游戏）───
+            window.closeHardModeAndStart = function() {
+                const modal = document.getElementById('hard-mode-modal');
+                if (!modal) return;
+                const content = modal.querySelector('#hard-mode-content');
+                modal.classList.remove('modal-backdrop-in');
+                modal.classList.add('modal-backdrop-out');
+                if (content) {
+                    content.classList.remove('modal-content-in');
+                    content.classList.add('modal-content-out');
+                }
+                setTimeout(() => {
+                    modal.remove();
+                    doStartGame(getSelectedHardTags(), getSelectedHardBonuses());
+                }, 260);
+            };
+
+            window.toggleHardMod = function(id) {
+                const mod = HARD_MODE_MODIFIERS.find(m => m.id === id);
+                if (!mod) return;
+                if (selected.has(id)) {
+                    selected.delete(id);
+                    totalPoints -= mod.points;
+                    // 如果减分后加成花费超出，自动取消多余的加成
+                    while (totalBonusCost > totalPoints && selectedBonuses.size > 0) {
+                        // 取消花费最高的加成
+                        let maxCostId = null, maxCost = 0;
+                        for (const bid of selectedBonuses) {
+                            const b = HARD_MODE_BONUSES.find(x => x.id === bid);
+                            if (b && b.cost > maxCost) { maxCost = b.cost; maxCostId = bid; }
+                        }
+                        if (maxCostId) { selectedBonuses.delete(maxCostId); totalBonusCost -= maxCost; }
+                        else break;
+                    }
+                } else {
+                    selected.add(id);
+                    totalPoints += mod.points;
+                }
+                render();
+            };
+
+            window.toggleHardBonus = function(id) {
+                const bonus = HARD_MODE_BONUSES.find(b => b.id === id);
+                if (!bonus) return;
+                if (selectedBonuses.has(id)) {
+                    selectedBonuses.delete(id);
+                    totalBonusCost -= bonus.cost;
+                } else {
+                    if (totalBonusCost + bonus.cost > totalPoints) return;
+                    selectedBonuses.add(id);
+                    totalBonusCost += bonus.cost;
+                }
+                render();
+            };
+
+            window.toggleAllHardMods = function() {
+                if (selected.size === HARD_MODE_MODIFIERS.length) {
+                    // 清空全部
+                    selected.clear();
+                    totalPoints = 0;
+                    // 同时清空所有加成
+                    selectedBonuses.clear();
+                    totalBonusCost = 0;
+                } else {
+                    // 全选全部
+                    HARD_MODE_MODIFIERS.forEach(mod => {
+                        if (!selected.has(mod.id)) {
+                            selected.add(mod.id);
+                            totalPoints += mod.points;
+                        }
+                    });
+                }
+                render();
+            };
+
+            window.toggleAllHardBonuses = function() {
+                if (selectedBonuses.size > 0) {
+                    // 清空加成
+                    selectedBonuses.clear();
+                    totalBonusCost = 0;
+                } else {
+                    // 全选加成（按顺序尽可能多选）
+                    const bonuses = typeof HARD_MODE_BONUSES !== "undefined" ? HARD_MODE_BONUSES : [];
+                    bonuses.forEach(bonus => {
+                        if (!selectedBonuses.has(bonus.id) && totalBonusCost + bonus.cost <= totalPoints) {
+                            selectedBonuses.add(bonus.id);
+                            totalBonusCost += bonus.cost;
+                        }
+                    });
+                }
+                render();
+            };
+
+            window.getSelectedHardTags = function() {
+                return [...selected];
+            };
+
+            window.getSelectedHardBonuses = function() {
+                return [...selectedBonuses];
+            };
+
+            window.toggleEasyMode = function() {
+                easyModeEnabled = !easyModeEnabled;
+                render();
+            };
+
+            window.isEasyModeEnabled = function() {
+                return easyModeEnabled;
+            };
+
+            render();
         }
 
         function resetGame() {
@@ -108,6 +849,9 @@
                 localStorage.removeItem('chinese_truck_adventure_endings');
                 localStorage.removeItem('chinese_truck_adventure_mileage_best');
                 localStorage.removeItem('chinese_truck_adventure_journey_history');
+                localStorage.removeItem('hard_mode_last_tags');
+                localStorage.removeItem('hard_mode_last_bonuses');
+                localStorage.removeItem('easy_mode_last');
             } catch (e) {}
             
             // 显示提示
@@ -217,6 +961,17 @@
             const modal = document.createElement('div');
             modal.innerHTML = html;
             document.body.appendChild(modal);
+        }
+    </script>
+
+    <!-- PWA Service Worker 注册 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('[PWA] Service Worker 已注册:', reg.scope))
+                    .catch(err => console.warn('[PWA] Service Worker 注册失败:', err));
+            });
         }
     </script>
 </body>

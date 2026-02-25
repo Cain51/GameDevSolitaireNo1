@@ -9,6 +9,9 @@ const LOOT_TABLES = {
     { itemId: "原油", quantity: 1, weight: 10 },
     { itemId: "零食", quantity: 1, weight: 20 },
     { itemId: "精炼剂", quantity: 1, weight: 5 },
+    { itemId: "铜线", quantity: 1, weight: 8 },
+    { itemId: "橡胶", quantity: 1, weight: 6 },
+    { itemId: "电池", quantity: 1, weight: 4 },
   ],
   // 稀有 (高价值)
   稀有: [
@@ -18,6 +21,9 @@ const LOOT_TABLES = {
     { itemId: "精炼剂", quantity: 2, weight: 20 },
     { itemId: "坐垫", quantity: 1, weight: 5 },
     { itemId: "零食", quantity: 3, weight: 15 },
+    { itemId: "铜线", quantity: 2, weight: 10 },
+    { itemId: "橡胶", quantity: 1, weight: 8 },
+    { itemId: "电池", quantity: 1, weight: 6 },
   ],
   // 燃油相关
   燃油: [
@@ -36,7 +42,10 @@ const LOOT_TABLES = {
   废料: [
     { itemId: "废金属", quantity: 2, weight: 40 },
     { itemId: "布料", quantity: 2, weight: 30 },
-    { itemId: "空罐", quantity: 3, weight: 30 },
+    { itemId: "空罐", quantity: 3, weight: 20 },
+    { itemId: "铜线", quantity: 1, weight: 12 },
+    { itemId: "橡胶", quantity: 1, weight: 10 },
+    { itemId: "电池", quantity: 1, weight: 8 },
   ]
 };
 

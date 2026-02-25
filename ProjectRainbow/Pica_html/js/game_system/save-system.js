@@ -18,6 +18,8 @@ function getBestMileage() {
 // 若当前里程高于历史最高则更新并保存
 function updateBestMileageIfNeeded(currentMileage) {
   if (typeof currentMileage !== "number" || isNaN(currentMileage)) return;
+  // 简单模式不计入最高里程记录
+  if (typeof gameState !== "undefined" && gameState.easyMode === true) return;
   const best = getBestMileage();
   if (currentMileage > best) {
     try {
@@ -65,6 +67,89 @@ function saveGame() {
   if (typeof gameState !== "undefined" && typeof gameState.mileage === "number") {
     updateBestMileageIfNeeded(gameState.mileage);
   }
+}
+
+// 删除存档（游戏结束后调用，使下次加载时走新游戏流程）
+function deleteSave() {
+  document.cookie = GAME_CONFIG.cookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+}
+
+// ─── 选项效果记忆系统（跨档永久保存） ───────────────────────────────
+const CHOICE_MEMORY_KEY = "chinese_truck_adventure_choice_memory";
+
+// 获取所有已记忆的选项（返回 Set）
+function getChoiceMemory() {
+  try {
+    const saved = localStorage.getItem(CHOICE_MEMORY_KEY);
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  } catch (e) {
+    return new Set();
+  }
+}
+
+// 记录一个选项为"已选过"
+function recordChoiceMemory(eventId, choiceId) {
+  const memory = getChoiceMemory();
+  const key = eventId + ":" + choiceId;
+  if (!memory.has(key)) {
+    memory.add(key);
+    try {
+      localStorage.setItem(CHOICE_MEMORY_KEY, JSON.stringify([...memory]));
+    } catch (e) {}
+  }
+}
+
+// 检查某个选项是否已被选过
+function isChoiceRemembered(eventId, choiceId) {
+  return getChoiceMemory().has(eventId + ":" + choiceId);
+}
+
+// ─── 时间银行系统（跨档永久保存） ────────────────────────────────────
+const TIME_BANK_KEY = "chinese_truck_adventure_time_bank";
+
+// 获取时间银行余额
+function getTimeBankBalance() {
+  try {
+    const v = localStorage.getItem(TIME_BANK_KEY);
+    const n = v != null ? parseInt(v, 10) : 0;
+    return isNaN(n) || n < 0 ? 0 : n;
+  } catch (e) {
+    return 0;
+  }
+}
+
+// 存入金币到时间银行（返回实际存入量）
+function depositToTimeBank(amount) {
+  if (typeof amount !== "number" || isNaN(amount) || amount <= 0) return 0;
+  amount = Math.floor(amount);
+  const current = getTimeBankBalance();
+  const newBalance = current + amount;
+  try {
+    localStorage.setItem(TIME_BANK_KEY, String(newBalance));
+  } catch (e) {}
+  return amount;
+}
+
+// 从时间银行取出金币（返回实际取出量）
+function withdrawFromTimeBank(amount) {
+  if (typeof amount !== "number" || isNaN(amount) || amount <= 0) return 0;
+  amount = Math.floor(amount);
+  const current = getTimeBankBalance();
+  const actual = Math.min(amount, current);
+  if (actual <= 0) return 0;
+  try {
+    localStorage.setItem(TIME_BANK_KEY, String(current - actual));
+  } catch (e) {}
+  return actual;
+}
+
+// 直接设置时间银行余额（用于死亡抚恤金等特殊操作）
+function setTimeBankBalance(amount) {
+  if (typeof amount !== "number" || isNaN(amount)) return;
+  amount = Math.max(0, Math.floor(amount));
+  try {
+    localStorage.setItem(TIME_BANK_KEY, String(amount));
+  } catch (e) {}
 }
 
 function loadGame() {
@@ -145,6 +230,18 @@ function loadGame() {
       gameState.achievedEndings = [];
     if (!Array.isArray(gameState.triggeredConditionalStories))
       gameState.triggeredConditionalStories = [];
+    if (!Array.isArray(gameState.hardModeTags))
+      gameState.hardModeTags = [];
+    if (!Array.isArray(gameState.hardModeBonuses))
+      gameState.hardModeBonuses = [];
+    if (!Array.isArray(gameState.activeDebuffs))
+      gameState.activeDebuffs = [];
+    if (typeof gameState.easyMode !== "boolean")
+      gameState.easyMode = false;
+    if (typeof gameState.debugUsed !== "boolean")
+      gameState.debugUsed = false;
+    if (typeof gameState.debugAddedAdminPermit !== "boolean")
+      gameState.debugAddedAdminPermit = false;
     if (typeof truckState.fuel !== "number" || isNaN(truckState.fuel))
       truckState.fuel = 100;
     if (
@@ -156,6 +253,13 @@ function loadGame() {
       truckState.comfort = 100;
     if (typeof inventoryState.gold !== "number" || isNaN(inventoryState.gold))
       inventoryState.gold = 0;
+    if (typeof inventoryState.trunkLevel !== "number" || isNaN(inventoryState.trunkLevel))
+      inventoryState.trunkLevel = 1;
+
+    // 重置运行时标记：防止玩家在事件中途返回后再进入游戏时卡住
+    gameState.eventTriggered = false;
+    textGenerationPaused = false;
+
     return true;
   }
   return false;

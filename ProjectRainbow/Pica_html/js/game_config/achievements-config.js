@@ -135,6 +135,137 @@ const ACHIEVEMENTS_CONFIG = {
     icon: "💊",
     check: () => typeof gameState.itemsUsed !== "undefined" && gameState.itemsUsed > 0,
   },
+  firefly_blessing: {
+    id: "firefly_blessing",
+    title: "萤火虫祝福",
+    description: "获得珍品「萤火虫之愿」",
+    icon: "✨",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "萤火虫之愿");
+    },
+  },
+  rain_blessing: {
+    id: "rain_blessing",
+    title: "风雨无阻",
+    description: "获得珍品「雨水护符」",
+    icon: "🌧️",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "雨水护符");
+    },
+  },
+  fog_phantom: {
+    id: "fog_phantom",
+    title: "雾中来客",
+    description: "获得珍品「雾中人的照片」",
+    icon: "👻",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "雾中人的照片");
+    },
+  },
+  starfall_pegasus: {
+    id: "starfall_pegasus",
+    title: "星坠天马",
+    description: "获得珍品「天马星座的流星」",
+    icon: "🌠",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "天马星座的流星");
+    },
+  },
+  golden_horse: {
+    id: "golden_horse",
+    title: "点石成金",
+    description: "获得珍品「金马雕像」",
+    icon: "🐴",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "金马雕像");
+    },
+  },
+  mirage_sculpture: {
+    id: "mirage_sculpture",
+    title: "沙海幻影",
+    description: "获得珍品「海市蜃楼雕塑」",
+    icon: "🏜️",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "海市蜃楼雕塑" || s.id === "破损的雕塑");
+    },
+  },
+  whisper_book: {
+    id: "whisper_book",
+    title: "命运倒转",
+    description: "获得珍品「呓语之书」",
+    icon: "📖",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "呓语之书" || s.id === "空白书");
+    },
+  },
+  horsehead_core: {
+    id: "horsehead_core",
+    title: "第三类接触",
+    description: "获得珍品「马头皮卡核心」",
+    icon: "👽",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "马头皮卡核心");
+    },
+  },
+  diamond_pickaxe: {
+    id: "diamond_pickaxe",
+    title: "矿脉传说",
+    description: "获得珍品「钻石稿」",
+    icon: "⛏️",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "钻石稿");
+    },
+  },
+  prosperity_fragment: {
+    id: "prosperity_fragment",
+    title: "繁荣的回响",
+    description: "获得珍品「繁荣时代的金属碎片」",
+    icon: "✨",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "繁荣时代的金属碎片");
+    },
+  },
+  asphalt_drip: {
+    id: "asphalt_drip",
+    title: "黑金炼成",
+    description: "获得珍品「沥青滴落装置」",
+    icon: "🛢️",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "沥青滴落装置");
+    },
+  },
+  dust_of_fate: {
+    id: "dust_of_fate",
+    title: "随缘而遇",
+    description: "在旅途中偶然获得了「随缘而遇的尘埃」",
+    icon: "🌫️",
+    hidden: true,
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "随缘而遇的尘埃");
+    },
+  },
+  saofurry_figure: {
+    id: "saofurry_figure",
+    title: "狂热收藏家",
+    description: "获得珍品「骚福瑞手办」",
+    icon: "💖",
+    check: () => {
+      if (typeof inventoryState === "undefined" || !inventoryState.items) return false;
+      return inventoryState.items.some(s => s.id === "骚福瑞手办");
+    },
+  },
 
   // 事件类成就
   event_many: {
@@ -278,5 +409,110 @@ const ACHIEVEMENTS_CONFIG = {
     check: () => {
       return Array.isArray(gameState.achievedEndings) && gameState.achievedEndings.includes("harmony");
     },
+  },
+
+  // 节日特殊成就
+  open_red_packet: {
+    id: "open_red_packet",
+    title: "开年大吉",
+    description: "打开马年红包",
+    icon: "🧧",
+    check: () => gameState.hasOpenedRedPacket === true,
+  },
+
+  // 罕见事件成就
+  clown_night_encounter: {
+    id: "clown_night_encounter",
+    title: "深夜马戏团",
+    description: "在漫漫长途中，遭遇了那个神秘的「小丑之夜」",
+    icon: "🤡",
+    hidden: true,
+    check: () => {
+      return Array.isArray(gameState.triggeredEvents) && gameState.triggeredEvents.includes("clown_night");
+    },
+  },
+
+  time_bank_encounter: {
+    id: "time_bank_encounter",
+    title: "异常连接",
+    description: "遭遇了神秘的「时间银行」",
+    icon: "⏳",
+    hidden: true,
+    check: () => {
+      return Array.isArray(gameState.triggeredEvents) && gameState.triggeredEvents.includes("time_bank");
+    },
+  },
+
+  time_bank_depositor: {
+    id: "time_bank_depositor",
+    title: "时间储蓄者",
+    description: "首次向时间银行存入金币",
+    icon: "💰",
+    hidden: true,
+    check: () => {
+      return typeof getTimeBankBalance === "function" && getTimeBankBalance() > 0;
+    },
+  },
+
+  time_rift_ending: {
+    id: "time_rift_ending",
+    title: "反抗资本",
+    description: "拒绝时间银行，触发「时间乱流」结局",
+    icon: "🌀",
+    hidden: true,
+    check: () => {
+      return Array.isArray(gameState.achievedEndings) && gameState.achievedEndings.includes("time_rift");
+    },
+  },
+
+  // 命运轮盘相关成就
+  fate_roulette_encounter: {
+    id: "fate_roulette_encounter",
+    title: "命运的邀请",
+    description: "遭遇「命运轮盘」罕见事件",
+    icon: "🎡",
+    hidden: true,
+    check: () => {
+      return Array.isArray(gameState.triggeredEvents) && gameState.triggeredEvents.includes("fate_roulette");
+    },
+  },
+
+  fate_roulette_again: {
+    id: "fate_roulette_again",
+    title: "贪婪者",
+    description: "在命运轮盘中选择「再来一次」",
+    icon: "🔄",
+    hidden: true,
+    check: () => {
+      return gameState.fateRouletteRespan === true;
+    },
+  },
+
+  fate_mockery_ending: {
+    id: "fate_mockery_ending",
+    title: "命运的棋子",
+    description: "被命运轮盘的「死亡」扇区击中，触发「命运的愚弄」结局",
+    icon: "💀",
+    hidden: true,
+    check: () => {
+      return Array.isArray(gameState.achievedEndings) && gameState.achievedEndings.includes("fate_mockery");
+    },
+  },
+
+  debug_cheater: {
+    id: "debug_cheater",
+    title: "卑鄙的作弊者",
+    description: "使用 Debug 功能触发事件或添加物品",
+    icon: "🐛",
+    hidden: true,
+    check: () => gameState.debugUsed === true,
+  },
+  debug_wish_again: {
+    id: "debug_wish_again",
+    title: "我的愿望是再要100个愿望",
+    description: "通过 Debug 界面再次添加了「一次性管理员权限」",
+    icon: "♾️",
+    hidden: true,
+    check: () => gameState.debugAddedAdminPermit === true,
   },
 };

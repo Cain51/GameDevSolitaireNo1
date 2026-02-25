@@ -20,6 +20,7 @@ const MERCHANT_CONFIG = {
       { itemId: "精炼剂", buyPrice: 20, sellPrice: 10 },
       { itemId: "医疗补给包", buyPrice: 38, sellPrice: 18 },
       { itemId: "舒适组合包", buyPrice: 30, sellPrice: 14 },
+      { itemId: "钻石稿", sellPrice: 50 },
     ],
   },
 
@@ -41,6 +42,7 @@ const MERCHANT_CONFIG = {
       { itemId: "豪华坐垫", buyPrice: 65, sellPrice: 32 },
       { itemId: "燃油混合液", buyPrice: 90, sellPrice: 45 },
       { itemId: "超级修理包", buyPrice: 85, sellPrice: 42 },
+      { itemId: "钻石稿", sellPrice: 50 },
     ],
   },
 
@@ -62,6 +64,7 @@ const MERCHANT_CONFIG = {
       { itemId: "水冷系统", buyPrice: 110, sellPrice: 55 },
       { itemId: "超级修理包", buyPrice: 78, sellPrice: 38 },
       { itemId: "燃油混合液", buyPrice: 82, sellPrice: 40 },
+      { itemId: "钻石稿", sellPrice: 50 },
     ],
   },
 
@@ -80,6 +83,7 @@ const MERCHANT_CONFIG = {
       { itemId: "豪华坐垫", buyPrice: 60, sellPrice: 30 },
       { itemId: "医疗补给包", buyPrice: 35, sellPrice: 16 },
       { itemId: "舒适组合包", buyPrice: 28, sellPrice: 12 },
+      { itemId: "钻石稿", sellPrice: 50 },
     ],
   },
 };

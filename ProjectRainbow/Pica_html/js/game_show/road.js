@@ -53,6 +53,7 @@ function pauseRoad() {
     roadInterval = null;
   }
   if (typeof stopEngineSound === "function") stopEngineSound();
+  if (typeof pauseScenery === "function") pauseScenery();
 }
 
 // 恢复道路
@@ -61,6 +62,7 @@ function resumeRoad() {
     roadInterval = setInterval(updateRoad, roadSpeed);
   }
   if (typeof startEngineSound === "function") startEngineSound();
+  if (typeof resumeScenery === "function") resumeScenery();
 }
 
 // 逐渐减速停止道路
