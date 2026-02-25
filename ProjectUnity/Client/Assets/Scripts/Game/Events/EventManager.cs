@@ -31,6 +31,8 @@ public class EventManager : ManagerBase
 			GameManager gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
 			gm.CostTime(eca.cost);
 			gm.SetNextAwake(eca.awake);
+            // 确保不会设置任何自动回调，防止意外触发 NextDay
+            dp.OnCallback = null;
 		}
 	}
 }

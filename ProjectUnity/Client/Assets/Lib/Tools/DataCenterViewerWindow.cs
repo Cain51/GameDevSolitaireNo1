@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using System.Data;
@@ -49,56 +50,49 @@ public class DataCenterViewerWindow : EditorWindow
         if (tableNames.Length == 0) return;
 
         string tableName = tableNames[selectedTableIndex];
-        var table = DataCenter.data[tableName];
+        var tableMap = DataCenter.data[tableName];
 
-        if (table == null || table.Count == 0)
+        if (tableMap == null || tableMap.Count == 0)
         {
-            EditorGUILayout.LabelField("该表无数据。");
+            EditorGUILayout.HelpBox("该表目前没有数据或尚未加载。", MessageType.Info);
             return;
         }
 
-        // 获取列名
-        DataRow firstRow = null;
-        foreach (var row in table.Values)
-        {
-            firstRow = row;
-            break;
-        }
-        if (firstRow == null)
-        {
-            EditorGUILayout.LabelField("该表无数据。");
-            return;
-        }
-
-        var columns = new List<string>();
-        foreach (DataColumn col in firstRow.Table.Columns)
-        {
-            columns.Add(col.ColumnName);
-        }
-
-        // 数据展示
+        // 显示表格内容
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
-
-        // 表头
-        EditorGUILayout.BeginHorizontal();
-        foreach (var col in columns)
-        {
-            EditorGUILayout.LabelField(col, EditorStyles.boldLabel, GUILayout.Width(100));
+        
+        // 获取第一行来确定列信息
+        DataRow firstRow = null;
+        foreach (var key in tableMap.Keys) 
+        { 
+            firstRow = tableMap[key]; 
+            break; 
         }
-        EditorGUILayout.EndHorizontal();
 
-        // 数据行
-        foreach (var kv in table)
+        if (firstRow != null)
         {
+            // 表头
             EditorGUILayout.BeginHorizontal();
-            foreach (var col in columns)
+            foreach (DataColumn col in firstRow.Table.Columns)
             {
-                string val = kv.Value[col]?.ToString() ?? "";
-                EditorGUILayout.LabelField(val, GUILayout.Width(100));
+                EditorGUILayout.LabelField(col.ColumnName, EditorStyles.boldLabel, GUILayout.Width(100));
             }
             EditorGUILayout.EndHorizontal();
+
+            // 数据行
+            foreach (var key in tableMap.Keys)
+            {
+                DataRow row = tableMap[key];
+                EditorGUILayout.BeginHorizontal();
+                foreach (var item in row.ItemArray)
+                {
+                    EditorGUILayout.TextField(item.ToString(), GUILayout.Width(100));
+                }
+                EditorGUILayout.EndHorizontal();
+            }
         }
 
         EditorGUILayout.EndScrollView();
     }
 }
+#endif

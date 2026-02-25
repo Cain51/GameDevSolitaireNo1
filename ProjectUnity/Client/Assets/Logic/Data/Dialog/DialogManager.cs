@@ -10,6 +10,7 @@ public class DialogManager : ManagerBase
 	public void ShowDialog(string name,Action a = null) {
 		UIManager uiManager = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
 		string graphName = $"{name}";
+        /* 禁用 PlayerPrefs 持久化检查
 		string data = PlayerPrefs.GetString(graphName, string.Empty);
 		if (data != string.Empty)
 		{
@@ -17,6 +18,7 @@ public class DialogManager : ManagerBase
 			dp2.ShowSimple(string.Empty, data);
 			return;
 		}
+        */
 		
 		DialogPanel dp = uiManager.OpenFloat("DialogPanel") as DialogPanel;
 		dp.StartDialog(graphName);
@@ -29,6 +31,7 @@ public class DialogManager : ManagerBase
 
 		UIManager uiManager = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
 		string graphName = $"{c.ca.name}{c.ca.id}/{c.ca.id}_{slm.curScene.name}_{gm.day}";
+        /* 禁用 PlayerPrefs 持久化检查
 		string data = PlayerPrefs.GetString(graphName, string.Empty);
 		if (data != string.Empty)
 		{
@@ -36,6 +39,7 @@ public class DialogManager : ManagerBase
 			dp2.ShowSimple(c.ca.name, data);
 			return;
 		}
+        */
 		if (gm.CheckTime(1) == false)
 		{
 			TipManager.Tip("时间不足1小时");

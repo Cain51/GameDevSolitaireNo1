@@ -1,17 +1,18 @@
 %YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
+%TAG !u! tag:yousandi.cn,2023:
 --- !u!1 &692056991300039668
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 7990203990465515677}
   - component: {fileID: 6533603320493723944}
   - component: {fileID: 292036646412251692}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: img_title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,7 +83,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 7968866134162823805}
   - component: {fileID: 4615562364530094027}
@@ -90,6 +91,7 @@ GameObject:
   - component: {fileID: 6489356517423529662}
   - component: {fileID: 1082741257225000407}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: speakpronubnce
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -301,11 +303,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 9075130062591624065}
   - component: {fileID: 5749261375472339937}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: DialogPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -368,13 +371,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 6438259346994162723}
   - component: {fileID: 8110266623256463112}
   - component: {fileID: 825523793376784701}
   - component: {fileID: 3668562071670573142}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: btn_choise
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -489,11 +493,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 2345577917561910927}
   - component: {fileID: 7483102293252865613}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: tran_content
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -551,13 +556,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 6889266408757873473}
   - component: {fileID: 7282873186138304459}
   - component: {fileID: 1179779339748997894}
   - component: {fileID: 7051143437812746654}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: btn_next
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -683,12 +689,13 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 2990252190126887599}
   - component: {fileID: 1408608867644323287}
   - component: {fileID: 1934688631135342929}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: raw_character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -755,12 +762,13 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 8955787868197366693}
   - component: {fileID: 1472538226069817600}
   - component: {fileID: 3581244302229465180}
   m_Layer: 0
+  m_HasEditorInfo: 1
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -844,6 +852,7 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_UseOcclusionCulling: 1
 --- !u!114 &3581244302229465180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -873,13 +882,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 5408207058999576933}
   - component: {fileID: 5510984633647693006}
   - component: {fileID: 5683857865202926341}
   - component: {fileID: 3804774009752826985}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: Text (Legacy)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -968,10 +978,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 2959282401275651319}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: node
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1003,12 +1014,13 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 5259781414000627302}
   - component: {fileID: 5947962109127529126}
   - component: {fileID: 8626716199122314882}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1078,12 +1090,13 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 5804075153273036796}
   - component: {fileID: 8574465915047163970}
   - component: {fileID: 6933793439389506257}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1157,6 +1170,8 @@ Camera:
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1
+  m_enableGDRP: 1
+  m_backfaceCulling: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -1196,6 +1211,11 @@ MonoBehaviour:
   m_UseScreenCoordOverride: 0
   m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  allowDeepLearningSuperSampling: 0
+  deepLearningSuperSamplingUseCustomQualitySettings: 0
+  deepLearningSuperSamplingQuality: 0
+  deepLearningSuperSamplingUseCustomAttributes: 0
+  deepLearningSuperSamplingUseOptimalSettings: 1
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
@@ -1212,13 +1232,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 5702715936033753911}
   - component: {fileID: 2848032233183849155}
   - component: {fileID: 1219784605813465979}
   - component: {fileID: 2066314026}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: lbl_name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1276,7 +1297,7 @@ MonoBehaviour:
     m_Font: {fileID: 12800000, guid: 8a4ee502f5e45174b8f9c9df06cc71eb, type: 3}
     m_FontSize: 33
     m_FontStyle: 0
-    m_BestFit: 0
+    m_BestFit: 1
     m_MinSize: 3
     m_MaxSize: 40
     m_Alignment: 4
@@ -1307,12 +1328,13 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 2426023856591296527}
   - component: {fileID: 5418963524667452955}
   - component: {fileID: 1474930696394984455}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: img_bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1382,13 +1404,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 7
   m_Component:
   - component: {fileID: 4036472358733142521}
   - component: {fileID: 2492069959244917042}
   - component: {fileID: 4600970365579546424}
   - component: {fileID: 2066314027}
   m_Layer: 5
+  m_HasEditorInfo: 1
   m_Name: lbl_content
   m_TagString: Untagged
   m_Icon: {fileID: 0}

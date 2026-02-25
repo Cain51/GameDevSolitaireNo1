@@ -50,7 +50,7 @@ namespace RG.Zeluda
 		public int day = 0;
 		public int time = 12;
 		public int max_time = 24;
-		public int start_time = 18;
+		public int start_time = 18; // 18 对应早上 6 点 (24 - 18 = 6)
 		public int over_time = 3;
 		public Transform uiManager;
 		public WorkCA work;
@@ -68,52 +68,322 @@ namespace RG.Zeluda
 		public bool pendingStage3Morning = false;
 		public bool storyEnded = false;
 		public bool pendingStartRanchTutorial = false;
+        public bool isMorningStoryPlaying = false; // 增加标志位，防止 UI 按钮状态冲突
+        public bool isBathStoryPlaying = false; // 第三天特殊逻辑：是否正在洗澡剧情中
+        public bool isBathStoryFinished = false; // 第三天特殊逻辑：是否洗完澡（ID 45 结束）
+        public bool isHospitalStoryPlaying = false; // 第三天特殊逻辑：是否正在医院剧情中
+        public bool isDay3FinalStoryPlaying = false; // 第三天特殊逻辑：是否正在进行 ID 74 - 90 剧情
+        public bool isDay3FinalStoryFinished = false; // 第三天特殊逻辑：ID 90 结束后解锁睡觉
+        public bool isDay4BuyStoryPlaying = false; // 第四天特殊逻辑：是否正在购买红肉糜剧情中 (ID 111)
+        public bool isDay4PostBuyStoryPlaying = false; // 第四天特殊逻辑：是否正在购买后回到牧场的剧情中 (ID 113)
+        public bool isDay4FinalStoryFinished = false; // 第四天特殊逻辑：ID 113 结束后解锁睡觉
+        public bool isDay5MorningStoryPlaying = false; // 第五天特殊逻辑：是否正在播放 ID 122
+        public bool isDay5StoryFinished = false; // 第五天特殊逻辑：ID 122 剧情结束标志
+        public bool isSpecialUnlockTriggered = false; // 新增：是否已触发 ID 145 的特殊解锁逻辑
+        public bool isFinalStoryPlaying = false; // 结局特殊逻辑：是否正在播放最终对话 (ID 152+)
+        public bool isFinalStoryFinished = false; // 结局特殊逻辑：结局对话是否已播完
+        public static bool isTransitioning = false; // 增加静态标志，防止连点导致跳天
+        public static bool isSleepClicked = false; // 新增：显式锁，只有点击睡觉按钮才允许进入下一天
+		public GameObject NewStorySystemPrefab; // 保存来自 LobbyPanel 的剧情系统预制体
 		private HashSet<int> collectedClues = new HashSet<int>();
 		private Dictionary<int, string> mapClueTexts = new Dictionary<int, string>();
+		private Dictionary<int, string> dayTitles = new Dictionary<int, string>();
 		private string[] kaneEncouragements = new string[0];
 		private const float clueTriggerChance = 0.35f;
 		private SaveData pendingSaveData;
 		private bool pendingSaveExists;
 		public void PrepareStartGame()
 		{
-			SaveData data = LoadSave();
-			if (data != null)
-			{
-				pendingSaveData = data;
-				pendingSaveExists = true;
-				return;
-			}
+            // 彻底清除注册表（PlayerPrefs），确保没有任何持久化数据干扰
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
+            Debug.Log("[GameManager] 已彻底清除 PlayerPrefs 数据。");
+
+			// 确保订阅了剧情事件
+			ExcelReading.Framework.StoryEventManager.Instance.Unsubscribe(ExcelReading.Framework.GameEventNames.DIALOG_START, OnNewStoryStart);
+			ExcelReading.Framework.StoryEventManager.Instance.Subscribe(ExcelReading.Framework.GameEventNames.DIALOG_START, OnNewStoryStart);
+			ExcelReading.Framework.StoryEventManager.Instance.Unsubscribe(ExcelReading.Framework.GameEventNames.DIALOG_END, OnNewStoryEnd);
+			ExcelReading.Framework.StoryEventManager.Instance.Subscribe(ExcelReading.Framework.GameEventNames.DIALOG_END, OnNewStoryEnd);
+
+			// 不再加载存档，每次都开启新游戏
 			pendingSaveData = BuildNewGameSaveData();
 			pendingSaveExists = false;
-			SaveToDisk(pendingSaveData);
 		}
 		public void StartFromLobby()
 		{
+			Debug.Log("[GameManager] StartFromLobby 被触发...");
+            // 每次从大厅开始都强制清理一遍，双重保险
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
+            Debug.Log("[GameManager] StartFromLobby: 已清理 PlayerPrefs");
 			if (pendingSaveData == null)
 			{
+				Debug.Log("[GameManager] 未发现待加载存档数据，调用 PrepareStartGame...");
 				PrepareStartGame();
 			}
-			if (pendingSaveExists)
+
+			// 无论是否有存档，统一使用 TransitionPanel 进行背景切换
+			UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+			TransitionPanel tp = um.OpenFloat("TransitionPanel") as TransitionPanel;
+			if (tp == null)
 			{
-				StartFromSave(pendingSaveData);
+				Debug.LogError("[GameManager] 无法加载 TransitionPanel，强制执行后续逻辑...");
+				ExecuteLobbyTransition();
+				return;
+			}
+
+			Debug.Log("[GameManager] 开始 Lobby 到游戏场景的黑屏过渡...");
+			tp.StartTransition(() =>
+			{
+				ExecuteLobbyTransition();
+				pendingSaveData = null;
+				pendingSaveExists = false;
+			}, "", () => {
+				// 屏幕变亮后，如果是第一天且是新游戏流程，触发新剧情系统 ID 0
+				Debug.Log($"[GameManager] 过渡完成，当前天数: {day}, 剧情阶段: {storyStage}");
+				if (day == 1 && storyStage == StoryStage.Stage1)
+				{
+					TriggerOpeningStory();
+				}
+			});
+		}
+
+		private void ExecuteLobbyTransition()
+		{
+			// 既然不持久化，每次都是开启新游戏
+			Debug.Log("[GameManager] 不再加载存档，开启新游戏状态...");
+			StartNewGame();
+		}
+
+		private void TriggerOpeningStory()
+		{
+			Debug.Log("[GameManager] 正在启动开场剧情系统 (ID 0)...");
+			if (NewStorySystemPrefab != null)
+			{
+				Debug.Log("[GameManager] 正在实例化 NewStorySystemPrefab...");
+				GameObject storySystem = GameObject.Instantiate(NewStorySystemPrefab);
+				GameObject.DontDestroyOnLoad(storySystem);
 			}
 			else
 			{
-				StartNewGame();
+				Debug.LogWarning("[GameManager] NewStorySystemPrefab 为空，尝试直接发布 DIALOG_START 事件...");
+				ExcelReading.Framework.StoryEventManager.Instance.Publish(ExcelReading.Framework.GameEventNames.DIALOG_START, 0);
 			}
-			pendingSaveData = null;
-			pendingSaveExists = false;
 		}
-		public void Start()
+
+		protected override void Init()
 		{
-			StartNewGame();
+			base.Init();
+			// 订阅剧情事件
+			ExcelReading.Framework.StoryEventManager.Instance.Subscribe(ExcelReading.Framework.GameEventNames.DIALOG_START, OnNewStoryStart);
+			ExcelReading.Framework.StoryEventManager.Instance.Subscribe(ExcelReading.Framework.GameEventNames.DIALOG_END, OnNewStoryEnd);
 		}
+
+		private void OnNewStoryStart(object eventData)
+		{
+			int dialogId = 0;
+			if (eventData is int) dialogId = (int)eventData;
+			else if (eventData is string strData && int.TryParse(strData, out int parsedId)) dialogId = parsedId;
+
+			// 特殊逻辑：对话 ID 136 开始时播放“叫声”
+			if (dialogId == 136)
+			{
+				Debug.Log("[GameManager] 监听到对话 ID 136 开始，播放叫声音效");
+				if (AudioManager.Inst != null)
+				{
+					AudioClip clip = Resources.Load<AudioClip>("BGM/叫声");
+					if (clip != null)
+					{
+						AudioManager.Inst.Play(clip);
+					}
+					else
+					{
+						Debug.LogWarning("[GameManager] 找不到音效资源: BGM/叫声");
+					}
+				}
+			}
+		}
+
+		private void OnNewStoryEnd(object eventData)
+		{
+			int dialogId = 0;
+			if (eventData is int) dialogId = (int)eventData;
+			else if (eventData is string strData && int.TryParse(strData, out int parsedId)) dialogId = parsedId;
+
+			Debug.Log($"[GameManager] OnNewStoryEnd 监听到对话结束, ID: {dialogId}, 当前天数: {day}, 剧情阶段: {storyStage}");
+
+			// 只有在游戏初始阶段且 ID 12 结束时触发凯恩对话
+			if (dialogId == 12 && day <= 1 && storyStage == StoryStage.Stage1)
+			{
+				Debug.Log("[GameManager] 满足凯恩对话触发条件，正在弹出对话框...");
+				UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+				DialogPanel dp = um.OpenFloat("DialogPanel") as DialogPanel;
+				// 显式清除之前的回调，防止触发旧的 NextDay 逻辑导致自动睡觉
+				dp.OnCallback = null;
+				// 播放凯恩对话
+				dp.StartDialog("第2日起床");
+			}
+
+            // 第三天特殊逻辑：洗澡对话 (ID 45) 结束后，标记并弹出医院开放提示
+            // 无论 ID 是多少，只要是正在播放洗澡剧情中结束了，就触发解锁
+            if (isBathStoryPlaying && day == 3)
+            {
+                Debug.Log($"[GameManager] 洗澡对话结束(ID:{dialogId})，解锁医院场景。");
+                isBathStoryPlaying = false;
+                isBathStoryFinished = true;
+                TipManager.Tip("医院开放了!");
+                
+                // 刷新主界面按钮状态
+                UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+                MainPanel main = um.GetPanel("MainPanel") as MainPanel;
+                if (main != null) main.RefreshActionButtons();
+            }
+
+            // 第三天特殊逻辑：医院治疗对话 (ID 54) 结束后，触发过渡回到牧场并播放 ID 74
+            if (isHospitalStoryPlaying && day == 3)
+            {
+                Debug.Log($"[GameManager] 医院治疗对话结束(ID:{dialogId})，准备回到牧场。");
+                isHospitalStoryPlaying = false;
+                
+                UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+                TransitionPanel tp = um.OpenFloat("TransitionPanel") as TransitionPanel;
+                if (tp != null)
+                {
+                    tp.StartTransition(() => {
+                        // 1. 切换回牧场
+                        roomIdx = 0;
+                        SceneLoadManager slm = CBus.Instance.GetManager(ManagerName.SceneLoadManager) as SceneLoadManager;
+                        if (slm != null)
+                        {
+                            slm.Load(prisonRooms[roomIdx]);
+                        }
+                        
+                        // 2. 在黑屏状态下触发 ID 74 剧情
+                        Debug.Log("[GameManager] 回到牧场过渡中，触发 ID 74 剧情");
+                        isDay3FinalStoryPlaying = true; // 开启终场剧情追踪
+                        isMorningStoryPlaying = true; // 锁定 UI
+                        ExcelReading.Framework.StoryEventManager.Instance.Publish(ExcelReading.Framework.GameEventNames.DIALOG_START, 74);
+                    }, "回到牧场...");
+                }
+            }
+
+            // 第三天特殊逻辑：ID 90 剧情结束后解锁睡觉
+            // 更加鲁棒的判断：只要在 Day3 终场剧情进行中结束，就尝试解锁
+            if ((dialogId == 90 || isDay3FinalStoryPlaying) && day == 3)
+            {
+                Debug.Log($"[GameManager] 第三天终场剧情结束(ID:{dialogId})，解锁睡觉按钮。");
+                isDay3FinalStoryPlaying = false;
+                isMorningStoryPlaying = false; // 解锁 UI
+                isDay3FinalStoryFinished = true;
+                
+                // 刷新 UI 状态
+                UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+                MainPanel main = um.GetPanel("MainPanel") as MainPanel;
+                if (main != null) main.RefreshActionButtons();
+            }
+
+            // 第四天特殊逻辑：购买红肉糜对话 (ID 111) 结束后，自动回到牧场并触发 ID 113
+            if (isDay4BuyStoryPlaying && day == 4)
+            {
+                Debug.Log($"[GameManager] 第四天购买红肉糜对话结束(ID:{dialogId})，准备回到牧场。");
+                isDay4BuyStoryPlaying = false;
+                isMorningStoryPlaying = true; // 保持锁定 UI 直到 ID 113 结束
+                
+                UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+                TransitionPanel tp = um.OpenFloat("TransitionPanel") as TransitionPanel;
+                if (tp != null)
+                {
+                    tp.StartTransition(() => {
+                        // 切换回牧场
+                        roomIdx = 0;
+                        SceneLoadManager slm = CBus.Instance.GetManager(ManagerName.SceneLoadManager) as SceneLoadManager;
+                        if (slm != null)
+                        {
+                            slm.Load(prisonRooms[roomIdx]);
+                        }
+                    }, "回到牧场...", () => {
+                        // 回到牧场后，自动播放 ID 113 对话
+                        Debug.Log("[GameManager] 回到牧场完成，触发 ID 113 剧情");
+                        isDay4PostBuyStoryPlaying = true;
+                        ExcelReading.Framework.StoryEventManager.Instance.Publish(ExcelReading.Framework.GameEventNames.DIALOG_START, 113);
+                    });
+                }
+            }
+
+            // 第四天特殊逻辑：ID 113 剧情结束后解锁睡觉
+            if (isDay4PostBuyStoryPlaying && day == 4)
+            {
+                Debug.Log($"[GameManager] 第四天终场剧情结束(ID:{dialogId})，解锁睡觉按钮。");
+                isDay4PostBuyStoryPlaying = false;
+                isMorningStoryPlaying = false; // 解锁 UI
+                isDay4FinalStoryFinished = true;
+                
+                // 刷新 UI 状态
+                UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+                MainPanel main = um.GetPanel("MainPanel") as MainPanel;
+                if (main != null) main.RefreshActionButtons();
+            }
+
+            // 第五天特殊逻辑：ID 122 剧情结束后刷新 UI
+            if (isDay5MorningStoryPlaying && day == 5)
+            {
+                Debug.Log($"[GameManager] 第五天晨间剧情结束(ID:{dialogId})");
+                isDay5MorningStoryPlaying = false;
+                isMorningStoryPlaying = false; // 解锁 UI
+                isDay5StoryFinished = true;
+                
+                // 刷新 UI 状态
+                UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+                MainPanel main = um.GetPanel("MainPanel") as MainPanel;
+                if (main != null) main.RefreshActionButtons();
+            }
+
+            // 特殊逻辑：对话 ID 145 结束后解锁所有按钮和场景
+            if (dialogId == 145)
+            {
+                Debug.Log("[GameManager] 监听到对话 ID 145 结束，触发全按钮/全场景解锁");
+                isSpecialUnlockTriggered = true;
+                
+                // 立即刷新当前界面的 UI 状态
+                UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+                MainPanel main = um.GetPanel("MainPanel") as MainPanel;
+                if (main != null) main.RefreshActionButtons();
+            }
+
+            // 结局特殊逻辑：最终对话结束后淡出回到牧场
+            if (isFinalStoryPlaying)
+            {
+                Debug.Log("[GameManager] 最终结局对话结束，正在淡出返回牧场...");
+                isFinalStoryPlaying = false;
+                isFinalStoryFinished = true; // 标记结局已完成
+
+                UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+                if (um != null)
+                {
+                    // 对话结束，恢复天数显示
+                    MainPanel main = um.GetPanel("MainPanel") as MainPanel;
+                    if (main != null) main.ToggleDayDisplay(true);
+
+                    TransitionPanel tp = um.GetPanel("TransitionPanel") as TransitionPanel;
+                    if (tp != null)
+                    {
+                        // 调用新增的 FadeOut 方法，平滑恢复场景亮度
+                        tp.FadeOut(() => {
+                            Debug.Log("[GameManager] 结局淡出完成，玩家已回到牧场视角");
+                        });
+                    }
+                }
+            }
+		}
+
 		private void StartNewGame()
 		{
+			Debug.Log("[GameManager] StartNewGame 被调用...");
 			InitStoryData();
 			ResetMapTutorialFlags();
+			InitDayCountUI();
 			day = 1;
-			time = start_time;
+			time = 18; // 强制从 6 点开始 (24 - 18 = 6)
 			roomIdx = 0;
 			nextDayMapID = 0;
 			matchWinStreak = 0;
@@ -123,36 +393,59 @@ namespace RG.Zeluda
 			pendingLiMorning = false;
 			clueCollectionEnabled = false;
 			pendingStage3Morning = false;
+            isBathStoryFinished = false;
+            isFinalStoryFinished = false;
 			storyEnded = false;
 			pendingStartRanchTutorial = false;
 			bag = new Dictionary<int, int>();
 			collectedClues = new HashSet<int>();
-			DialogManager dm = CBus.Instance.GetManager(ManagerName.DialogManager) as DialogManager;
-			dm.ShowDialog("游戏开始", () =>
-			{
-				SetupAfterLobby(true);
-				SaveToDisk(BuildCurrentSaveData());
-			});
+
+			SetupAfterLobby(true);
+			SaveToDisk(BuildCurrentSaveData());
 		}
+
 		private void StartFromSave(SaveData data)
 		{
+			Debug.Log("[GameManager] StartFromSave 被调用...");
 			InitStoryData();
+			InitDayCountUI();
 			ApplySaveData(data);
 			SetupAfterLobby(false);
 		}
+
 		private void SetupAfterLobby(bool isNewGame)
 		{
+			Debug.Log($"[GameManager] SetupAfterLobby(isNewGame: {isNewGame}) 开始执行...");
+			
+            // 开启背景音乐
+            if (AudioManager.Inst != null)
+            {
+                AudioManager.Inst.PlayBGM("BGM/MainBGM", 0.15f);
+            }
+
+			// 先处理资源初始化，确保 MainPanel 打开时资源数量正确
+			AssetManager am = CBus.Instance.GetManager(ManagerName.AssetManager) as AssetManager;
+			if (isNewGame && am != null)
+			{
+                am.RemoveCoin(am.AssetCount(1100001)); // 清零（如果有默认值）
+                am.GetCoin(100); // 初始给 100 钱币
+				am.Add(1100002, 10);
+				am.Add(1100003, 3);
+			}
+
 			UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
 			um.ClosePanel("LobbyPanel");
 			MainPanel main = um.OpenPanel("MainPanel") as MainPanel;
 			LevelManager levelManager = CBus.Instance.GetManager(ManagerName.LevelManager) as LevelManager;
 			levelManager.OnExpChanged += (c, m) =>
 			{
+                if (main == null || main.gameObject == null || main.img_exp == null) return;
 				main.img_exp.fillAmount = c * 1f / m;
 				main.text_exp.text = $"{c}/{m}";
 			};
 			levelManager.OnLevelUp += (l) =>
 			{
+                if (main == null || main.gameObject == null || main.lbl_lv == null) return;
 				main.lbl_lv.text = $"Lv.{l}";
 				if (l == 2 || l == 3 || l == 5 || l == 7)
 				{
@@ -163,12 +456,6 @@ namespace RG.Zeluda
 					AudioManager.Inst.Play(GetHorseLevelUpClip());
 				}
 			};
-			AssetManager am = CBus.Instance.GetManager(ManagerName.AssetManager) as AssetManager;
-			if (isNewGame && am != null)
-			{
-				am.Add(1100002, 10);
-				am.Add(1100003, 3);
-			}
 			levelManager.updateexp();
 			main.SetDay(day);
 			main.SetTime(time);
@@ -197,6 +484,7 @@ namespace RG.Zeluda
 			data.pendingLiMorning = false;
 			data.clueCollectionEnabled = false;
 			data.pendingStage3Morning = false;
+            // data.isBathStoryFinished = false; // SaveData 结构里目前没加这个，因为不持久化所以暂时不加也没关系
 			data.storyEnded = false;
 			data.pendingStartRanchTutorial = false;
 			data.collectedClues = new List<int>();
@@ -307,18 +595,12 @@ namespace RG.Zeluda
 		}
 		private SaveData LoadSave()
 		{
-			string path = GetSavePath();
-			if (!File.Exists(path)) { return null; }
-			string json = File.ReadAllText(path);
-			if (string.IsNullOrEmpty(json)) { return null; }
-			return JsonUtility.FromJson<SaveData>(json);
+			// 禁用存档读取
+			return null;
 		}
 		private void SaveToDisk(SaveData data)
 		{
-			if (data == null) { return; }
-			string path = GetSavePath();
-			string json = JsonUtility.ToJson(data, true);
-			File.WriteAllText(path, json);
+			// 禁用存档保存
 		}
 		public int GetCurTime()
 		{
@@ -327,6 +609,90 @@ namespace RG.Zeluda
 		public void RefreshAll()
 		{
 
+		}
+
+		private void InitDayCountUI()
+		{
+			GameObject go = GameObject.Find("DayCountUI");
+			if (go == null)
+			{
+				go = new GameObject("DayCountUI");
+				GameObject.DontDestroyOnLoad(go);
+				go.AddComponent<DayCountHelper>();
+			}
+		}
+
+		private class DayCountHelper : MonoBehaviour
+		{
+			private Text txt_day;
+			private GameManager gm;
+
+			void Start()
+			{
+				gm = CBus.Instance.GetManager(ManagerName.GameManager) as GameManager;
+				
+				GameObject canvasObj = new GameObject("DayCanvas");
+				canvasObj.transform.SetParent(transform, false);
+				Canvas canvas = canvasObj.AddComponent<Canvas>();
+				canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+				canvas.sortingOrder = 999;
+				CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
+				scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+				scaler.referenceResolution = new Vector2(1920, 1080);
+				canvasObj.AddComponent<GraphicRaycaster>();
+
+				GameObject textObj = new GameObject("DayText");
+				textObj.transform.SetParent(canvasObj.transform, false);
+				txt_day = textObj.AddComponent<Text>();
+				
+				GameObject tipPrefab = Resources.Load<GameObject>("Prefab/tip");
+				if (tipPrefab != null)
+				{
+					Text tipText = tipPrefab.GetComponentInChildren<Text>();
+					if (tipText != null)
+					{
+						txt_day.font = tipText.font;
+					}
+				}
+				if (txt_day.font == null)
+				{
+					txt_day.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+				}
+
+				txt_day.fontSize = 40;
+				txt_day.color = Color.white;
+				txt_day.alignment = TextAnchor.UpperLeft;
+				txt_day.horizontalOverflow = HorizontalWrapMode.Overflow;
+				txt_day.verticalOverflow = VerticalWrapMode.Overflow;
+				textObj.AddComponent<Outline>().effectColor = Color.black;
+
+				RectTransform rt = textObj.GetComponent<RectTransform>();
+				rt.anchorMin = new Vector2(0, 1);
+				rt.anchorMax = new Vector2(0, 1);
+				rt.pivot = new Vector2(0, 1);
+				rt.anchoredPosition = new Vector2(500, -50);
+				rt.sizeDelta = new Vector2(300, 100);
+			}
+
+			void Update()
+			{
+				if (gm != null && txt_day != null)
+				{
+					// 获取当前场景
+					//string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+					// 如果是赛马场景（match），则隐藏文本
+					UnityEngine.SceneManagement.Scene matchScene = UnityEngine.SceneManagement.SceneManager.GetSceneByName("match");
+					if (matchScene.IsValid() && matchScene.isLoaded)
+					{
+						txt_day.enabled = false;
+					}
+					else
+					{
+						txt_day.enabled = true;
+						txt_day.text = $"第 {gm.day} 天";
+					}
+				}
+			}
 		}
 
 		public void PlayerInit()
@@ -342,13 +708,56 @@ namespace RG.Zeluda
 		}
 		public void NextDayDailog()
 		{
+            if (isTransitioning) return;
+            if (!isSleepClicked)
+            {
+                Debug.LogWarning("[GameManager] NextDayDailog 被调用，但 isSleepClicked 为 false。拒绝弹出对话框。");
+                return;
+            }
+
 			UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
 			DialogPanel dp = um.OpenFloat("DialogPanel") as DialogPanel;
-			dp.StartDialog("NightDialog");
-			dp.OnCallback = NextDay;
+            // 显式清空旧回调，防止残留
+            dp.OnCallback = null; 
+
+            if (day == 1)
+            {
+			    dp.StartDialog("NightDialog");
+			    dp.OnCallback = NextDay;
+                dp.OnCloseCallback = NextDay;
+            }
+            else
+            {
+			    dp.StartDialog("NightDialog");
+			    dp.OnCallback = NextDay;
+                dp.OnCloseCallback = NextDay;
+            }
 		}
 		public void NextDay()
 		{
+            if (isTransitioning) return;
+            if (!isSleepClicked)
+            {
+                Debug.LogWarning("[GameManager] NextDay 被调用，但 isSleepClicked 为 false。拒绝执行。");
+                return;
+            }
+
+            isTransitioning = true;
+            isSleepClicked = false; // 重置点击状态
+            
+            // 睡觉醒来后，强制重置场景到牧场 (prisonRooms[0])
+            roomIdx = 0;
+            SceneLoadManager slm = CBus.Instance.GetManager(ManagerName.SceneLoadManager) as SceneLoadManager;
+            if (slm != null)
+            {
+                slm.Load(prisonRooms[roomIdx]);
+            }
+
+            // 关键：进入新的一天时，默认开启剧情锁，防止 UI 按钮在剧情加载前瞬间亮起
+            isMorningStoryPlaying = true;
+
+            // 增加调用堆栈打印，以便排查是谁触发了自动睡觉
+            Debug.Log($"[GameManager] NextDay 执行开始. Day: {day}, Time: {time}\nStackTrace: {System.Environment.StackTrace}");
 			GroundManager gdm = CBus.Instance.GetManager(ManagerName.GroundManager) as GroundManager;
 			gdm.DayEnd();
 
@@ -357,6 +766,19 @@ namespace RG.Zeluda
 			time = start_time;
 			UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
 			TransitionPanel tp = um.OpenFloat("TransitionPanel") as TransitionPanel;
+			
+			string title = "";
+			if (dayTitles == null || dayTitles.Count == 0) { InitStoryData(); }
+			if (dayTitles != null && dayTitles.ContainsKey(day))
+			{
+				title = dayTitles[day];
+			}
+			else
+			{
+				title = $"第{day}天：新的开始";
+			}
+
+            Debug.Log($"[GameManager] 开始天数切换过渡: {title}");
 			tp.StartTransition(() =>
 			{
 
@@ -366,6 +788,7 @@ namespace RG.Zeluda
 				MainPanel main = um1.GetPanel("MainPanel") as MainPanel;
 				main.SetDay(day);
 				main.SetTime(time);
+				main.RefreshActionButtons();
 				AssetManager am = CBus.Instance.GetManager(ManagerName.AssetManager) as AssetManager;
 				GroundManager gm = CBus.Instance.GetManager(ManagerName.GroundManager) as GroundManager;
 				if (am != null && gm != null)
@@ -383,59 +806,64 @@ namespace RG.Zeluda
 					}
 					gm.SetAllChickenHungry();
 				}
-
+			}, title, () => 
+			{
+                isTransitioning = false; // 过渡完全结束后重置
+				UIManager um1 = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
 				DailyFactory df = CBus.Instance.GetFactory(FactoryName.DailyFactory) as DailyFactory;
 				DailyCA daily = df.GetCA(1400000 + day) as DailyCA;
 				DialogPanel dp = um1.OpenFloat("DialogPanel") as DialogPanel;
 				Action onMorningDialogClose = () =>
 				{
-					//if (day < 5)
-					//{
-					//	UIManager um2 = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
-					//	WorkPanel work = um2.OpenPanel("WorkPanel") as WorkPanel;
-					//	if (nextDayMapID == 0)
-					//	{
-					//		SceneLoadManager slm = CBus.Instance.GetManager(ManagerName.SceneLoadManager) as SceneLoadManager;
-					//		slm.Load(prisonRooms[roomIdx]);
-					//	}
-					//	else
-					//	{
-					//		SceneLoadManager slm = CBus.Instance.GetManager(ManagerName.SceneLoadManager) as SceneLoadManager;
-					//		slm.Load(nextDayMapID);
-					//	}
-					//}
-					//else
-					//{
-					//	UIManager um2 = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
-					//	VideoPanel video = um2.OpenPanel("VideoPanel") as VideoPanel;
-					//}
 					if (storyStage == StoryStage.Stage2 && pendingLiMorning)
 					{
 						pendingLiMorning = false;
 						clueCollectionEnabled = true;
 					}
+                    
+                    // 统一在剧情结束后刷新按钮状态
+                    MainPanel main = um1.GetPanel("MainPanel") as MainPanel;
+                    if (main != null)
+                    {
+                        main.RefreshActionButtons();
+                    }
+
 					if (day == 2)
 					{
-						main.ismatchlocked = true;
-						TipManager.Tip("赛马场开放了!");
+						TipManager.Tip("养鸡场开放了!");
+					}
+                    else if (day == 3)
+                    {
+                        TipManager.Tip("海边开放了!");
+                    }
+                    else if (day == 4)
+                    {
+                        // 第四天特殊逻辑：修改肉的信息
+                        AssetFactory af = CBus.Instance.GetFactory(FactoryName.AssetFactory) as AssetFactory;
+                        if (af != null)
+                        {
+                            AssetCA chickenMeat = af.GetCA(1100005) as AssetCA;
+                            if (chickenMeat != null)
+                            {
+                                chickenMeat.name = "红肉糜";
+                                chickenMeat.describe = "不知名家畜的混合肉，散发着甜腥味";
+                                Debug.Log("[GameManager] 第四天：鸡肉已更名为红肉糜");
+                            }
+                        }
+                        TipManager.Tip("杂货铺开放了!");
                     }
 				};
-				Action showDailyDialog = () =>
-				{
-					if (daily == null)
-					{
-						onMorningDialogClose();
-						return;
-					}
-					DialogPanel dailyPanel = um1.OpenFloat("DialogPanel") as DialogPanel;
-					dailyPanel.StartDialog(daily.dialog);
-					dailyPanel.OnCallback = onMorningDialogClose;
-				};
-				if (TryShowMorningStoryDialog(dp, showDailyDialog))
+
+                // 直接进入新的一天晨间逻辑，不再自动弹出 DailyCA 对话
+				if (TryShowMorningStoryDialog(dp, onMorningDialogClose))
 				{
 					return;
 				}
-				showDailyDialog();
+                // 如果没有晨间剧情，重置标志并执行关闭回调，确保 UI 状态刷新
+                isMorningStoryPlaying = false;
+				onMorningDialogClose();
+                // 关键修复：如果没有晨间剧情，必须关闭 DialogPanel，否则会显示上一次的残留内容（即睡觉对话）
+                dp.Close();
 			});
 		}
 		public void SetNextAwake(int scene)
@@ -487,47 +915,11 @@ namespace RG.Zeluda
 		}
 		public bool TryShowMapTutorial(MapCA mapCA)
 		{
-			if (mapCA == null) { return false; }
-			string mapName = mapCA.name != null ? mapCA.name.Trim() : string.Empty;
-			string text = GetMapTutorialText(mapName);
-			if (string.IsNullOrEmpty(text)) { return false; }
-			string key = $"MapTutorial_{mapCA.id}";
-			if (mapName == "牧场")
-			{
-				if (PlayerPrefs.GetInt(GetRanchTutorialKey(), 0) == 1) { return false; }
-			}
-			if (PlayerPrefs.GetInt(key, 0) == 1) { return false; }
-			PlayerPrefs.SetInt(key, 1);
-			if (mapName == "牧场")
-			{
-				PlayerPrefs.SetInt(GetRanchTutorialKey(), 1);
-			}
-			PlayerPrefs.Save();
-			UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
-			if (um == null) { return false; }
-			DialogPanel dp = um.OpenFloat("DialogPanel") as DialogPanel;
-			dp.ShowSimple("少女", text, 1200001);
-			return true;
+			return false;
 		}
 		public void TriggerInitialRanchTutorial()
 		{
-			string text = GetMapTutorialText("牧场");
-			if (string.IsNullOrEmpty(text)) { return; }
-			string ranchKey = GetRanchTutorialKey();
-			int mapId = GetCurrentRanchMapId();
-			string mapKey = mapId > 0 ? $"MapTutorial_{mapId}" : string.Empty;
-			if (PlayerPrefs.GetInt(ranchKey, 0) == 1) { return; }
-			if (!string.IsNullOrEmpty(mapKey) && PlayerPrefs.GetInt(mapKey, 0) == 1) { return; }
-			PlayerPrefs.SetInt(ranchKey, 1);
-			if (!string.IsNullOrEmpty(mapKey))
-			{
-				PlayerPrefs.SetInt(mapKey, 1);
-			}
-			PlayerPrefs.Save();
-			UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
-			if (um == null) { return; }
-			DialogPanel dp = um.OpenFloat("DialogPanel") as DialogPanel;
-			dp.ShowSimple("少女", text, 1200001);
+			return;
 		}
 		public void TriggerInitialRanchTutorialIfPending()
 		{
@@ -559,24 +951,133 @@ namespace RG.Zeluda
 		{
 			InitStoryData();
 			if (storyEnded) { return false; }
-			if (storyStage == StoryStage.Stage1 && firstRaceWin == false && day >= 4)
+			
+			// 第二天早晨触发特定的马匹异样剧情 (Excel ID 18)
+			if (day == 2)
+			{
+                isMorningStoryPlaying = true;
+				// 监听剧情结束事件，确保播完后再执行 onStoryComplete
+				Action<object> onDialogEnd = null;
+				onDialogEnd = (data) =>
+				{
+					int endId = (data is int) ? (int)data : 0;
+					if (endId == 26) // ID 26 是第二天晨间剧情的结束标志
+					{
+						ExcelReading.Framework.StoryEventManager.Instance.Unsubscribe(ExcelReading.Framework.GameEventNames.DIALOG_END, onDialogEnd);
+                        isMorningStoryPlaying = false;
+						onStoryComplete?.Invoke();
+					}
+				};
+				ExcelReading.Framework.StoryEventManager.Instance.Subscribe(ExcelReading.Framework.GameEventNames.DIALOG_END, onDialogEnd);
+				
+				ExcelReading.Framework.StoryEventManager.Instance.Publish(ExcelReading.Framework.GameEventNames.DIALOG_START, 18);
+				return true;
+			}
+
+            // 第三天早晨触发特定的剧情 (Excel ID 40)
+            if (day == 3)
+            {
+                isMorningStoryPlaying = true;
+                Action<object> onDialogEnd = null;
+                onDialogEnd = (data) =>
+                {
+                    // 更加健壮的判断：只要是剧情结束事件，且当前是第三天早晨，就尝试释放
+                    ExcelReading.Framework.StoryEventManager.Instance.Unsubscribe(ExcelReading.Framework.GameEventNames.DIALOG_END, onDialogEnd);
+                    Debug.Log($"[GameManager] 第三天晨间剧情结束 (EventData: {data})");
+                    isMorningStoryPlaying = false;
+                    onStoryComplete?.Invoke();
+                };
+                ExcelReading.Framework.StoryEventManager.Instance.Subscribe(ExcelReading.Framework.GameEventNames.DIALOG_END, onDialogEnd);
+                
+                ExcelReading.Framework.StoryEventManager.Instance.Publish(ExcelReading.Framework.GameEventNames.DIALOG_START, 40);
+                return true;
+            }
+
+            // 第四天早晨触发特定的剧情 (Excel ID 91 -> 结束)
+            if (day == 4)
+            {
+                isMorningStoryPlaying = true;
+                Action<object> onDialogEnd = null;
+                onDialogEnd = (data) =>
+                {
+                    // 只要在 Day 4 晨间剧情状态下，且不是购买剧情，任何对话结束都视为解锁信号
+                    if (!isDay4BuyStoryPlaying)
+                    {
+                        ExcelReading.Framework.StoryEventManager.Instance.Unsubscribe(ExcelReading.Framework.GameEventNames.DIALOG_END, onDialogEnd);
+                        Debug.Log($"[GameManager] 第四天晨间对话结束，解锁地图");
+                        isMorningStoryPlaying = false;
+                        onStoryComplete?.Invoke();
+                        
+                        // 显式强制刷新一次 UI
+                        UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+                        MainPanel main = um.GetPanel("MainPanel") as MainPanel;
+                        if (main != null) main.RefreshActionButtons();
+                    }
+                };
+                ExcelReading.Framework.StoryEventManager.Instance.Subscribe(ExcelReading.Framework.GameEventNames.DIALOG_END, onDialogEnd);
+                
+                ExcelReading.Framework.StoryEventManager.Instance.Publish(ExcelReading.Framework.GameEventNames.DIALOG_START, 91);
+                return true;
+            }
+
+            // 第五天早晨触发特定的剧情 (Excel ID 122)
+            if (day == 5)
+            {
+                isMorningStoryPlaying = true;
+                isDay5MorningStoryPlaying = true;
+                
+                // 监听剧情结束事件，确保播完后再执行 onStoryComplete
+                Action<object> onDialogEnd = null;
+                onDialogEnd = (data) =>
+                {
+                    // 只有在 Day 5 晨间剧情状态下，对话结束视为解锁信号
+                    if (isDay5MorningStoryPlaying)
+                    {
+                        ExcelReading.Framework.StoryEventManager.Instance.Unsubscribe(ExcelReading.Framework.GameEventNames.DIALOG_END, onDialogEnd);
+                        Debug.Log($"[GameManager] 第五天晨间对话结束，准备解锁赛马");
+                        // 逻辑已经在 OnNewStoryEnd 中处理，这里只负责关闭锁和刷新
+                        isMorningStoryPlaying = false;
+                        onStoryComplete?.Invoke();
+                        
+                        // 显式强制刷新一次 UI
+                        UIManager um = CBus.Instance.GetManager(ManagerName.UIManager) as UIManager;
+                        MainPanel main = um.GetPanel("MainPanel") as MainPanel;
+                        if (main != null) main.RefreshActionButtons();
+                    }
+                };
+                ExcelReading.Framework.StoryEventManager.Instance.Subscribe(ExcelReading.Framework.GameEventNames.DIALOG_END, onDialogEnd);
+                
+                ExcelReading.Framework.StoryEventManager.Instance.Publish(ExcelReading.Framework.GameEventNames.DIALOG_START, 122);
+                return true;
+            }
+
+			if (storyStage == StoryStage.Stage1 && firstRaceWin == false && day >= 6)
 			{
 				string text = GetRandomKaneEncouragement();
 				dp.ShowSimple("市长凯恩", text, 1200002);
-				dp.OnCloseCallback = onStoryComplete;
+				dp.OnCloseCallback = () => {
+                    isMorningStoryPlaying = false; // 剧情结束，解锁 UI
+                    onStoryComplete?.Invoke();
+                };
 				return true;
 			}
 			if (storyStage == StoryStage.Stage2 && pendingLiMorning)
 			{
 				dp.ShowSimple("李北镇", "你能赢我不意外，但我也不太开心。你父亲当年的事，城里有些“地方”还留着线索，别被人牵着鼻子走。", 1200003);
-				dp.OnCloseCallback = onStoryComplete;
+				dp.OnCloseCallback = () => {
+                    isMorningStoryPlaying = false; // 剧情结束，解锁 UI
+                    onStoryComplete?.Invoke();
+                };
 				return true;
 			}
 			if (storyStage == StoryStage.Stage3 && pendingStage3Morning)
 			{
 				pendingStage3Morning = false;
 				dp.StartDialog("阶段3_抉择之夜");
-				dp.OnCallback = onStoryComplete;
+				dp.OnCallback = () => {
+                    isMorningStoryPlaying = false; // 剧情结束，解锁 UI
+                    onStoryComplete?.Invoke();
+                };
 				return true;
 			}
 			return false;
@@ -619,18 +1120,7 @@ namespace RG.Zeluda
 		}
 		private void ResetMapTutorialFlags()
 		{
-			PlayerPrefs.DeleteKey(GetRanchTutorialKey());
-			MapFactory mf = CBus.Instance.GetFactory(FactoryName.MapFactory) as MapFactory;
-			if (mf == null) { return; }
-			CABase[] maps = mf.GetAllCA();
-			if (maps == null || maps.Length == 0) { return; }
-			for (int i = 0; i < maps.Length; i++)
-			{
-				MapCA map = maps[i] as MapCA;
-				if (map == null) { continue; }
-				PlayerPrefs.DeleteKey($"MapTutorial_{map.id}");
-			}
-			PlayerPrefs.Save();
+            // 不再使用 PlayerPrefs 持久化标志
 		}
 		private int GetCurrentRanchMapId()
 		{
@@ -670,6 +1160,16 @@ namespace RG.Zeluda
 				mapClueTexts[1800009] = "海边漂来一只旧瓶，里面的纸条写着“别相信赛马场的人”。";
 			}
 			if (collectedClues == null) { collectedClues = new HashSet<int>(); }
+			if (dayTitles == null) { dayTitles = new Dictionary<int, string>(); }
+			if (dayTitles.Count == 0)
+			{
+				dayTitles[1] = "【第一天：不安的种子】";
+				dayTitles[2] = "【第二天：腥甜的渴望】";
+				dayTitles[3] = "【第三天：破壳的诊疗单】";
+				dayTitles[4] = "【第四天：直立的梦魇】";
+				dayTitles[5] = "【第五天：森林的哨音】";
+				dayTitles[6] = "【第六天：无声的加冕】";
+			}
 		}
 		public bool CheckTime(int t)
 		{
@@ -685,10 +1185,6 @@ namespace RG.Zeluda
 			{
 
 				return false;
-			}
-			if (time <= over_time)
-			{
-				NextDayDailog();
 			}
 			if (work != null && (max_time - time + t) > work.starttime)
 			{
@@ -716,10 +1212,6 @@ namespace RG.Zeluda
 						dp.StartDialog(work.work);
 						dp.OnCallback = WorkOver;
 					};
-				}
-				if (time <= over_time)
-				{
-					NextDayDailog();
 				}
 			}
 			return true;

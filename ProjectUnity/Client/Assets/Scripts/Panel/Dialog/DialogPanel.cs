@@ -23,21 +23,31 @@ public class DialogPanel : PanelBase
 	private bool isSimple = false;
 	private int simpleSpeakerId = 0;
 	public Action OnCallback;
+    public new Action OnCloseCallback; // 使用 new 关键字明确隐藏基类成员，增加对 ShowSimple 的支持
+
 	public void StartDialog(DialogNode startNode)
 	{
 		lbl_name.text = name;
 		currentNode = startNode;
 		currentTextIndex = 0;
 		isSimple = false;
+        OnCallback = null;
+        OnCloseCallback = null;
 		DisplayCurrentNode();
 		AudioManager.Inst.Play("BGM/对话框展开");
 	}
 	public void StartDialog(string gn)
 	{
+		Debug.Log($"[DialogPanel] 开始对话: {gn}");
 		OnCallback = null;
+        OnCloseCallback = null;
 		graphName = gn;
 		DialogGraph dn = Resources.Load<DialogGraph>($"Dialog/{gn}");
-		if (dn == null) { return; }
+		if (dn == null) {
+			Debug.LogError($"[DialogPanel] 找不到对话资源: Dialog/{gn}");
+			ShowSimple("系统错误", $"读取对话失败: Dialog/{gn}");
+			return; 
+		}
 		currentNode = dn.nodes[0] as DialogNode;
 		currentTextIndex = 0;
 		isSimple = false;
@@ -46,6 +56,9 @@ public class DialogPanel : PanelBase
 	}
 	public void ShowSimple(string name, string sentence, int speakerId = 0)
 	{
+		Debug.Log($"[DialogPanel] ShowSimple: {name} - {sentence}");
+        OnCallback = null;
+        OnCloseCallback = null;
 		lbl_name.text = name;
 		isSimple = true;
 		simpleSpeakerId = speakerId;
@@ -90,7 +103,7 @@ public class DialogPanel : PanelBase
 				
 				Close();
 				OnDialogOver();
-				PlayerPrefs.SetString($"{graphName}", currentNode.endingDescription);
+				// PlayerPrefs.SetString($"{graphName}", currentNode.endingDescription); 不再保存对话结束描述
 
 			}
 			else
@@ -118,19 +131,57 @@ public class DialogPanel : PanelBase
 			{
 				Destroy(c.gameObject);
 			}
-			GameObject obj = GameObject.Instantiate(Resources.Load<GameObject>(cca.path));
-			obj.transform.SetParent(tran_node);
-			obj.transform.localPosition = Vector3.zero;
-			obj.transform.localRotation = Quaternion.identity;
-			obj.transform.localScale = Vector3.one;
+            
+            // 统一立绘加载逻辑：支持 Prefab 和 Sprite
+            if (!string.IsNullOrEmpty(cca.path))
+            {
+                // 先尝试加载为 Prefab
+                GameObject prefab = Resources.Load<GameObject>(cca.path);
+                if (prefab != null)
+                {
+                    GameObject obj = GameObject.Instantiate(prefab);
+                    obj.transform.SetParent(tran_node);
+                    obj.transform.localPosition = Vector3.zero;
+                    obj.transform.localRotation = Quaternion.identity;
+                    obj.transform.localScale = Vector3.one;
+                    
+                    // 确保 Prefab 能够正确显示在 Dialog 层
+                    int dialogLayer = LayerMask.NameToLayer("Dialog");
+                    if (dialogLayer != -1) SetLayer(obj.transform, dialogLayer);
+                }
+                else
+                {
+                    // 尝试作为 Sprite 加载
+                    Sprite portrait = Resources.Load<Sprite>(cca.path);
+                    if (portrait != null)
+                    {
+                        GameObject spriteObj = new GameObject("Portrait", typeof(RectTransform));
+                        spriteObj.transform.SetParent(tran_node);
+                        
+                        Image img = spriteObj.AddComponent<Image>();
+                        img.sprite = portrait;
+                        img.raycastTarget = false; // 对话立绘不需要射线检测
+                        img.SetNativeSize();
+                        
+                        RectTransform rt = spriteObj.GetComponent<RectTransform>();
+                        rt.anchoredPosition = Vector2.zero;
+                        rt.localScale = Vector3.one;
+                        
+                        int dialogLayer = LayerMask.NameToLayer("Dialog");
+                        if (dialogLayer != -1) spriteObj.layer = dialogLayer;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[DialogPanel] 无法在 Resources/{cca.path} 找到 Prefab 或 Sprite，请检查资源路径。");
+                    }
+                }
+            }
+
 			if (go_name.activeSelf == false)
 			{
 				go_name.SetActive(true);
 			}
 			lbl_name.text = cca.name;
-
-			int layerIndex = LayerMask.NameToLayer("Dialog");
-			SetLayer(obj.transform, layerIndex);
 		}
 		else
 		{
@@ -207,19 +258,13 @@ public class DialogPanel : PanelBase
 
 	public void NextSegmentOrChooseOption()
 	{
-		//// 如果打字机效果未完成，立即完成当前文本显示
-		//if (typingCoroutine != null)
-		//{
-		//	if(currentNode.dialogText.Count<= currentTextIndex){
-		//		lbl_content.text = currentNode.dialogText[currentTextIndex - 1]; // 立即显示完整文本
-		//	}
-  //          StopCoroutine(typingCoroutine); // 停止打字机协程
-  //          typingCoroutine = null;  // 打字机协程已结束
-
-		//	return;  // 返回，等待玩家再次点击继续下一段
-		//}
 		if (typingCoroutine != null) { return; }
-		if (isSimple == true) { Close(); return; }
+		if (isSimple == true) 
+        { 
+            Close(); 
+            OnCloseCallback?.Invoke(); // 触发简单对话的回调
+            return; 
+        }
 
 		currentTextIndex++;
 		DisplayCurrentNode();
@@ -234,6 +279,7 @@ public class DialogPanel : PanelBase
 		if (isSimple == true)
 		{
 			Close();
+            OnCloseCallback?.Invoke(); // 触发简单对话的回调
 			return;
 		}
 		if (currentNode == null)

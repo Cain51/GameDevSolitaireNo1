@@ -1,0 +1,3 @@
+// 默认游戏设置
+factoryDataType="xml"
+isUseAB=false

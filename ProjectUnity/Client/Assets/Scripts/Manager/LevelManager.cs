@@ -40,6 +40,7 @@ public class LevelManager : ManagerBase
 	{
 		Level = Math.Max(1, Math.Min(level, MaxLevel));
 		CurrentExp = Math.Max(0, exp);
+		OnLevelUp?.Invoke(Level);
 		OnExpChanged?.Invoke(CurrentExp, GetRequiredExp());
 	}
 	public int GetRequiredExp()

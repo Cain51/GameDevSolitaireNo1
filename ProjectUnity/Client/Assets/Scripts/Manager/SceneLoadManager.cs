@@ -16,13 +16,27 @@ public class SceneLoadManager : ManagerBase
 	public MapCA mapCA;
 	public void Load(string scene)
 	{
+		LoadSceneParameters parameters = new LoadSceneParameters(LoadSceneMode.Additive);
+		Scene newScene = SceneManager.LoadScene(scene, parameters);
+
 		if (curScene.name != null)
 		{
 			if (curScene.name == scene) { return; }
-			SceneManager.UnloadScene(curScene);
+			SceneManager.UnloadSceneAsync(curScene);
 		}
-		LoadSceneParameters parameters = new LoadSceneParameters(LoadSceneMode.Additive);
-		curScene = SceneManager.LoadScene(scene, parameters);
+		else
+		{
+			// Try to find the active scene if curScene is not set (e.g. first load from Lobby)
+			Scene activeScene = SceneManager.GetActiveScene();
+			if (activeScene.IsValid() && activeScene.name != "DontDestroyOnLoad" && activeScene.name != "Manager")
+			{
+				if (activeScene.name != scene)
+				{
+					SceneManager.UnloadSceneAsync(activeScene);
+				}
+			}
+		}
+		curScene = newScene;
 	}
 	public void Load(MapCA ca)
 	{
@@ -47,7 +61,7 @@ public class SceneLoadManager : ManagerBase
 			{
 				GameObject.Destroy(pfb_obj);
 			}
-			SceneManager.UnloadScene(curScene);
+			SceneManager.UnloadSceneAsync(curScene);
 		}
 		LoadSceneParameters parameters = new LoadSceneParameters(LoadSceneMode.Additive);
 		curScene = SceneManager.LoadScene(sceneName, parameters);
@@ -73,7 +87,7 @@ public class SceneLoadManager : ManagerBase
 			{
 				GameObject.Destroy(pfb_obj);
 			}
-			SceneManager.UnloadScene(curScene);
+			SceneManager.UnloadSceneAsync(curScene);
 		}
 		LoadSceneParameters parameters = new LoadSceneParameters(LoadSceneMode.Additive);
 		curScene = SceneManager.LoadScene(mapCA.scene, parameters);

@@ -41,11 +41,9 @@ public class UIManager : ManagerBase
 	}
 	public PanelBase GetPanel(string key)
 	{
-		if (panelDic.ContainsKey(key) == false)
-		{
-			CreatePanel(key);
-		}
-		return panelDic[key];
+		if (panelDic.ContainsKey(key)) return panelDic[key];
+        if (floatDic.ContainsKey(key)) return floatDic[key];
+		return CreatePanel(key);
 	}
 	public void OpenBase()
 	{
