@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="接龙大赛抽奖"
+run/main_scene="uid://fpwmi4lj0fmj"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 

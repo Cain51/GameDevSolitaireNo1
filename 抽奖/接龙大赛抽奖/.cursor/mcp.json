@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "godot-mcp": {
+      "command": "node",
+      "args": [
+        "d:/游戏制作/GameDevSolitaireNo1/抽奖/接龙大赛抽奖/Godot-MCP/server/dist/index.js"
+      ],
+      "env": {
+        "MCP_TRANSPORT": "stdio"
+      }
+    }
+  }
+}
