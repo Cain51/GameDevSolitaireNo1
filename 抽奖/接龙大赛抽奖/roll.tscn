@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://fpwmi4lj0fmj"]
+
+[node name="Roll" type="Node2D"]
+
+[node name="BG" type="Control" parent="."]
+custom_minimum_size = Vector2(500, 500)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
